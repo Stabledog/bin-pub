@@ -1,0 +1,7 @@
+# dddbash-inline
+# inline version of dddbash, i.e. the script is composed on the fly by concatenating
+# the params, i.e.
+#
+#
+ddd --debugger /usr/bin/bashdb -c "$@"
+

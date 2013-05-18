@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Populate SSH_ALIASES
+
+declare -a SSH_ALIASES
+
+SSH_ALIASES=( 
+    "phorge-me lmatheson@phorge" 
+    "sdcardws-me lmatheson@sdcardws" 
+    "jenkins jenkins@rave-build-vm32" 
+    "kitsdcard sdcardkit@rave_sdcard_kit" 
+    "test-jenkins jenkins@test-jenkins"
+    "reposerver jenkins@reposerver" 
+    "mediacracy lmatheson@mediacracy"
+    "extranjo lmatheson@extranjo"
+    "cachet	   cachet@mediacracy"
+    "j2enkins  jenkins@jenkins2"
+    "j3enkins  jenkins@jenkins3"
+    "j4enkins  jenkins@jenkins4"
+    "j10enkins  jenkins@jenkins10"
+    "j11enkins  jenkins@jenkins11"
+    "sysbuild  jenkins@sysbuild-dev"
+    "sysles    lmatheson@sysbuild-dev"
+    "osbuild   lmatheson@osbuild"
+    "os2build  jenkins@osbuild2"
+    "prodInitPlatform jenkins@ProdInitPlatform"
+
+    )
+
+function ssh-launch {
+    local tgt=$1  # This is either a full spec (user@host), a pseudo-spec (mypc), or empty.   If it's
+         # empty, we present a list menu.  If it's a pseudo-spec, we do a lookup.  Otherwise,
+         # go straight to the full spec.
+    local spec=$(interpretSshSpec $1)
+    if [[ -z "$spec" ]]; then
+        spec=$(ssh-menu $@ | awk '{print $2}')
+        if [[ -z "$spec" ]]; then
+            return
+        fi
+    fi
+    shift
+    if $CYGWIN; then
+        cygstart mintty --exec ssh -Y $spec $@
+    else
+        ssh -Y $spec $@
+    fi
+}
+
+
+function interpretSshSpec  {
+    local spec=$1
+    if [[ -z "$spec" ]]; then
+		false
+		return
+    fi
+    # Translate an ssh spec into a user@hostname form:
+    if [[ $spec =~ .+@.+ ]]; then
+		echo $1
+		true
+		return
+    fi
+
+    # Is there an alias starting with this spec?
+    local len=${#spec}
+    for a in "${SSH_ALIASES[@]}"; do
+		if [[ "${a:0:$len}" == "$spec" ]]; then
+			echo "$a" | awk '{print $2}'
+			true
+			return
+		fi
+	done
+
+    false
+}
+
+function ssh-menu {
+    # List the available specs from getSshAliases and let the user choose:
+
+    select item in "${SSH_ALIASES[@]}"; do
+		echo $item
+		return
+    done
+}
+
+alias xsh='ssh-launch'

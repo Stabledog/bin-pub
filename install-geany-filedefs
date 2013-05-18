@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Install the vibrant geany filedefs
+
+set -e
+
+mkdir /tmp/vibrant-$$
+cd /tmp/vibrant-$$
+
+tar xvf ~/bin/vibrant_ink*.tar.gz 
+
+cd vibrant_ink_geany/filedefs
+
+(mkdir -p ~/.config/geany/filedefs)
+
+cp * ~/.config/geany/filedefs/
+
+echo "Restart geany to use the new config"
+
+

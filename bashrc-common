@@ -96,7 +96,7 @@ stty -ixon -ixoff
 function raverc_stuff {
 	[[ -f ~/.raverc/raverc ]] && { source ~/.raverc/raverc; addpath ~/.raverc; }
 
-	export SVNDIFF_COMPARETOOL="gvimdiff -f"
+	#export SVNDIFF_COMPARETOOL="gvimdiff -f"
 
 	# Added by svnkit installer:
 	[[ -f ~/.svnkit ]] &&  source ~/.svnkit

@@ -21,6 +21,7 @@ SSH_ALIASES=(
     "j11enkins  jenkins@jenkins11"
     "sysbuild  jenkins@sysbuild-dev"
     "sysles    lmatheson@sysbuild-dev"
+    "openstacker    lmatheson@openstacker"
     "osbuild   lmatheson@osbuild"
     "os2build  jenkins@osbuild2"
     "prodInitPlatform jenkins@ProdInitPlatform"

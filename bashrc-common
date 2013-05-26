@@ -114,7 +114,7 @@ if $CYGWIN; then
 fi
 
 
-if [[ "$(hostname)" == "lmathesonlap" ]]; then
+if [[ "$(hostname)" == "boomerang" ]]; then
 
 	export nwoRoot=$HOME/nwo_tools
 	source $HOME/nwo_tools/bin/nwo_tools.rc

@@ -5,26 +5,11 @@
 declare -a SSH_ALIASES
 
 SSH_ALIASES=( 
-    "phorge-me lmatheson@phorge" 
-    "sdcardws-me lmatheson@sdcardws" 
-    "jenkins jenkins@rave-build-vm32" 
-    "kitsdcard sdcardkit@rave_sdcard_kit" 
-    "test-jenkins jenkins@test-jenkins"
-    "reposerver jenkins@reposerver" 
     "mediacracy lmatheson@mediacracy"
-    "extranjo lmatheson@extranjo"
     "cachet	   cachet@mediacracy"
-    "j2enkins  jenkins@jenkins2"
-    "j3enkins  jenkins@jenkins3"
-    "j4enkins  jenkins@jenkins4"
-    "j10enkins  jenkins@jenkins10"
-    "j11enkins  jenkins@jenkins11"
-    "sysbuild  jenkins@sysbuild-dev"
-    "sysles    lmatheson@sysbuild-dev"
     "openstacker    lmatheson@openstacker"
-    "osbuild   lmatheson@osbuild"
-    "os2build  jenkins@osbuild2"
-    "prodInitPlatform jenkins@ProdInitPlatform"
+    "cyg lmatheson@lapcygwin"
+    "pig lmatheson@pigsadmin"
 
     )
 

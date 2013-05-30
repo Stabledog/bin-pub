@@ -113,6 +113,9 @@ if $CYGWIN; then
     cygstart startxwin.exe -- -clipboard -multiwindow
 fi
 
+if [[ "$(hostname)" == "sliderule" ]]; then
+	export PATH="${HOME}/binl:${PATH}"
+fi
 
 if [[ "$(hostname)" == "boomerang" ]]; then
 

@@ -143,6 +143,8 @@ if [[ "$(hostname)" == "boomerang" ]]; then
 	alias kbfix='source /home/lmatheson/.Xmodmap'
 fi
 
+# xclip should use the X clipboard, oddly enough:
+alias xclip='xclip -se c'
 
 
 # My own .ravebuzz comes from home dir, for development:

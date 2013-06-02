@@ -1,0 +1,2 @@
+(sudo yum install -y g++ gcc-c++ libX11-devel lesstif-devel ) || exit 1
+./configure && make && sudo make install

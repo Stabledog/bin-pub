@@ -1,8 +1,10 @@
 #!/bin/bash
 
-if ! declare -p CYGWIN &>/dev/null; then
-    export CYGWIN=false
-fi
+
+CYGWIN=false
+[[ -f /Cygwin.bat ]] && CYGWIN=true
+
+
 
 # If not running interactively, don't do anything
 if [[ ! -t 0 ]]; then
@@ -110,7 +112,7 @@ raverc_stuff
 
 if $CYGWIN; then
     export DISPLAY=:0
-    cygstart startxwin.exe -- -clipboard -multiwindow
+    #cygstart startxwin.exe -- -clipboard -multiwindow
 fi
 
 

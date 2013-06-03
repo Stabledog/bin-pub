@@ -115,11 +115,14 @@ if $CYGWIN; then
     #cygstart startxwin.exe -- -clipboard -multiwindow
 fi
 
+if [[ "$(hostname)" == "sliderule" ]]; then
+	export PATH="${HOME}/binl:${PATH}"
+fi
 
 if [[ "$(hostname)" == "boomerang" ]]; then
 
-	export nwoRoot=$HOME/nwo_tools
-	source $HOME/nwo_tools/bin/nwo_tools.rc
+	#export nwoRoot=$HOME/nwo_tools
+	#source $HOME/nwo_tools/bin/nwo_tools.rc
 	export PERL_LOCAL_LIB_ROOT="/home/lmatheson/perl5";
 	export PERL_MB_OPT="--install_base /home/lmatheson/perl5";
 	export PERL_MM_OPT="INSTALL_BASE=/home/lmatheson/perl5";
@@ -142,6 +145,8 @@ if [[ "$(hostname)" == "boomerang" ]]; then
 	alias kbfix='source /home/lmatheson/.Xmodmap'
 fi
 
+# xclip should use the X clipboard, oddly enough:
+alias xclip='xclip -se c'
 
 
 # My own .ravebuzz comes from home dir, for development:

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# build and install ddd + bashdb
+
+function errExit {
+    echo "ERROR: $1" >&2
+    exit 1
+}
+
+if ! which bashdb >/dev/null; then
+    echo "Installing bashdb..."
+    sudo apt-get install bashdb || errExit ""
+fi
+
+if which ddd >/dev/null; then
+    echo "Removing managed ddd package..."
+    sudo apt-get remove ddd || errExit ""
+fi
+
+sudo apt-get install libmotif-dev flex || errExit ""
+
+./configure || errExit ""
+
+make || errExit ""
+
+sudo make install || errExit ""
+
+echo "
+Install completed. Use this command line to launch bashdb+ddd:
+
+ddd --debugger /usr/bin/bashdb -- {scriptname} {params}
+
+"
+

@@ -104,7 +104,7 @@ alias popup='zenity --info --text '
 
 # A new bash script is handy:
 function newBashScript {
-
+	local orgArgs="$@"
 	while [[ "$1" != "" ]]; do
 		if [[ ! -f $1 ]]; then
 			echo "#!/bin/bash
@@ -119,10 +119,10 @@ function errExit {
 			echo "$1 already exists"
 		fi
 		chmod +x $1
-		svn add $1
-		gvim $1 &
 		shift
 	done
+
+	$EDITOR $orgArgs
 }
 
 

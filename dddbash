@@ -42,6 +42,8 @@ function ddd_prereqs {
 	if ! which bashdb >/dev/null; then
 		errExit "bashdb is not installed"
 	fi
+	BASHDB=$(which bashdb)
+	export BASHDB
 }	# </ ddd_prereqs  
 
 
@@ -122,7 +124,7 @@ function dddbash_main {
 		fi
 	fi
 	trace "Converted scriptname: $scriptName"
-    local cmd="$DDD $useTty --debugger /usr/bin/bashdb -- $scriptName  $Allargs"
+    local cmd="$DDD $useTty --debugger $BASHDB -- $scriptName  $Allargs"
     trace "cmd=$cmd"
     $cmd
 }

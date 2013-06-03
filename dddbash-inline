@@ -3,5 +3,6 @@
 # the params, i.e.
 #
 #
-ddd --debugger /usr/bin/bashdb -c "$@"
+export BASHDB=$(which bashdb)
+ddd --debugger $BASHDB -c "$@"
 

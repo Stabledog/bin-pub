@@ -176,6 +176,15 @@ repeat() {
 
 export SVN_EDITOR=vim
 
+function gitdiff {
+	if ! which diffuse >/dev/null; then
+		echo "Sorry, diffuse not installed.  Try {yum|apt-get} diffuse" >&2
+		false
+		return
+	fi
+
+	git difftool -t diffuse "$@"
+}
 
 alias et='myEdit -t '
 

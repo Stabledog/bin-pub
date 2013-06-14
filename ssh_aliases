@@ -26,11 +26,13 @@ function ssh-launch {
         fi
     fi
     shift
-    if $CYGWIN; then
-        cygstart mintty --exec ssh -Y $spec $@
-    else
-        ssh -Y $spec $@
-    fi
+    # why is this cygwin hack needed?
+#    if $CYGWIN; then
+#        cygstart mintty --exec ssh -Y $spec $@
+#    else
+#        ssh -Y $spec $@
+#    fi
+	ssh -Y $spec $@
 }
 
 

@@ -119,7 +119,12 @@ if [[ "$(hostname)" == "sliderule" ]]; then
 	export PATH="${HOME}/binl:${PATH}"
 fi
 
+if [[ "$(hostname)" == "lmatheson.bacon.illumina.com" ]]; then
+	export PATH="${HOME}/binl:${PATH}"
+fi
+
 if [[ "$(hostname)" == "boomerang" ]]; then
+
 
 	#export nwoRoot=$HOME/nwo_tools
 	#source $HOME/nwo_tools/bin/nwo_tools.rc

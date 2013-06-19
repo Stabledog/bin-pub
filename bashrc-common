@@ -115,13 +115,10 @@ if $CYGWIN; then
     #cygstart startxwin.exe -- -clipboard -multiwindow
 fi
 
-if [[ "$(hostname)" == "sliderule" ]]; then
+if [[ -d ${HOME}/binl ]]; then
 	export PATH="${HOME}/binl:${PATH}"
 fi
 
-if [[ "$(hostname)" == "lmatheson.bacon.illumina.com" ]]; then
-	export PATH="${HOME}/binl:${PATH}"
-fi
 
 if [[ "$(hostname)" == "boomerang" ]]; then
 

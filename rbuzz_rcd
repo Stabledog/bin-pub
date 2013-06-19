@@ -1,0 +1,144 @@
+#!/bin/bash
+
+# Change to component directory based on partial-name-match
+
+
+function printMsg {
+    echo $1 >&2
+}
+
+function indexExists {
+    [[ -f $gotoRoot/.tox-index ]]
+}
+
+function findIndex {
+    if [[ -f .tox-index ]]; then
+        pwd
+        return
+    fi
+    if [[ "$PWD" == "/" ]]; then
+        false
+        return
+    fi
+    cd ..
+    findIndex
+}
+
+function findRootLocal {
+	# Walk up the filesystem until we find a raveRoot file:
+    if [[ "$PWD" == "/" ]]; then
+    	exit 1  # Can't find a rave root
+    fi
+    if [[ -f ./raveRoot ]]; then
+    	cd ..
+    	echo $PWD
+    	exit 0
+    fi
+    cd ..
+    findRootLocal  # Recurse
+}
+
+function rebuildIndex {
+    printMsg "(Re)building tree index..."
+    pushd $gotoRoot >/dev/null
+    find * -type d | grep -vF "/arm
+/ia32
+/.svn
+/x86
+/clfs" > /tmp/.tox-index
+    cp /tmp/.tox-index $gotoRoot/.tox-index
+    popd >/dev/null
+}
+
+function filterIndexRaw {
+    local rgx="$1"
+    cat $gotoRoot/.tox-index | grep "$rgx"
+}
+
+function filterIndex {
+    local rgx="$1"
+    cat $gotoRoot/.tox-index | grep "$rgx"
+}
+
+function filterIndexCount {
+    local rgx="$1"
+    cat $gotoRoot/.tox-index | grep "$rgx" | wc -l
+}
+
+function gotoComponentCore {
+	gotoRoot=$(findRootLocal &2> /dev/null)
+    if [[ "$gotoRoot" == "" ]]; then
+        # Scan up the tree looking for a .tox-index:
+        gotoRoot=$(findIndex)
+        if [[ "$gotoRoot" == "" ]]; then
+
+            printMsg "ERROR: could not find .tox-index or GENESYS_ROOT"
+            false
+            return
+        fi
+    fi
+    if [[ "$1" == "--help" ]]; then
+        printMsg "tox [-x] {dir_fragment} [index]
+    Quick-CD to a subdir matching dir_fragment.
+    -x: Rebuild dir index "
+        false
+        return
+    elif [[ "$1" == "-x" ]]; then
+        shift
+        rebuildIndex
+    fi
+
+    if ! indexExists ; then
+        rebuildIndex
+    fi
+
+    if [[ "$1" == "" ]]; then
+        return
+    fi
+
+	# Try to match it as a normal dirname:
+    if [[ "$1" == "/" ]]; then
+        echo $gotoRoot
+        return
+	elif [[ -d $1 ]]; then
+		echo $1
+		return
+	fi
+
+    if [[ "$2" == "" ]]; then
+        # User did not specify an index
+        local cnt=$(filterIndexCount "$1")
+        if [[ $cnt == 0 ]]; then
+            printMsg "No matching directories in index.  Use -x to rebuild index."
+            return
+        elif [[ $cnt == 1 ]]; then
+            CHOICE="$(filterIndexRaw $1)"
+            echo "$gotoRoot/$CHOICE"
+            return
+        fi
+        select CHOICE in $(filterIndex "$1"); do
+            if (( $REPLY < 1 )); then
+                return
+            fi
+            echo "$gotoRoot/$CHOICE"
+            return
+        done
+    else
+        # An array index was specified:
+        local ix=$2
+
+        local dir=$(filterIndex "$1" | head -n $ix | tail -n 1)
+        if [[ -d $gotoRoot/$dir ]]; then
+            echo "$gotoRoot/$dir"
+            return
+        else
+            printMsg "No matching directories in index.  Use -x to rebuild index."
+        fi
+    fi
+
+}
+
+gotoComponentCore "$@"
+
+
+

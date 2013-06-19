@@ -65,6 +65,21 @@ function filterIndexCount {
     cat $gotoRoot/.tox-index | grep "$rgx" | wc -l
 }
 
+function initIndex {
+	echo -n "ERROR: could not find .tox-index or GENESYS_ROOT.  Would you like to create an index here in $PWD? " >&2
+	if ! read -n1 response; then
+		exit 1
+	fi
+	case $response in
+		[yY]) echo -n "" ;;
+		*) exit 1 ;;
+	esac
+	touch .tox-index # Create the index file
+	rebuildIndex
+	echo "Index creation completed.  Please re-run your original command now."
+	exit 1
+}
+
 function gotoComponentCore {
 	gotoRoot=$(findRootLocal &2> /dev/null)
     if [[ "$gotoRoot" == "" ]]; then
@@ -72,9 +87,10 @@ function gotoComponentCore {
         gotoRoot=$(findIndex)
         if [[ "$gotoRoot" == "" ]]; then
 
-            printMsg "ERROR: could not find .tox-index or GENESYS_ROOT"
-            false
-            return
+            if ! initIndex; then
+				false
+				return
+        	fi
         fi
     fi
     if [[ "$1" == "--help" ]]; then

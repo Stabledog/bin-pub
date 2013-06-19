@@ -154,15 +154,20 @@ fi
 alias xclip='xclip -se c'
 
 
-# My own .ravebuzz comes from home dir, for development:
-if [[ -f $HOME/ravebuzz/.ravebuzz ]]; then
-    source $HOME/ravebuzz/bin/devmode
-    source $HOME/ravebuzz/.ravebuzz
-    echo "Ravebuzz devmode in effect via .bashrc"
-elif [[ -f /opt/devel/ravebuzz/.ravebuzz ]]; then
-    source /opt/devel/ravebuzz/.ravebuzz  # Added by ravebuzz installer
-	alias tox='buzz_rcd'
+
+if [[ -f ~/bin/rbuzz_rcd ]]; then
+	function tox {
+		newDir="$($HOME/bin/rbuzz_rcd $@)"
+		if [[ ! -z "$newDir" ]]; then
+			pushd $newDir >/dev/null
+		fi
+	}
+else
+	function tox {
+		echo "This function only works if ~/bin/rbuzz_rcd is present."
+	}
 fi
+
 
 if [[ -f $HOME/binl/.cache-funcs ]]; then
 	source $HOME/binl/.cache-funcs
@@ -172,12 +177,6 @@ if [[ -f $HOME/binl/mediacracy-funcs ]]; then
 	source $HOME/binl/mediacracy-funcs
 fi
 
-if [[ -f $HOME/sysbuild/trunk/rbin/rave.rc ]]; then
-    source $HOME/sysbuild/trunk/rbin/rave.rc
-fi
-if [[ -f /opt/devel/rbin/rave.rc ]]; then
-	source /opt/devel/rbin/rave.rc
-fi
 if  which taskrc-shell &>/dev/null ; then
 	source $(which taskrc-shell)
 fi

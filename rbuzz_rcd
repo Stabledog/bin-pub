@@ -74,7 +74,8 @@ function initIndex {
 		[yY]) echo -n "" ;;
 		*) exit 1 ;;
 	esac
-	touch .tox-index # Create the index file
+	gotoRoot=$PWD
+	touch $gotoRoot/.tox-index # Create the index file
 	rebuildIndex
 	echo "Index creation completed.  Please re-run your original command now."
 	exit 1

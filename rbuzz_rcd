@@ -68,13 +68,17 @@ function filterIndexCount {
 function initIndex {
 	echo -n "ERROR: could not find .tox-index or GENESYS_ROOT.  Would you like to create an index here in $PWD? " >&2
 	if ! read -n1 response; then
+		echo ""
 		exit 1
 	fi
 	case $response in
 		[yY]) echo -n "" ;;
-		*) exit 1 ;;
+		*) 
+			echo ""
+			exit 1 ;;
 	esac
-	touch .tox-index # Create the index file
+	echo ""
+	touch $PWD/.tox-index # Create the index file
 	rebuildIndex
 	echo "Index creation completed.  Please re-run your original command now."
 	exit 1

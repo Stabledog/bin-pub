@@ -186,6 +186,15 @@ function gitdiff {
 	git difftool -t diffuse "$@"
 }
 
+function git-commit {
+	# Whatever we get as params is the message, and we push afterward:
+	git commit -am "$@"  && git push
+}
+
+function gitstatus {
+	git status
+}
+
 alias et='myEdit -t '
 
 alias e='myEdit '
@@ -194,4 +203,7 @@ alias ek='myEdit -k '
 if ! [[ "$PATH" =~ "$HOME/bin" ]]; then
     export PATH="$PATH:$HOME/bin"
 fi
+
+# Show that we're currently in a vim shell, if so:
+alias invim='pstree | grep -B1 pstree | grep vim'
 

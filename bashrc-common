@@ -178,3 +178,7 @@ if  which taskrc-shell &>/dev/null ; then
 	source $(which taskrc-shell)
 fi
 
+# For transient or uncontrolled shell-startup stuff:
+if [[ -f ${HOME}/.bashrc-ext ]]; then
+	source ${HOME}/.bashrc-ext
+fi

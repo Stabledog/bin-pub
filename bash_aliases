@@ -9,8 +9,6 @@ alias ll='ls -alF' --color=none
 alias la='ls -A'
 alias l='ls -CF'
 
-# Editing
-alias gopen='gnome-open'
 
 # Bash history
 alias his=history
@@ -42,7 +40,16 @@ function chrome {
 	chromium-browser &>/dev/null &
 }
 
-
+# Cygwin-only helpers:
+if $CYGWIN; then
+	function gopen {
+		cygstart "$@"
+	}
+else
+	function gopen {
+		gnome-open "$@"
+	}
+fi
 
 
 

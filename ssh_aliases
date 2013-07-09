@@ -6,11 +6,14 @@ declare -a SSH_ALIASES
 
 SSH_ALIASES=( 
     "mediacracy lmatheson@mediacracy"
+    "med2iacracy -p 12254 lmatheson@mediacracy.dynalias.net"
     "cachet	   cachet@mediacracy"
     "openstacker    lmatheson@openstacker"
     "cyg lmatheson@lapcygwin"
     "pig lmatheson@pigsadmin"
     "math lmatheson@pigsmath"
+    "ftiweb-test1 lmatheson@ftiweb-test1"
+    "base lmatheson@ftiweb-base"
 
     )
 
@@ -26,12 +29,6 @@ function ssh-launch {
         fi
     fi
     shift
-    # why is this cygwin hack needed?
-#    if $CYGWIN; then
-#        cygstart mintty --exec ssh -Y $spec $@
-#    else
-#        ssh -Y $spec $@
-#    fi
 	ssh -Y $spec $@
 }
 

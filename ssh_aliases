@@ -6,7 +6,7 @@ declare -a SSH_ALIASES
 
 SSH_ALIASES=( 
     "mediacracy lmatheson@mediacracy"
-    "med2iacracy -p 12254 lmatheson@mediacracy.dynalias.net"
+    "med2iacracy lmatheson@mediacracy.dynalias.net -p 12254 "
     "cachet	   cachet@mediacracy"
     "openstacker    lmatheson@openstacker"
     "cyg lmatheson@lapcygwin"
@@ -50,7 +50,7 @@ function interpretSshSpec  {
     local len=${#spec}
     for a in "${SSH_ALIASES[@]}"; do
 		if [[ "${a:0:$len}" == "$spec" ]]; then
-			echo "$a" | awk '{print $2}'
+			echo "$a" | awk '{$1=""; print }'
 			true
 			return
 		fi

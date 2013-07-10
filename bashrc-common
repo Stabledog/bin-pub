@@ -112,7 +112,7 @@ raverc_stuff
 
 if $CYGWIN; then
     export DISPLAY=:0
-    #cygstart startxwin.exe -- -clipboard -multiwindow
+	PATH=$HOME/bin/cyg:$PATH
 fi
 
 if [[ -d ${HOME}/binl ]]; then

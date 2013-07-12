@@ -1,4 +1,0 @@
-#!/bin/bash
-
-svn up ~/mylog
-svn commit ~/mylog -m "Synced by mylog-sync"

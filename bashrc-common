@@ -2,6 +2,15 @@
 
 
 CYGWIN=false
+if [ -n "$ZSH_VERSION" ]; then
+	inZsh=true
+	function shopt {
+		# turn shopt into nothingness in zsh
+	}
+else
+	inZsh=false
+fi
+
 [[ -f /Cygwin.bat ]] && CYGWIN=true
 
 
@@ -85,8 +94,10 @@ if $CYGWIN; then
 	alias sudo="$@"
 fi
 
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
+if ! $inZsh; then
+	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+		. /etc/bash_completion
+	fi
 fi
 
 export XEDITOR=$(which gvim)
@@ -106,7 +117,7 @@ function raverc_stuff {
 	[[ -f /opt/devel/rbin/rave.rc ]] && source /opt/devel/rbin/rave.rc
 }
 
-raverc_stuff
+#raverc_stuff
 
 [[ -f ~/bin/ssh_aliases ]] && source ~/bin/ssh_aliases
 
@@ -182,3 +193,4 @@ fi
 if [[ -f ${HOME}/.bashrc-ext ]]; then
 	source ${HOME}/.bashrc-ext
 fi
+

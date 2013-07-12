@@ -1,4 +1,4 @@
 bin
 ===
 
-Non-personal $home/bin on linux
+Non-personal $home/bin on *nix

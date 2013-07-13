@@ -4,32 +4,34 @@
 
 declare -a SSH_ALIASES
 
-SSH_ALIASES=( 
-    "mediacracy lmatheson@mediacracy"
-    "med2iacracy lmatheson@mediacracy.dynalias.net -p 12254 "
-    "cachet	   cachet@mediacracy"
-    "openstacker    lmatheson@openstacker"
-    "cyg lmatheson@lapcygwin"
-    "pig lmatheson@pigsadmin"
-    "math lmatheson@pigsmath"
-    "ftiweb-test1 lmatheson@ftiweb-test1"
-    "base lmatheson@ftiweb-base"
+SSH_ALIASES="mediacracy 	ssh -Y lmatheson@mediacracy
+med2iacracy 	ssh -Y -p 12254 lmatheson@mediacracy.dynalias.net
+cachet	  		ssh -Y cachet@mediacracy
+openstacker    ssh -Y lmatheson@openstacker
+cyg 			ssh -Y lmatheson@lapcygwin
+pig 			ssh -Y lmatheson@pigsadmin
+math 			ssh -Y lmatheson@pigsmath
+ftiweb-test1 	ssh -Y lmatheson@ftiweb-test1
+base 			ssh -Y lmatheson@ftiweb-base"
 
-    )
+function printAlias {
+	local xkey="^$1"
+	echo "$SSH_ALIASES" | grep "$xkey"
+}
 
 function ssh-launch {
-    local tgt=$1  # This is either a full spec (user@host), a pseudo-spec (mypc), or empty.   If it's
-         # empty, we present a list menu.  If it's a pseudo-spec, we do a lookup.  Otherwise,
-         # go straight to the full spec.
-    local spec=$(interpretSshSpec $1)
-    if [[ -z "$spec" ]]; then
-        spec=$(ssh-menu $@ | awk '{print $2}')
-        if [[ -z "$spec" ]]; then
-            return
-        fi
-    fi
-    shift
-	ssh -Y $spec $@
+	# The original version of this broke on zsh -- not sure why.  So here's the much-simplified version.
+	local line
+	local rx
+	local cmd
+	read rx cmd < <(printAlias "$1")
+	if [[ -z $rx ]]; then
+		echo "ERROR: Unrecognized key" >&2
+		printAlias
+		return
+	fi
+	shift
+	eval "$cmd $@"
 }
 
 

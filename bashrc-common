@@ -2,11 +2,12 @@
 
 
 CYGWIN=false
-if [ -n "$ZSH_VERSION" ]; then
+if [[ -n "$ZSH_VERSION" ]]; then
 	inZsh=true
-	function shopt {
+	eval "function shopt {
+		local doNothing
 		# turn shopt into nothingness in zsh
-	}
+	}"
 else
 	inZsh=false
 fi

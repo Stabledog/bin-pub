@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Clone a github repo.   Expects that you have already installed an ssh pub key
+# on github for the current identity.
+
+# Just supply the relative path to the repo, i.e.:
+#
+#  weaseluser/myProject
+#
+
+git clone git@github.com:$1
+
+

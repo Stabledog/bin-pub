@@ -7,7 +7,7 @@ declare -a SSH_ALIASES
 # Note: med2iacracy puts localhost rdp on 10000, and anchor rdp on 10001
 
 SSH_ALIASES="mediacracy 	ssh -Y lmatheson@mediacracy
-med2iacracy 	ssh -Y -p 12254 -L 10000:localhost:3389 -L 10001:anchor:3389 -L 10003:locahost:5900 lmatheson@mediacracy.dynalias.net
+med2iacracy 	ssh -Y -p 12254 -L 10000:localhost:3389 -L 10002:locahost:5900 -L 10001:anchor:3389 -L 10003:anchor:22 lmatheson@mediacracy.dynalias.net
 cachet	  		ssh -Y cachet@mediacracy
 openstacker     ssh -Y lmatheson@openstacker
 cyg 			ssh -Y lmatheson@lapcygwin

@@ -170,6 +170,7 @@ if [[ -f ~/bin/rbuzz_rcd ]]; then
 		if [[ ! -z "$newDir" ]]; then
 			pushd $newDir >/dev/null
 		fi
+		unset newDir
 	}
 else
 	function tox {

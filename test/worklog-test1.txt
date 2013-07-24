@@ -1,0 +1,480 @@
+CPO Tech Log
+>> 2013-07-23 (Tues)
+2:02pm>>
+Still head-scratching about Qt Creator -- why doesn't it recognize the mingw 4.8 installation in the very directories it created?   It won't let you build (at least, not from within the tool) because it claims a compiler isn't configured.  But the only config setting available seems to cover the 4.8 toolchain and looks fine.   Hmm.
+
+We could build from the command line.   Maybe that's worth a try.   How hard to get a Hello World in mingw working?
+
+Ok, here's the answer:  I was creating a QtQuick project, which doesn't really include compiler support... it just lets you use their qml preview system.  If you build a regular "Qt Gui App" with the wizard, it all works and mingw behaves just fine.    
+
+So now back to the original question: can this thing have a light footprint and run without install?   Time to copy the exe to our working VM and analyze dependencies.
+
+Grr.   It's dependent on Qt5Core.dll, and Windows can't even find that on the build machine.   Seems like QtCreator is setting up a customized runtime environment for the app, because it does run in QtCreator.
+
+Lets track down those DLLs...
+1 7/23/2013 -- These DLLs from the c:\Qt\5.1.0\mingw48_32\bin directory were adequate
+2 to get qt-gui-1.exe to run on my Win7 dev machine. This is a 'hello world' Qt Gui
+3 app.
+4
+5 total 43384
+6 drwxrwxrwx+ 1 Administrators Domain Users 0 Jul 23 15:52 ./
+7 drwxrwxrwx+ 1 Administrators Domain Users 0 Jul 23 15:17 ../
+8 ----------+ 1 lmatheson Domain Users 22378434 Jul 23 15:52 icudt51.dll
+9 ----------+ 1 lmatheson Domain Users 3369922 Jul 23 15:52 icuin51.dll
+10 ----------+ 1 lmatheson Domain Users 1978690 Jul 23 15:52 icuuc51.dll
+11 ----------+ 1 lmatheson Domain Users 544817 Jul 23 15:37 libgcc_s_dw2-1.dll
+12 ----------+ 1 lmatheson Domain Users 989805 Jul 23 15:40 libstdc++-6.dll
+13 ----------+ 1 lmatheson Domain Users 73901 Jul 23 15:40 libwinpthread-1.dll
+14 -rwxrwxrwx+ 1 Administrators Domain Users 1425 Jul 23 15:17 main.o*
+15 -rwxrwxrwx+ 1 Administrators Domain Users 5242 Jul 23 15:17 mainwindow.o*
+16 -rwxrwxrwx+ 1 Administrators Domain Users 2674 Jul 23 15:17 moc_mainwindow.cpp*
+17 -rwxrwxrwx+ 1 Administrators Domain Users 8646 Jul 23 15:17 moc_mainwindow.o*
+18 ----------+ 1 lmatheson Domain Users 4389376 Jul 23 15:55 Qt5Core.dll
+19 ----------+ 1 lmatheson Domain Users 4450304 Jul 23 15:52 Qt5Gui.dll
+20 ----------+ 1 lmatheson Domain Users 6146560 Jul 23 15:50 Qt5Widgets.dll
+21 -rwxrwxrwx+ 1 Administrators Domain Users 43520 Jul 23 15:17 qt-gui-1.exe*
+
+That was on the dev machine.   Still have to see if this works on a plain XP box.  That's next:
+
+Sadly, the Microsoft CRT blows up with a typical no-information-of-value red X box.   I think we just have to build Qt statically and be done with it, despite the build time and weight.
+
+5:34pm<<
+
+ 
+
+>> 2013-07-21 (Sun)
+6:15 am>>
+Qt 5.1 installed in c:\Qt.  Looking for a baseline app now.   QtQuick preferred...
+
+Some possibilities:
+https://projects.forum.nokia.com/qtquickplayground  (The "playground" that installs with qt to show samples is itself a qtquick app.)
+Perhaps backup2go (qt 4.72, symbian)
+Or QmlUiExamples
+
+@ 7:02:  Got the systemdialogs sample built (in cpotech/
+
+Devsetup: need to add the Qt\5.1.0\msvc2012\bin dir to the path.
+@7:19:  Working to get the build process sorted out.
+7:19am<<
+7:50 am >>
+Built the release version of systemdialogs.exe.   Now lets find out what it's dependencies are.  What's the latest version of depends?
+That gives us qt5quick.dll, qt5gui.dll, and qt5core.dll, along with the msvc runtimes msvcp110.dll and msvcr110.dll.
+Can we static-link this stuff?
+According to the 5.1 beta blog, yes.
+8:05am<<
+9:30am>>
+According to general googling, adding CONFIG+=static to the .pro file will cause qmake to issue static-linking stuff.  But it does not seem to work.
+What if we skip worrying about static linking for now, and just see what happens if we dump it all together on XP?
+Copying the essentials to anchor:~/temp --   
+exe
+manifest
+c:\qt\5.1.0\msvc2012\bin\QT5CORE.DLL
+c:\qt\5.1.0\msvc2012\bin\QT5GUI.DLL
+c:\qt\5.1.0\msvc2012\bin\QT5NETWORK.DLL
+c:\qt\5.1.0\msvc2012\bin\QT5QML.DLL
+c:\qt\5.1.0\msvc2012\bin\QT5QUICK.DLL
+c:\qt\5.1.0\msvc2012\bin\QT5V8.DLL
+
+:: Interrupt! ::
+
+In the qt\5.10\msvc2012\lib dir, there appear to be valid lib and pdb files for all the Qt components, including qtquick.  So how do we get the static build to actually work?
+
+ cl -c -nologo -Zm200 -Zc:wchar_t -O2 -MD -GR -W3 -w34100 -w34189 -EHsc -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_OPENGL_ES_2 -DQT_OPENGL_ES_2_ANGLE -DNDEBUG -I"C:\Qt\5.1.0\msvc2012\include" -I"C:\Qt\5.1.0\msvc2012\include\QtQuick" -I"C:\Qt\5.1.0\msvc2012\include\QtQml" -I"C:\Qt\5.1.0\msvc2012\include\QtNetwork" -I"C:\Qt\5.1.0\msvc2012\include\QtGui" -I"C:\Qt\5.1.0\msvc2012\include\QtANGLE" -I"C:\Qt\5.1.0\msvc2012\include\QtCore" -I"release" -I"." -I"C:\Qt\5.1.0\msvc2012\mkspecs\win32-msvc2012" -Forelease\ @C:\Users\LMATHE~1\AppData\Local\Temp\qrc_systemdialogs.obj.18004.31.jom
+
+qrc_systemdialogs.cpp
+
+/OUT:release\systemdialogs.exe @C:\Users\LMATHE~1\AppData\Local\Temp\systemdialogs.exe.18004.1295.jom
+
+The system cannot find the path specified.
+
+jom: C:\cpotech\prelim\qtquick-dialogs\release\Makefile.Release [release\systemdialogs.exe] Error 1
+
+jom: C:\cpotech\prelim\qtquick-dialogs\release\Makefile [release] Error 2
+
+10:22:37: The process "C:\Qt\Tools\QtCreator\bin\jom.exe" exited with code 2.
+
+Error while building/deploying project systemdialogs (kit: Desktop Qt 5.1.0 MSVC2012 32bit)
+
+When executing step 'Make'
+
+That's what we're getting when using CONFIG+=staticlib in our .pro file.   Seems we're getting closer, although this error is rather obscure as we don't know which path it can't find!
+10:26am<<
+
+5:36pm>> Switching gears to see if the Qt+mingw tookit works any better...
+Well, it looks like the massive Qt SDK installation doesn't include either the mingw compiler *or* any obvious indication of how to proceed to get the compiler.   So fetching from the mingw site: http://sourceforge.net/projects/mingw/?source=dlp, and turned on the C++ compiler and the developer's kit in mingw setup.
+6:15pm<<
+>> 2013-07-20 (Sat)
+12:39pm>>
+Planned tasks for velspin, in order:
+1. Make a primitive UI for key input
+2. Verify that all our stuff will be able to do what it needs to do without install or privileges.
+3. Wrap the dongle communication into a DLL we can invoke from Python
+Installing wxGlade 0.6.8 for Windows
+
+Cooking a basic UI for key input with wxGlade, file is newKey.wxg
+1:42pm<<
+1:53pm>>
+2:26pm<<
+7:24pm>>
+After a bunch of tinkering with wxPython and wxGlade, I'm interested in trying PyQt instead.   Seems like wxPython is not getting the community attention anymore.   
+
+Hmm.  It just seems like Python as the core language of cross-platform GUIs isn't really very mature.   Maybe we're better off doing straight Qt and plugging in python where it makes sense -- there is PySide which can generate bindings for the C++ classes.
+
+@8:39 pm: Downloading Qt 5.1 for Windows 32bit.
+
+Stumbled onto this: http://arstechnica.com/information-technology/2009/03/how-to-deploying-pyqt-applications-on-windows-and-mac-os-x/
+
+Since he's already solved the deployment issues with PyQt, and has an app we can use as a baseline... maybe?
+9:02pm<<
+
+>> 2013-07-19 (Fri)
+11:50 am>>
+Patrick wants to focus on a proof-of-concept that just downloads and decrypts a file from dropbox (and presumably uploads one as well?).   What do we need to run this off the dongle with no installation or admin privileges?
+
+- Dropbox API:  the choices are probably Python wrapper or C++.  Since this is a RESTful API, C++ is certainly feasable.  But we should probably minimize the amount of C++ in the app to speed development.   Perhaps a combination of C++ for low level, and Python for everything else...
+
+- UI: If this is just proof of concept, then presumably UI convenience isn't relevant?   A command-line interface would be adequate to demonstrate.
+
+- Installation:  we're not doing any, so we expect to just run in-place from the dongle, with all dependencies right there.   
+
+First lets take a look at the code Duncan sent in email:  one of his students (Tsang Yi Sha) did her final-year project building "NetSync", a C# app which encrypts files and stores them on Dropbox.  The resources here -- except for the video -- have been captured in the netsync folder of my git repo at (ssh://lmatheson@mediacracy.dynalias.net:12254/~/cpotech.git)
+
+
+1. https://dl.dropboxusercontent.com/u/44813531/130415%20Teresa%20Tsang-FYP%20Report.doc
+This is the student's FYP report. Below are the pages that are relevant:
+p. 63 Steps 1 to 5 after Figure 14.
+p. 69 The Handler monitors file changes: Change Handler
+p. 85 section 5.2.3 Monitoring file change
+p. 90 section 5.4 AES-XTS file encryption implementation
+
+2. https://dl.dropboxusercontent.com/u/44813531/130423%20NetSync.zip
+Remark: source code of the FYP. It's written in C#.
+
+3. https://dl.dropboxusercontent.com/u/44813531/130424%20netsync2.avi
+Remark: a video introduces the FYP
+ 
+Duncan identifies specific pages and sections that he thinks are relevant.  Reviewing those here:
+
+p 63 discusses the client/server/cloud architecture of NetSync.  This design puts a managed rsync server at the intersection of client machines and a cloud service (AWS, in the drawing).  Since we're not considering a server-centric solution in the current project, this may not be relevant at the moment.
+p 69: discusses the internal design of the client application.  Duncan has cited the file-change handler, which depends on the .Net framework for change detection.   Unfortunately, the implementing code suffers from a lack of best-practices design concepts:  there's a great deal of coupling and little abstraction or recognition of the need for it, consistent with a student coder.   Still, there is some relevance to what we're doing, and perhaps some of the code can be translated and reused, although the framework and source language (C#) are unlikely candidates for our solution (non-portable, and too heavy to drop into an installation-free app on a usb stick).    
+p 87 covers key exchange -- this bears study for its algorithmic relevance, although again we probably won't find the code directly usable as-is.
+p 90 discusses AES-XTS, and the design again leans on the .Net framework for a component that implements the algorithm.  Since we have our own embedded encryptor, relevance seems low here.
+Takeaway:  there are some areas in the NetSync app which may provide helpful guidance for our project, although code-reuse seems an unlikely goal.
+1:10pm<<
+
+1:40 pm>>
+I really want a preliminary app architecture and design for this proof-of-concept.  Here's the current thinking:
+Languages:  mix of Python and C++, mainly the latter for low-level platform insulation, while the bulk of logic is Python.
+GUI:  Q: How fat is pyqt now?  A: really, really fat.  Ugh.
+Better to stick with wxPython.  More known quantities.
+Use cases:
+Key creation:
+User picks "Create key", and is prompted for a key name and passphrase
+User enters key name and passphrase
+App generates a cipher key, encrypts it, etc., stores everything in the dongle's key store
+Uploading -- 
+User picks "Store file", identifies the file
+App prompts user to choose one of their stored encryption keys, then prompts user for passphrase.
+Application encrypts the file and uploads it to dropbox
+Downloading --
+User picks "Fetch file".
+Application lists files on dropbox
+User picks a file
+Application downloads it, decrypts it, stores plaintext.
+asdf
+Some resources on Python/C++ integration:
+Extending Python with C/C++
+According to wikipedia, the Dropbox client itself is using wxPython.  What a coincidence!
+Some candidate shell app starters:
+http://pingpong-abc.sourceforge.net/  (Yet Another Bittorrent Client)
+2:55pm<<
+3:15 pm>>
+Still searching for a good starter-base.  Here's some possibilities.
+Taskcoach looks promising
+Downloaded wxPython demo and samples.
+
+3:25 pm<<
+
+5:01 pm>>
+Experiment:  identify a wxPython base, pull in the Dropbox client and Michael's sample code, and get it all to build together.  Track down all the dependencies and have it run off the dongle.
+
+wxPython install instructions
+
+Setup: installing Python for Windows 2.7 (32 bit)
+... and adding wxPython for Windows 2.8 (32 bit) for Python 2.7 (unicode)
+
+@6:16:  Ooops.  Can't import wx.  Turns out to be installed (on my illumina.lap) in  c:\python27\lib\site-packages\wx-2.8-msw-unicode\wx\.   But it's not making it into the pythonpath for Cygwin.  We'll have to fix that.   But first I want to get pyscripter installed, having used it before.
+
+@6:26: Done -- got 'velspin' running in PyScripter.  Time for a git checkin.  
+
+Announced a plan to Patrick et.al.:
+Patrick,
+
+I spent a number of hours working on this today.  I've reviewed the NetSync project and document from Duncan's student, re-examined the email threads, and cooked up some definite ideas about how I think we should proceed.   
+
+I think it's time to put some stakes in the ground to start building something.  Here's what I'm doing, unless you tell me to stop:
+
+Creating a wxPython program which will integrate:The goal is to produce a demo which :
+ the Dropbox client API
+pieces of Michael's scsitool C application
+(possibly) some refactored and/or language-translated elements of Ms. Tsang's work
+A wxPython GUI
+transfers files to/from dropbox,
+Uses the Velosti dongle to encrypt/decrypt the data
+Stores the cipher key in the dongle
+Runs without installation or admin privileges from the dongle
+I've put most of everything that I have, including the source code for the app, into a git repository on a server which is physically located in my home (i.e. no public service provider or NSA ghosts lurking ;)  ).  This is accessible only via ssh using PKE, we can use this as a location for the codebase during development, or move it somewhere else, it doesn't much matter to me except that I cannot bear the thought of sending tarballs around via email for months on end.  A DVCS should be considered essential, I prefer git but mercurial would be fine too.
+As you know, I don't expect to have time to write all the code for this (or even most of it).  My hope is just to get some of the basic architectural and technical elements up and running in some minimally useful form, so that Duncan's programmer(s) can hit the ground running on a project that already has some structure and some of the basic tools sorted out already.
+
+Regarding the source tree, if you approve the plan, I can take public ssh keys from team members and install them on my server to grant access.   If you'd rather see this moved elsewhere, please let me know where..
+
+7:00 pm<<
+
+>> 2013-07-18 (Thu)
+4:27 am>>
+Some design thoughts based on this email chain: https://mail.google.com/mail/u/0/?hl=en&tab=wm#inbox/13fe36fc9a3c912a
+
+Michael has produced some proposed metadata structure and a bunch of questions.
+I respond with some preliminary ideas about the app dataflow, with a promise to deliver more details soonish, asserting that we need to understand something about how the app works in order to define what the metadata structure and semantics should be...
+We distinguish between "user files" and "metadata files", both of which have plain-text and encrypted flavors.
+Encrypted data is placed in a content-addressable object store with a flat structure (i.e. the tree layout of the object store is fixed, even if files belong to subdirectories from the user's perspective.   The location of the file in the user tree is itself metadata in the object store by the time it's encrypted)
+The content address is by hashing the plaintext data: i.e. you find the encrypted data by hashing the plaintext and then navigating the hash values in the object store.  
+When we encrypt a user file, the ciphertext is written to the object store, and the original file is replaced with a stub.  The stub has the same name as the original file but with a '.vxk' extension (or something like that).  This extension is registered with the shell so that if the user clicks on it our decryption code is launched to extract the data.
+The user can wipe out the stubs without doing any real harm, we can reconstruct them from the object store.
+We only ever sync the object store to the cloud -- the stubs are present just for the local user.  We can have user policies which decide whether or not stubs should be generated, etc.   If they don't have stubs, we provide a small interface which allows them to do incremental searches of the catalog for files by name, etc.
+No semantic information (filenames, directory names, file content, etc.) is ever 'leaked' out of the object store.  It's all encrypted.  If the user chooses to store a file with no encryption, we use the same general process as for an encrypted file, but a 'null' encryption algorithm which copies input to output.  It still goes in the object store.
+The object store is distinct from the key store.  The object store gets cloned through the cloud, but the key store stays on the USB key.   Object stores are binary-equivalent between keys if they're  sharing all the same user files.
+5:23am<<
+
+>> 2013-07-11 (Thu)
+11:00 am  >>  Call with Patrick re: requirements, technical issues, team structure.
+11:30 am <<
+>> 2013-07-10 (Wed)
+6:50 am>>
+Patrick responded to my e-mail with notes about requirements.   He's right that we need to get this nailed down... I think there's been enough discussion of alternative approaches, but I can't really be the decision-maker because I'm too far from the business stakeholders.   So waiting to see what Patrick and Duncan have to say.
+
+7:00 am<<
+>> 2013-07-09 (Tues)
+8:25 pm>>
+Responding to Patrick's email about requirements.
+9:15pm<<
+
+>> 2013-07-05 (Fri)
+7:00 am >>
+Toshi prompted some requirements clarifications: https://mail.google.com/mail/u/0/?hl=en&tab=wm#sent/13fb1834283a2511.   Need to retrofit the v0.1 document to include these notes.
+7:10 am <<
+>> 2013-07-04 (Thu)
+12:30pm>>
+Not received any responses to my email announcing dropbox-client-integration worries.  So that leaves me inclined to think that I should write requirements on the assumption that we will find or make an installable file system, such that dropbox deals with the encrypted stream, and the user deals with the plain-text stream, all transparently to each.   If we can't do that, all bets are off.
+
+Returning to my requirements spreadsheet (illumina.lap: c:\cpotech\Velosti-Encrypted-Cloud-Requirement-Elements.xlsx)
+12:35pm <<
+14:55 >>
+@17:15   I have a rough draft of the spreadsheet now (v0.1), good enough to circulate for comment.  Going to try importing it to Google docs and back again, hoping that preserves enough fidelity that I can invite people to edit on the Google doc but use Excel myself for extensive refinement if needed.
+
+Success: the round-trip quality is excellent.  The only distortion I can see is that my comment box sizes were not preserved, but everything else looks great.  Yay!
+
+Sending out invites to the google doc, along with a caveat which explains that this whole approach depends on that filesystem filter.
+
+17:42 <<
+
+
+>> 2013-07-03 (Wed)
+6:59 am >>
+Problem: there's a significant risk that we may not be able to easily integrate with the existing Windows dropbox client.   It's not enough that they provide wrappers for their RESTful API -- for our approach to work seamlessly, we really need to be able to intercept their client's interaction with the host PC file system.
+
+Example:  an ordinary dropbox user will have a specific folder in their home tree (i.e. %USERPROFILE%/Dropbox) which is the root of their sync'ed files.   These are plain-text, so they can edit without jumping through hoops.  Every time the files change, the dropbox client detects and sends deltas to the cloud -- in plain text.   So where do we get to play?   We don't, unless we encrypt the files in the user's dropbox tree, which makes them unusable for the user -- or unless we are able to filter the dropbox client's interaction with the filesystem or cloud at some level to apply encryption/decryption.
+
+But there's no such API offered by the dropbox client, their API is focused on server interactions with 3rd party applications.
+
+How to solve this?  
+we could reverse-engineer their client and perhaps find workarounds.  
+We could patch the Windows system calls it uses at the DLL level (very messy).  
+We could install our own virtual filesystem and get the user to place their dropbox folder there (reasonable, but still a lot of work potentially).  
+We could try to find an open source filesystem extension and adapt it to our needs (if a suitable thing exists).  
+We could dispense with the dropbox client and it's special folder, and take over the entire job of sync management, adding our encryption layer  (A great deal of work)
+We could "hide" the dropbox folder -- perhaps on the pendrive -- from the user, and present a similar Explorer shell which provides them with similar capabilities, but quietly handles crypt-sync between that folder and the 'hidden' dropbox folder.
+We could let the Dropbox folder files be encrypted with our shell extension, and provide a menu item like "open this file" that copies a plain-text version to a temp folder and launches the shell handler:  this is ugly from the user's perspective.  Anybody who has noticed how Outlook handles edited file attachments will be familiar with that ugliness.
+I think this is a serious risk that threatens the viability of the project: if we don't have a workable strategy for integrating with the Dropbox client which can be implemented with the time and resources available, we may not really have a project or have to do a management re-think of the overall plan.
+
+@7:51: a possible solution is the "Callback File System" (CBFS) -- downside is the license cost (their calculator and my guesses about license options produce $4800 for license cost).   It's sort of a "FUSE for Windows", and should allow us to slide in a layer on top of the dropbox folder, which we would move to an obscure location.   We would still have to proxy or reproduce some of the user-interaction, and the user experience would be different enough to be a product concern, unless we really invest a lot in that.
+
+Another possible approach is to go ahead and let the dropbox folder contain encrypted files, with '.encrypted' or whatever added as extension.  When the user tries to launch these, our shell handler is invoked and we point the user to the plain-text version in a different filesystem tree.
+
+8:01 am<<
+
+>> 2013-07-02 (Tuesday)
+6:01 am >>
+Some thoughts about requirements:
+How will we know what key to use in decrypting?- Should probably have a 'dongle key identifier' which uniquely ID's a dongle, as well as a 'user identifier' and 'key identifier'.
+- We could append a header or trailer to the encrypted file with key metadata
+- Advantage: hard to lose the metadata
+- Disadvantage: changes file size
+- We could keep metadata in the folder.  Variants:
+- as a separate file, using filename to correlate,
+as a single metadata file in the directory
+as a group metadata file in a common directory whose name is determined by our software
+- We might presume that the cloud platform(s) are trusted to handle authentication and authorization, and just focus on key management.
+- For shared data, could use a dongle-pairing strategy (like Firefox Sync) to handle key transmission: 
+   User 'dest' invokes the 'create transfer code' feature.  He is given a randomly-generated sequence which is short enough to be read over the phone to user 'src'.
+User 'src' invokes the 'secure key transfer' feature, it prompts him for this transfer code.
+The software on 'src' encrypts the data key with the transfer code, and pushes the result up to the storage cloud.
+The software on 'dst' retrieves the data key, decrypts with the transfer code, and stores the key in its secure memory.
+Variants:
+Anybody with the transfer code can retrieve that key as long as it lives on the cloud.
+Transfer code is combined with dongle key to encrypt.   This means that src and dest must have previously been paired by some other means.
+Transfer code is combined with group ID to encrypt.  Means that group ID must be communicated by other means.
+@6:46 Studying dropbox API again.   Should try to stick to the lowest-common of this and other services.
+
+Note: dropbox requires you to register your app to get a key which is used in api calls.  I started to register 'quipto', but stopped when seeing they require an https url (for authorization or something?  Not sure) Ask Mike about this.
+
+Studying OAuth summary (dropbox uses oauth).  Turns out there's quite a controversy about OAuth 2.0, with a lot of people coming down on the side of sticking with 1.0a.
+
+What about encryption of the filenames in the cloud?
+
+Looks like dropbox API makes no provision for 3rd-party app metadata to be associated with a file -- and even if it did, would we want to depend on that, reducing portability to other providers?  Probably not.  So that suggests metadata should be managed by our app.
+
+8:06 am <<
+
+7:15 pm >>
+Re-reading the email threads with the team -- now that I have more context, lets see if other concerns or ideas pop up...
+Started a requirements spreadsheet in c:\cpotech
+
+8:10 pm<<
+9:18 pm >>
+9:37 pm<<
+
+
+
+
+>> 2013-07-01 (Monday)
+6:12pm>>
+Mike replied to my email about the confusion applying dongle update (see 6/30 log) with updated firmware upload instructions and binary.   Need to test this on pink#1:  using  1.6.5.rc1-loopback.bin (md5=7e3c13c611f5e303b0f71621237d22dd) in c:\cpotech, with devtool.exe (md5=3d80ccfee4640a8cd4d5afb97d8e68c7).
+
+Oops.  Now I get an error message -- this is devtool 1.20 according to the error message.  Sent e-mail to Mike asking if there's a newer version, and suggesting a move to cloud-based vcs.
+
+@6:54  Pushing that firmware update task onto the stack, time to study dropbox a bit.
+
+Reading their security guide, it's certainly designed to make the user comfortable -- i.e. they encrypt the data at rest, have internal policies and tech restrictions for employees, etc.   Of course, they fail to mention where the key is stored, or that they're probably required to cough up the plaintext on "court order" (or because the NSA operative likes your wife...)  So there's still a market opportunity for another layer of encryption.
+
+They have a personal service and a business service.  The latter has a lot more admin features.  Presumably we will support the personal service, and the business service only to the degree that there is low development cost for common features.   Validate that presumption.  Would there be any significant API differences?
+
+They have clients for pretty much every platform, including Linux and all the popular mobiles.
+
+Their API documentation.  They use a RESTful api, and have SDKs for platforms.   We need to consider how we will abstract the API to support multiple cloud providers.
+
+They have a python SDK, probably our best bet for interaction.  But what is Mike using already?  Patrick said he had done some previous dropbox integration work.
+
+7:30pm <<
+
+9:15pm >> Mike says the command causing problems is supposed to be "clr", not "clear".   So lets try again to update pink#1:
+
+OK- that worked.  Both my dongles accepted the update, and now each has a 512mb and 7.5gb empty partition.   Mike doesn't think it's worth my time to study the loopback encryption logic, but at least I have what appears to be functioning devices.
+
+@9:30 pm - want to start a feature elements matrix to capture all the possible requirement ideas in one place.    We'll do google docs for now...
+
+9::35 <<
+9:55 >>
+Spreadsheet in progress here https://docs.google.com/spreadsheet/ccc?key=0AocJ2aZbu5q8dEI2WFBpMWNSaVRoOHpHRVBENlBScFE#gid=0
+
+Interrupt: install dropbox client for Windows.
+
+@10:13 pm: Dropbox installed.  Looks like they still force you to put all your cloud files in a single root.   Dang... how long is that limitation going to be part of this product??
+
+10:15pm <<
+
+ 
+
+
+
+
+
+>> 2013-06-30 (Sunday)
+11:20 am >>
+Starting with a task list for this week:
+Get specs on the dongle from (Duncan?)
+Install existing test app on the dongle
+Review code on the test app
+Study dropbox:
+- features
+
+- API
+
+Identify use cases - potential
+Decompose use cases to identify subfunctions
+Draft a set of feature options + tradeoffs, with a comment area.  Post it online so the team can comment (Evernote)
+Task 1: can I get the test app to work on illumina.lap?  Using vm xpbox2-cpo1 for testing this.   
+Oddly, velosti.com doesn't respond to browser.  Hmm.
+
+Setting up xpbox2-cpo1:\
+c:\cpotech as a working root. 
+Extracting the test source and firmware install tool from https://mail.google.com/mail/u/0/?hl=en&shva=1#label/cpo/13f66e9c9d26b52d.   We'll try to zap the firmware into device #1 (labeling as #1 or #2 for clarity).
+
+Note: the device does not show up in Windows Explorer, no light on device either -- I guess it is truly bare metal?  Not even a storage interface?   Or maybe vmware offers it as usb2 to the vm?   Try a usb 2.0 port.   Nope, doesn't show up as a device there either.   Switching back to having pink #1 on my usb 3 port.
+
+On both ports, the pink #1 led flashes green after connecting, but does not seem to have driver support.  Still think it's because this is bare-metal.
+
+Problem: the device does not show up on XP at all, but it does on the Windows 7 host OS.   Suspect XP support is broken or has a missing prerequisite.  Discuss this with the team.   Meanwhile, we'll work directly on illumina.lap and cross fingers.
+
+Pink#1 works fine in both my 2.0 and 3.0 ports, Windows mounts it as F: and G:, the former is 64mb (FAT) partition and has "SecureDriveManager-2.54.exe" on it.  The latter is 7.43 GB and empty (FAT32).
+
+Problem: the firmware update procedure doc is targeting a development board, which I don't have.  Will try to muddle through anyway.
+
+Extracting the files to c:\cpotech on illumina.lap
+
+Hmm... careful reading of the update procedure suggests that my pink#1 has already been updated.  The procedure says you'll have 1 partition before the update, and two afterwards.  I have two, and the procedure is ambiguous if I'm supposed to run it again, because I don't have a way to identify the correct drive letter.   So I'm concluding that someone already updated this device.   Time to check pink#2.
+
+12:35<<
+12:45>> Should install a win7 vm for testing/dev.
+Problem:  I have a file from Michael Yuen (loopback-slc-4k-128-4k.bin) received by e-mail on June 22, and the convo suggests that I need to install it on my device.   But the procedure is so unrelated to this use case that I'm concerned it might be just wrong -- which drive to use?  Is this firmware appropriate for my device that shows up with 2 partitions and the SecureDriveManager.exe?   Should probably check with Michael.  Sent an email @12:57pm.
+
+For now, we'll skip messing with the device update(s) and move on to other tasks.
+
+Sidebar: Windows 7 source reference in https://www.evernote.com/Home.action#st=p&n=5290e0ba-e8b9-4015-92b7-f1ad751fbe36  xfer in progress on mediacracy.
+
+Lets try to build the test app source code.   Working in c:\cpotech on illumina.lap.  Extracted the loopback code from Michael's June 21 message, which also contains some instructions for building.  I am installing the WDK 7.1.0, because Mike says the loopback test code + scsi utility needs "the DDK' (no version specified).  WDK is found on illumina.lap:Downloads\GRMWDK_EN_7600_1.iso.
+
+@1:50pm The scsitool source built without incident in DDK x86 build shell.
+
+1:59pm<<
+
+
+
+
+
+
+>> 2013-06-29 (Saturday)
+8:00 pm >>
+Call with Patrick: we discussed the need to get something "dropbox enabled" out quickly, to take advantage of the wave of nervousness present in the market in the wake of the NSA Prism project disclosures in the news -- people are (rightly) nervous about putting their data in the cloud unencrypted.
+This would be an added feature -- probably an app that can install directly from the device when first inserted. 
+Patrick wants to support both of Dropbox' scope modes -- personal and shared.
+My task is to study the existing device, code, and dropbox features and develop a draft set of requirements to act as a strawman.
+Target is Friday 7/5 for that.
+8:30 pm<<
+
+June 25 (Tuesday)
+7:09 am >>
+- Received tracking number for my dongles (Patrick is sending 2), and firmware burn instructions+image data.
+Setup a VM for testing/development - in progress.  (machine name xpbox2).   Also should probably setup VMs for Win7 and Win8 (later).
+Study dropbox - what APIs / features do they have now?  Study http://www.completelyprivatefiles.com/  (Viivo by pkware)
+What about encryption key management?  Presumably we're not going to store the key in dropbox, so the user needs means to backup/recover, etc.  
+Questions:
+- What about other platforms (Mac, iOS, Android, Linux?)
+- Should we be distinguishing common components + abstracting platform?
+VM Info:  working on Dell i7, XP baseline with VMWare tools => "xpbox2-baseline".   Login lmatheson/like-a-cargo-ship.
+- Cloning xpbox2-baseline as xpbox2-cpo1
+8:13 am <<
+
+
+
+>> 2013-06-23 (Sunday)
+5:46 am >>
+E-mail from Patrick.   Don't yet understand the intended architecture and use cases: is this just supposed to be for backup, or are we going to be extending Windows Explorer to make encrypted pseudo-drives, etc?   Try to establish requirements.
+
+Need to extract the source provided by Mike and try to build it.   Also waiting for one of the dongle's from Patrick (find out if there's a virtual stub which can bypass the dongle for development).   And get the source code into github or some other inet-accessible sharing point.
+
+Patrick is traveling, with limited access to data presumably.  Returns from China week of 6/24-?
+
+Need to  install DDK on VM for this project.
+5:55 am <<
+

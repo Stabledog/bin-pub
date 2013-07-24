@@ -1,0 +1,198 @@
+#!/bin/bash
+
+# Parse a work log into a csv suitable for Excel or whatever.
+
+# We use the following markup rules:
+#
+#  1.  A new date is introduced with ">> 2013-12-21".  Whatever comes after the date is ignored,
+#     but that date becomes the new 'current_date' for subsequent rows.
+#  
+#  2.  Punch-ins are defined with hh:mm[am|pm]>>.   No whitespace, please.
+#  
+#  3.  Punch-outs are identified by hh:mm[am|pm]<<.   No whitespace.  Anything following on the same line will become the summary comment.
+#
+
+# Input comes from stdin, we write results to stdout.
+
+# We're dependent on ./make-worklog-table.awk
+
+curState="date_unk"  # States are date_unk, in_session, out_session
+curEvent=""
+export inputFile="/proc/self/fd/0"
+export inputLine=""  # Current line raw text
+curLine=0  # Current line number
+export curDate=""  # Current date stamp
+export curTime=""  # Current time stamp
+comment=""   # Current comment
+endSessionEdge=false  # We set this true when we've captured data for a whole session, ready to print it.
+
+function errExit {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+
+# When an error occurs we try to tell where it happened:
+function getFailContext {
+	echo "$curDate (line #$inputLine)"
+	if [[ $inputFile =~ ^/proc ]]; then
+		return
+	fi
+	# We can print more context with the line number:
+	local startLine=$(( $curLine - 5 ))
+	cat $inputFile | head -n $startLine | tail -n 8
+}
+
+
+function sessionFsm {
+	# $1 is "new_date", "sess_start", or "sess_end".   Our
+	# state is either "in_session" or "out_session".  State
+	# violations are punished with errExit.
+	#
+	# Caller can read curState to determine whether we're in or out
+	# of session.
+
+	local event=$1
+
+	case $curState in
+		date_unk)
+			case $event in
+				new_date)
+					curState="out_session"
+					return
+					;;
+				sess_start|sess_end)
+					errExit "Bad $curState - we don't have a date at $(getFailContext)"
+					;;
+				eof)
+					exit 0 # We're done
+					
+			esac
+			;;
+		out_session)
+			case $event in
+				new_date)
+					return  # a new date when we're out_session doesn't produce a state change
+					;;
+				sess_start)
+					curState="in_session"
+					return
+					;;
+				sess_end)
+					errExit "Bad session-end event (no session in progress) at $(getFailContext)"
+					;;
+				eof)
+					exit 0  # We're done, finished normally.
+					;;
+
+			esac
+			;;
+		in_session)
+			case $event in
+				sess_end)
+					curState="out_session"
+					endSessionEdge=true
+					return
+					;;
+				new_date|sess_start)
+					errExit "Bad $event (session still in progress) at $(getFailContext)"
+					;;
+				eof)
+					errExit "Bad eof encountered while session still in progress"
+					;;
+			esac
+			;;
+	esac
+}
+
+
+function parseAndNormalize {
+	# Clean up and classify:
+	local line
+	read curLine curEvent ampm line <<< "$@"
+
+	if [[ $line =~ ^\>\> ]]; then
+		# Strip off the leading >> and print the first field after that -- the date.
+		curDate=$(echo ${line:2} | awk '{print $1}' )
+	else
+		# Strip off everything after > or <, print the first field -- the time.  Oh, and
+		# strip off any existing am/pm indicators -- we have those captured already and
+		# will reapply normalized versions.
+		curTime=$( echo "$line" | cut -d '>' -f 1 | cut -d '<' -f 1 | sed 's/[ap]m//')
+
+		# If there's no space between the time and 'am/pm', add one:
+		curTime="$curTime $ampm"
+	fi
+		
+}
+
+
+function parseEvent {
+	local line="$1"
+
+}
+
+function printSession {
+
+	local curDate="$1"
+	local sessStart="$2"
+	local sessEnd="$3"
+	local comment="$4"
+
+	printf "$curDate\t$sessStart\t$sessEnd\t\t\t$comment\n"
+}
+
+# Process the input stream as a series of events.  We expect that
+# the caller is supplying a stream that just contains the filtered
+# session events (new_date, sess_start, sess_end) and our job
+# is to pull one line at a time and pass it through our state
+# machine and output-formatting logic.
+#
+# We expect the input stream on fd#8
+function dispatchInstream {
+	local instream=$1
+	local sessStart
+	local sessEnd
+	while read -u 8 inputLine; do
+		parseAndNormalize "$inputLine"
+		local prevState=$curState
+		sessionFsm $curEvent
+		if [[ $curState == "in_session" ]] && [[ $prevState != "in_session" ]]; then
+			sessStart=$curTime
+		elif [[ $curState == "out_session" ]] && [[ $prevState == "in_session" ]]; then
+			sessEnd=$curTime
+		fi
+
+		if $endSessionEdge; then
+			endSessionEdge=false
+			printSession "$curDate" "$sessStart" "$sessEnd" "$curComment"
+		fi
+	done
+}
+
+
+function parseArgs {
+	if [[ -n $1 ]]; then
+		inputFile="$1"
+	fi
+	if [[ ! -f $inputFile ]]; then
+		errExit "Can't find input file $inputFile"
+	fi
+
+}
+
+
+function main {
+	parseArgs "$@"
+	exec 8< <(awk -f ~/bin/make-worklog-table.awk $inputFile)
+	dispatchInstream 
+	exec 8<&-
+}
+
+
+if [[ -z $sourceMe ]]; then
+	main "$@"
+fi
+
+
+

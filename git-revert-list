@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Revert a list of changes specified in $1 (or stdin if no file specified).  For each
+# change, apply the revert with --no-commit, then do a diff inspection to
+# let the user intervene.
+
+infile=/proc/self/fd/0
+changelist=""
+
+function errExit {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+function parseArgs {
+	if [[ -z $1 ]]; then
+		infile=/proc/self/fd/0
+	else
+		infile="$1"
+	fi
+	changeList="$(cat $infile)"
+}
+
+function main {
+	parseArgs "$@"
+
+	for hash in $changeList; do
+		echo "Reverting $hash from $infile:"
+		git revert $hash --no-commit || errExit "Revert failed for $hash"
+		git diff --staged
+		read -p "You may review the changes locally.  Press Ctrl+C to abort, or any other key to commit and continue:"
+		git commit -m "Reverted $hash" || errExit "Commit failed for $hash"
+	done
+	echo "All changes reverted successfully."
+	
+}
+
+if [[ -z $sourceMe ]]; then
+	main "$@"
+fi
+

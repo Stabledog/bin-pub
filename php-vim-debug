@@ -6,4 +6,25 @@
 
 export XDEBUG_IDEKEY="idekey=vim_session" 
 
-$(which php) "$@"
+function waitForSomeoneToOpenDebugPort {
+	local port=9000   # TODO: Read this value from the vim php debugger script, somewhere in ~/.vim
+	local debugHost=localhost  # TODO: Likewise, get this from config
+	local srchStr=":${port}"
+	echo "Waiting for debug client to open port $port for connection from php:"
+	while true; do
+		# We just want to know if someone is listening on the debug port:
+		ss -l4tpn | awk '/^LISTEN / {print $4}' | grep "$srchStr" >/dev/null
+		if [[ $? -eq 0 ]]; then
+			true
+			return
+		fi
+		sleep 0.5
+	done
+}
+
+while true; do
+	echo "Ready to debug ($@).   Press F5 in Vim, or Ctrl+C to exit:"
+	waitForSomeoneToOpenDebugPort
+	$(which php) "$@"
+	echo "End of session, result code=$?"
+done

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Launch php for debugging cli script, using vim as the debug client.
+# See http://stackoverflow.com/a/17885410/237059 for details on setup.
+
+
+export XDEBUG_IDEKEY="idekey=vim_session" 
+
+$(which php) "$@"

@@ -26,5 +26,8 @@ while true; do
 	echo "Ready to debug ($@).   Press F5 in Vim, or Ctrl+C to exit:"
 	waitForSomeoneToOpenDebugPort
 	$(which php) "$@"
-	echo "End of session, result code=$?"
+	result=$?
+	echo " "
+	echo ">>>>   End of run, result code=$result <<<< "
+
 done

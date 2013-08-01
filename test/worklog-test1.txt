@@ -38,7 +38,7 @@ That was on the dev machine.   Still have to see if this works on a plain XP box
 
 Sadly, the Microsoft CRT blows up with a typical no-information-of-value red X box.   I think we just have to build Qt statically and be done with it, despite the build time and weight.
 
-5:34pm<<
+5:34pm<< Assessing viability of Qt 5.1+mingw to build no-install app
 
  
 
@@ -102,7 +102,7 @@ That's what we're getting when using CONFIG+=staticlib in our .pro file.   Seems
 
 5:36pm>> Switching gears to see if the Qt+mingw tookit works any better...
 Well, it looks like the massive Qt SDK installation doesn't include either the mingw compiler *or* any obvious indication of how to proceed to get the compiler.   So fetching from the mingw site: http://sourceforge.net/projects/mingw/?source=dlp, and turned on the C++ compiler and the developer's kit in mingw setup.
-6:15pm<<
+6:15pm<< Experimenting with Qt+mingw tool combination
 >> 2013-07-20 (Sat)
 12:39pm>>
 Planned tasks for velspin, in order:

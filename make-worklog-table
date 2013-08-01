@@ -17,14 +17,14 @@
 # We're dependent on ./make-worklog-table.awk
 
 curState="date_unk"  # States are date_unk, in_session, out_session
-curEvent=""
+curEvent="" # Events are: new_date, sess_start, sess_end, eof
 export inputFile="/proc/self/fd/0"
 export inputLine=""  # Current line raw text
 curLine=0  # Current line number
 export curDate=""  # Current date stamp
 export curTime=""  # Current time stamp
-comment=""   # Current comment
 endSessionEdge=false  # We set this true when we've captured data for a whole session, ready to print it.
+curComment=""   # Current comment
 
 function errExit {
 	echo "ERROR: $@" >&2
@@ -122,6 +122,11 @@ function parseAndNormalize {
 
 		# If there's no space between the time and 'am/pm', add one:
 		curTime="$curTime $ampm"
+
+		# If the event is 'sess_end', capture the comment summarizing the session:
+		if [[ $curEvent == "sess_end" ]]; then
+			curComment=$(echo "$line" | awk 'BEGIN {FS="<<"} {print $2}')
+		fi
 	fi
 		
 }
@@ -132,6 +137,19 @@ function parseEvent {
 
 }
 
+function timeToSeconds {
+	# Invoke date... the base date is irrelevant, as we only really care about the relative elapsed:
+	local arg="today $@"
+	date --date="$arg" +"%s"
+}
+
+function calcSessionMinutes {
+	local timeStart="$1"
+	local timeEnd="$2"
+	local delta=$(( $(timeToSeconds "$timeEnd") - $(timeToSeconds "$timeStart") ))
+	echo "$(( $delta / 60 ))"
+}
+
 function printSession {
 
 	local curDate="$1"
@@ -139,8 +157,10 @@ function printSession {
 	local sessEnd="$3"
 	local comment="$4"
 
-	printf "$curDate\t$sessStart\t$sessEnd\t\t\t$comment\n"
+	local elapsed=$(calcSessionMinutes "$sessStart" "$sessEnd")
+	printf "$curDate\t$sessStart\t$sessEnd\t$elapsed\t\t$comment\n"
 }
+
 
 # Process the input stream as a series of events.  We expect that
 # the caller is supplying a stream that just contains the filtered

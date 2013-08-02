@@ -150,14 +150,16 @@ function calcSessionMinutes {
 	echo "$(( $delta / 60 ))"
 }
 
+
+# Prints the session row in tab-delimited form:
 function printSession {
 
 	local curDate="$1"
 	local sessStart="$2"
 	local sessEnd="$3"
-	local comment="$4"
+	local elapsed="$4"
+	local comment="$5"
 
-	local elapsed=$(calcSessionMinutes "$sessStart" "$sessEnd")
 	printf "$curDate\t$sessStart\t$sessEnd\t$elapsed\t\t$comment\n"
 }
 
@@ -169,10 +171,13 @@ function printSession {
 # machine and output-formatting logic.
 #
 # We expect the input stream on fd#8
+#
+# At the end, we print the total hours 
 function dispatchInstream {
 	local instream=$1
 	local sessStart
 	local sessEnd
+	local totalMin=0
 	while read -u 8 inputLine; do
 		parseAndNormalize "$inputLine"
 		local prevState=$curState
@@ -185,9 +190,16 @@ function dispatchInstream {
 
 		if $endSessionEdge; then
 			endSessionEdge=false
-			printSession "$curDate" "$sessStart" "$sessEnd" "$curComment"
+			local elapsed=$(calcSessionMinutes "$sessStart" "$sessEnd")
+			totalMin=$(( $totalMin + $elapsed ))
+			printSession "$curDate" "$sessStart" "$sessEnd" "$elapsed" "$curComment"
 		fi
 	done
+	local hours
+	hours=$(( totalMin/60 ))
+	local minutes=$(( $totalMin % 60 ))
+
+	echo "Total time: $hours:$minutes"
 }
 
 

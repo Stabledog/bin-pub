@@ -1,0 +1,15 @@
+#!/bin/bash
+# For centos 6.4:
+
+cd /usr/local
+
+sudo yum install curl-devel expat-devel gettext-devel   openssl-devel zlib-devel perl-ExtUtils-MakeMaker || exit 1
+sudo git clone git://git.kernel.org/pub/scm/git/git.git || exit 1
+sudo chmod og+w git -R
+cd git
+make prefix=/usr/local all || exit 1
+sudo make prefix=/usr/local install || exit 1
+cd contrib/subtree
+make prefix=/usr/local || exit 1
+sudo make prefix=/usr/local install || exit 1
+

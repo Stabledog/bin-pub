@@ -4,7 +4,8 @@
 # See http://stackoverflow.com/a/17885410/237059 for details on setup.
 
 
-export XDEBUG_IDEKEY="idekey=vim_session" 
+#export XDEBUG_IDEKEY="idekey=vim_session"  # For vim
+export XDEBUG_IDEKEY="idekey=netbeans-xdebug" # For netbeans
 
 function waitForSomeoneToOpenDebugPort {
 	local port=9000   # TODO: Read this value from the vim php debugger script, somewhere in ~/.vim
@@ -22,9 +23,23 @@ function waitForSomeoneToOpenDebugPort {
 	done
 }
 
+function errExit  {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+script=$1
+if [[ -z $script ]]; then
+	errExit "No script specified"
+fi
+if [[ ! -f $script ]]; then
+	errExit "Can't find script: $@"
+fi
+
 while true; do
 	echo "Ready to debug ($@).   Press F5 in Vim, or Ctrl+C to exit:"
 	waitForSomeoneToOpenDebugPort
+	echo "Running php $@:"
 	$(which php) "$@"
 	result=$?
 	echo " "

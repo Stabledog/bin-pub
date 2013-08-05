@@ -12,4 +12,4 @@ sudo make prefix=/usr/local install || exit 1
 cd contrib/subtree
 make prefix=/usr/local || exit 1
 sudo make prefix=/usr/local install || exit 1
-
+echo "build-git-from-source completed normally."

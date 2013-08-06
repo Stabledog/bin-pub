@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#
+
+git count-objects -v || exit 1
+
+git filter-branch -f --force --index-filter 'git rm -rf --cached --ignore-unmatch tftpboot/initrd.img' --prune-empty --tag-name-filter cat -- --all || exit 1
+
+
+git filter-branch -f --force  --index-filter 'git rm -rf --cached --ignore-unmatch build-automation/tftpboot/initrd.img'  --prune-empty --tag-name-filter cat -- --all || exit 1
+
+rm -rf .git/refs/original/ || exit 1
+
+git reflog expire --expire=now --all || exit 1
+
+git gc --prune=now || exit 1
+
+git gc --aggressive --prune=now || exit 1
+
+git count-objects –v || exit 1
+

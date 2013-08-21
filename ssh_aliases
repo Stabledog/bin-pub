@@ -11,9 +11,11 @@ med2iacracy 	ssh -Y -p 12254 -L 10000:localhost:3389 -L 10002:locahost:5900 -L 1
 cachet	  		ssh -Y cachet@mediacracy
 openstacker     ssh -Y lmatheson@openstacker
 cyg 			ssh -Y lmatheson@lapcygwin
+j1 				ssh -Y jenkins@jenkins1
 pig 			ssh -Y lmatheson@pigsadmin
 math 			ssh -Y lmatheson@pigsmath
 ftiweb-test1 	ssh -Y lmatheson@ftiweb-test1
+patmc			ssh -Y lmatheson2@pmcshane-dev.bacon.illumina.com
 base 			ssh -Y lmatheson@ftiweb-base"
 
 function printAlias {

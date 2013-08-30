@@ -12,7 +12,7 @@ cachet	  		ssh -Y cachet@mediacracy
 openstacker     ssh -Y lmatheson@openstacker
 cyg 			ssh -Y lmatheson@lapcygwin
 j1 				ssh -Y jenkins@jenkins1
-p6				ssh -Y root@pigs06
+p6				ssh -Y bacondev@pigs06
 pig 			ssh -Y lmatheson@pigsadmin
 math 			ssh -Y lmatheson@pigsmath
 ftiweb-test1 	ssh -Y lmatheson@ftiweb-test1

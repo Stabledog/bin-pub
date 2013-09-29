@@ -1,0 +1,36 @@
+#!/bin/bash
+
+whichOpt='L'
+
+if ! which rdesktop >/dev/null; then
+	echo "Sorry, rdesktop isn't installed.  Try the package manager" >&2
+	exit 1
+fi
+echo "Anchor remote options:
+(L)arge screen
+(H)alf screen
+(F)ull screen
+--------------"
+read -p "Choose option:" -n1 whichOpt
+echo ""
+
+case $whichOpt in
+	[lL]) geo="-g 1298x713"; echo "Geometry $geo" ;;
+	[hH]) geo="-g 775x713" echo "Geometry $geo" ;;
+	[fF]) geo="-f"; echo "Geometry full" ;;
+	*) ;;
+esac
+
+if [[ -f $HOME/.anchor-rdesktop ]]; then
+	pwdParm="-p $(cat $HOME/.anchor-rdesktop)"
+else
+	echo "This script supports auto-login, but its not set up"
+fi
+set +x
+nohup rdesktop -u lmatheson $pwdParm -C  -T Anchor $geo  anchor &>/dev/null &
+#disown 
+sleep 2  # Not sure why this is needed, but it works...
+echo "Launch completed: press a key to exit shell"
+#read -n1
+exit 0
+

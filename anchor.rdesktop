@@ -27,7 +27,8 @@ else
 	echo "This script supports auto-login, but its not set up"
 fi
 set +x
-nohup rdesktop -u lmatheson $pwdParm -C  -T Anchor $geo  anchor &>/dev/null &
+ # TODO: Dynamically pick the address based on local vs. remote:
+rdesktop -u lmatheson $pwdParm -C  -T Anchor $geo localhost:10001
 #disown 
 sleep 2  # Not sure why this is needed, but it works...
 echo "Launch completed: press a key to exit shell"

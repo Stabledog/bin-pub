@@ -86,7 +86,21 @@ function ls_aliases {
 	alias lr='ls -lirt'
 }
 
+# 'gc' is 'git commit'
+function gc {
+	if [[ -z $1 ]]; then
+		git commit
+	else
+		git commit -m "$@"
+	fi
+}
+
+function setup_git_aliases {
+	alias gs='git status'
+}
+
 ls_aliases
+setup_git_aliases
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 

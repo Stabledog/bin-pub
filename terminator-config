@@ -1,0 +1,36 @@
+[global_config]
+  enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+[keybindings]
+  cycle_prev = <Primary><Shift>p
+  toggle_zoom = <Primary><Shift>p
+  move_tab_right = <Primary><Shift>p
+  go_up = <Primary><Shift>k
+  group_tab = <Primary><Shift>p
+  group_all = <Primary><Shift>p
+  move_tab_left = <Primary><Shift>p
+  next_tab = <Primary><Shift>p
+  new_terminator = <Primary><Shift>p
+  split_horiz = <Super>h
+  prev_tab = <Primary><Shift>p
+  go_down = <Primary><Shift>j
+  cycle_next = <Primary><Shift>p
+  split_vert = <Super>v
+  ungroup_all = <Primary><Shift>p
+  go_left = <Primary><Shift>h
+  ungroup_tab = <Primary><Shift>p
+  go_next = <Primary><Shift>p
+  toggle_scrollbar = <Primary><Shift>p
+  hide_window = <Primary><Shift>p
+  go_right = <Primary><Shift>l
+[profiles]
+  [[default]]
+    foreground_color = "#ffffff"
+[layouts]
+  [[default]]
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+    [[[window0]]]
+      type = Window
+      parent = ""
+[plugins]

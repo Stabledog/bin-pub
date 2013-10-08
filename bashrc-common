@@ -100,6 +100,11 @@ function setup_git_aliases {
 	alias ga='git add'
 }
 
+# Set the terminal title (bash only)
+function title {
+	echo -ne "\033]0;${1}\007"
+}
+
 ls_aliases
 setup_git_aliases
 

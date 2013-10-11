@@ -98,6 +98,10 @@ function gc {
 function setup_git_aliases {
 	alias gs='git status'
 	alias ga='git add'
+	alias gp='git push'
+	alias gpull='git pull'
+	alias gd='git diff'
+	alias gdt='git difftool'
 }
 
 # Set the terminal title (bash only)

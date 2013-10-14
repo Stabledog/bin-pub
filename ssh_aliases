@@ -16,6 +16,7 @@ j1 				ssh -Y jenkins@jenkins1
 jred			ssh -Y jenkins@jenkins-red
 jgreen			ssh -Y jenkins@jenkins-green
 p6				ssh -Y bacondev@pigs06
+pgreen			ssh -Y root@pigs-green
 pig 			ssh -Y lmatheson@pigsadmin
 math 			ssh -Y lmatheson@pigsmath
 ftiweb-test1 	ssh -Y lmatheson@ftiweb-test1

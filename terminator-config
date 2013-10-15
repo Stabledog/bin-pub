@@ -1,7 +1,7 @@
 [global_config]
   enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
 [keybindings]
-  cycle_prev = <Ctrl><Shift>p
+  cycle_prev = <Ctrl><Shift>less
   group_tab = <Ctrl><Shift>p
   resize_left = <Shift><Alt>h
   move_tab_left = <Ctrl><Shift>p
@@ -16,7 +16,7 @@
   split_vert = <Shift><Super>v
   ungroup_all = <Ctrl><Shift>p
   ungroup_tab = <Ctrl><Shift>p
-  cycle_next = <Ctrl><Shift>p
+  cycle_next = <Ctrl><Shift>treater
   new_terminator = <Ctrl><Shift>p
   go_next = <Ctrl><Shift>p
   go_left = <Ctrl><Shift>h

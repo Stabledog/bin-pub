@@ -95,10 +95,12 @@ function gc {
 	fi
 }
 
+
 function setup_git_aliases {
 	alias gs='git status'
 	alias ga='git add'
 	alias gp='git push'
+	alias gl='git log'
 	alias gpull='git pull'
 	alias gd='git diff'
 	alias gdt='git difftool'

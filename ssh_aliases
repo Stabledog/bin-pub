@@ -13,15 +13,20 @@ openstacker     ssh -Y lmatheson@openstacker
 cyg 			ssh -Y lmatheson@lucas
 illumitu		ssh -Y lmatheson@illumitu
 j1 				ssh -Y jenkins@jenkins1
-jred			ssh -Y jenkins@jenkins-red
-jgreen			ssh -Y jenkins@jenkins-green
 p6				ssh -Y bacondev@pigs06
-pgreen			ssh -Y root@pigs-green
-pig 			ssh -Y lmatheson@pigsadmin
+pigsadmin		ssh -Y lmatheson@pigsadmin
+pig 			ssh -Y jenkins@pigsadmin
 math 			ssh -Y lmatheson@pigsmath
 ftiweb-test1 	ssh -Y lmatheson@ftiweb-test1
 patmc			ssh -Y lmatheson2@pmcshane-dev.bacon.illumina.com
-base 			ssh -Y lmatheson@ftiweb-base"
+base 			ssh -Y lmatheson@ftiweb-base
+jred			ssh -Y jenkins@jenkins-red.bacon.illumina.com
+jgreen			ssh -Y jenkins@jenkins-green.bacon.illumina.com
+jblue			ssh -Y jenkins@jenkins-blue.bacon.illumina.com
+pred			ssh -Y root@pigs-red.bacon.illumina.com
+pgreen			ssh -Y root@pigs-green.bacon.illumina.com
+pblue			ssh -Y root@pigs-blue.bacon.illumina.com"
+
 
 function printAlias {
 	local xkey="^$1"

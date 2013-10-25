@@ -14,8 +14,8 @@ cyg 			ssh -Y lmatheson@lucas
 illumitu		ssh -Y lmatheson@illumitu
 j1 				ssh -Y jenkins@jenkins1
 p6				ssh -Y bacondev@pigs06
-pigsadmin		ssh -Y lmatheson@pigsadmin
 pig 			ssh -Y jenkins@pigsadmin
+pigsadmin		ssh -Y lmatheson@pigsadmin
 math 			ssh -Y lmatheson@pigsmath
 ftiweb-test1 	ssh -Y lmatheson@ftiweb-test1
 patmc			ssh -Y lmatheson2@pmcshane-dev.bacon.illumina.com

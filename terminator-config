@@ -12,10 +12,10 @@
   resize_down = <Shift><Alt>j
   move_tab_right = <Ctrl><Shift>p
   prev_tab = <Ctrl><Shift>p
-  split_vert = <Shift><Super>v
-  ungroup_all = <Ctrl><Shift>p
-  ungroup_tab = <Ctrl><Shift>p
   cycle_next = <Ctrl><Shift>o
+  ungroup_all = <Ctrl><Shift>p
+  split_vert = <Shift><Super>v
+  ungroup_tab = <Ctrl><Shift>p
   go_next = <Ctrl><Shift>p
   go_left = <Ctrl><Shift>h
   hide_window = <Ctrl><Shift>p
@@ -29,6 +29,7 @@
   toggle_scrollbar = <Ctrl><Shift>p
 [profiles]
   [[default]]
+    scrollbar_position = hidden
     foreground_color = "#ffffff"
 [layouts]
   [[default]]

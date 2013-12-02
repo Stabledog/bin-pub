@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Install box.com webdav mounting 
+
+# Requires:  ~/.config/box_com_mount/credentials
+
+

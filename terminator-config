@@ -29,6 +29,8 @@
   toggle_scrollbar = <Ctrl><Shift>p
 [profiles]
   [[default]]
+    use_system_font = False
+    font = Courier 10 Pitch 11
     scrollbar_position = hidden
     foreground_color = "#ffffff"
 [layouts]

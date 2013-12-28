@@ -128,8 +128,11 @@ if ! $inZsh; then
 	fi
 fi
 
-export XEDITOR=$(which gvim)
 export EDITOR=$(which vim)
+export XEDITOR=$(which gvim 2>/dev/null)
+if [[ -z $XEDITOR ]]; then
+	XEDITOR=$EDITOR
+fi
 
 # disable flow control for terminal:
 stty -ixon -ixoff

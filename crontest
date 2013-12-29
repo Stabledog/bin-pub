@@ -6,15 +6,15 @@
 #
 #  1. When adding your cron job, use all 5 stars to make it run every minute
 #  2. Wrap the command in crontest
-#  3. Use -- to separate crontest params from the rest of command line
+#        
 #
 #  Example:
 #
 #  $ crontab -e
-#     * * * * * /usr/local/bin/crontest --bashdb -- $HOME/bin/my-new-script --myparams
+#     * * * * * /usr/local/bin/crontest $HOME/bin/my-new-script --myparams
 #
-#  ... now, cron will run your job every minute.  crontest will use a locking mechanism
-#  to ensure that the target command does not run multiple instances.
+#  Now, cron will run your job every minute, but crontest will only allow one
+#  instance to run at a time.  
 #
 #  crontest always wraps the command in "screen -d -m" if possible, so you can
 #  use "screen -x" to attach and interact with the job.   
@@ -30,9 +30,10 @@
 #   - crontest writes its own stuff to /tmp/crontest.log
 #
 #   - If GNU screen isn't available, neither is --bashdb
+#
 
 crontestLog=/tmp/crontest.log
-lockfile=/var/lock/crontest.lock
+lockfile=$(if [[ -d /var/lock ]]; then echo /var/lock/crontest.lock; else echo /tmp/crontest.lock; fi )
 useBashdb=false
 useScreen=$( if which screen &>/dev/null; then echo true; else echo false; fi )
 innerArgs="$@"
@@ -74,15 +75,15 @@ function parseArgs {
 }
 
 if [[ -z  $sourceMe ]]; then
+	# Lock the lockfile (no, we do not wish to follow the standard
+	# advice of wrapping this in a subshell!)
+	exec 9>$lockfile
+	flock -n 9 || exit 1
 	
 	# Zap any old log data:
 	[[ -f $crontestLog ]] && rm -f $crontestLog
 
 	parseArgs "$@"
-	# Lock the lockfile (no, we do not wish to follow the standard
-	# advice of wrapping this in a subshell!)
-	exec 9>$lockfile
-	flock -n 9 || exit 1
 
 	log "crontest starting at $(date)"
 	log "Raw command line: $@"

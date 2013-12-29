@@ -16,7 +16,7 @@
 #  Now, cron will run your job every minute, but crontest will only allow one
 #  instance to run at a time.  
 #
-#  crontest always wraps the command in "screen -d -m" if possible, so you can
+#  crontest always wraps the command in "screen -D -m" if possible, so you can
 #  use "screen -x" to attach and interact with the job.   
 #
 #  If --bashdb is used, the command line will be passed to bashdb.  Thus you

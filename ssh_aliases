@@ -23,7 +23,7 @@ function scpLite {
 }
 
 function printAlias {
-	local xkey="^[[:space:]]$1"
+	local xkey="^[[:space:]]*$1"
 	echo "$SSH_ALIASES" | egrep "$xkey" | sed "s^lovesMe^$(getSshLovesMe)^g"
 }
 

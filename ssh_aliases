@@ -88,6 +88,8 @@ if [[ -z $sourceMe ]]; then
 
 	if [[ -f $HOME/.ssh/aliases ]]; then
 		source $HOME/.ssh/aliases
+	else
+		echo "No ~/.ssh/aliases exists" >&2
 	fi
 
 fi

@@ -226,3 +226,15 @@ if [[ -f ${HOME}/.bashrc-ext ]]; then
 	source ${HOME}/.bashrc-ext
 fi
 
+function loadTaskrcs {
+	while read line; do
+		source $line
+	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null)
+}
+
+# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
+# just source everything found there.
+if [[ -d $HOME/.taskrc ]]; then
+	loadTaskrcs
+fi
+

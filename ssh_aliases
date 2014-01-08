@@ -80,6 +80,7 @@ function ssh-menu {
 }
 
 alias xsh='ssh-launch'
+export sshLovesMe="$(getSshLovesMe)"
 
 if [[ -z $sourceMe ]]; then
 	# Populate SSH_ALIASES

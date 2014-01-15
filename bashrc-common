@@ -172,11 +172,6 @@ if [[ "$(hostname)" == "boomerang" ]]; then
 	export PERL_MM_OPT="INSTALL_BASE=/home/lmatheson/perl5";
 	export PERL5LIB="/home/lmatheson/perl5/lib/perl5/i686-linux-gnu-thread-multi-64int:/home/lmatheson/perl5/lib/perl5";
 	export JAVA_HOME="/usr"
-	export EC2_HOME="/opt/aws/ec2-api-tools-1.6.7.3"
-	export AWS_ACCESS_KEY="AKIAJWOOYKPDF5QXBPUA"
-	export AWS_SECRET_KEY="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"
-	export EC2_URL=https://ec2.us-west-2.amazonaws.com
-	#export EC2_DEFAULT_ARGS="--aws-access-key=$AWS_ACCESS_KEY -- aws-secret-key=$AWS_SECRET_KEY "
 	export PATH="/home/lmatheson/perl5/bin:/opt/cxoffice/bin:$HOME/binl:$PATH:$EC2_HOME/bin"
 	source ~/.Xmodmap
 	# If network-manager isn't running, start it:

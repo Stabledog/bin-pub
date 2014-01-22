@@ -189,19 +189,19 @@ alias xclip='xclip -se c'
 
 
 
-if [[ -f ~/bin/rbuzz_rcd ]]; then
-	function tox {
-		newDir="$($HOME/bin/rbuzz_rcd $@)"
-		if [[ ! -z "$newDir" ]]; then
-			pushd $newDir >/dev/null
-		fi
-		unset newDir
-	}
-else
-	function tox {
-		echo "This function only works if ~/bin/rbuzz_rcd is present."
-	}
-fi
+function tox {
+	if [[ ! -x $HOME/bin/rbuzz_rcd ]]; then
+		echo "This function only works if $HOME/bin/rbuzz_rcd is present." >&2
+		return false
+	fi
+	local newDir=$( $HOME/bin/rbuzz_rcd "$@" )
+	if [[ -d "${newDir}" ]]; then
+		pushd ${newDir} >&2
+	else
+		echo "Cant find .tox-index match for $@" >&2
+		return false
+	fi
+}
 
 
 if [[ -f $HOME/binl/.cache-funcs ]]; then

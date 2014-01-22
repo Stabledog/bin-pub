@@ -41,12 +41,20 @@ function findRootLocal {
 function rebuildIndex {
     printMsg "(Re)building tree index..."
     pushd $gotoRoot >/dev/null
-    find * -type d | grep -vF "/arm
-/ia32
-/.svn
-/x86
-/clfs" > /tmp/.tox-index
-    cp /tmp/.tox-index $gotoRoot/.tox-index
+    find * -type d | grep -vF "/.git
+/.svn" > /tmp/.tox-index
+	rm $gotoRoot/.tox-index
+	# If there's a .tox-index-pre, take that first:
+	if [[ -f $gotoRoot/.tox-index-pre ]]; then
+		cp $gotoRoot/.tox-index-pre >$gotoRoot/.tox-index
+	fi
+
+    cat /tmp/.tox-index >$gotoRoot/.tox-index
+
+	if [[ -f $gotoRoot/.tox-index-post ]]; then
+		cat $gotoRoot/.tox-index-post > $gotoRoot/.tox-index
+	fi
+    
     popd >/dev/null
 }
 
@@ -158,7 +166,9 @@ function gotoComponentCore {
 
 }
 
-gotoComponentCore "$@"
+if [[ -z $sourceMe ]]; then
+	gotoComponentCore "$@"
+fi
 
 
 

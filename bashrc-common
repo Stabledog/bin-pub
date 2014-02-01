@@ -162,32 +162,32 @@ if [[ -d ${HOME}/binl ]]; then
 fi
 
 
-if [[ "$(hostname)" == "boomerang" ]]; then
 
-
-	#export nwoRoot=$HOME/nwo_tools
-	#source $HOME/nwo_tools/bin/nwo_tools.rc
-	export PERL_LOCAL_LIB_ROOT="/home/lmatheson/perl5";
-	export PERL_MB_OPT="--install_base /home/lmatheson/perl5";
-	export PERL_MM_OPT="INSTALL_BASE=/home/lmatheson/perl5";
-	export PERL5LIB="/home/lmatheson/perl5/lib/perl5/i686-linux-gnu-thread-multi-64int:/home/lmatheson/perl5/lib/perl5";
-	export JAVA_HOME="/usr"
-	export PATH="/home/lmatheson/perl5/bin:/opt/cxoffice/bin:$HOME/binl:$PATH:$EC2_HOME/bin"
-	source ~/.Xmodmap
-	# If network-manager isn't running, start it:
-	nmRunning="$(sudo status network-manager | grep 'running')"
-	if [[ -z $nmRunning  ]]; then
-		echo "Starting network-manager:"
-		sudo start network-manager
-	fi
-	~/binl/xpbox-control start  # Start Virtual Box to run the XpBox vm
-	alias kbfix='source /home/lmatheson/.Xmodmap'
-fi
 
 # xclip should use the X clipboard, oddly enough:
 alias xclip='xclip -se c'
 
 
+# Restart network to fix wifi on Kubuntu roaming:
+function wifi-restart {
+	echo "Restarting wpa_supplicant and network-manager:"
+	sudo killall wpa_supplicant
+	sudo service network-manager restart
+	while !  ping 8.8.8.8 -c 1; do
+		sleep 1
+	done
+}
+
+# Show ip address of given NIC
+function ip-show {
+	ip addr show dev $1
+}
+
+# If we want a shell to not quit, here's how:
+function no-exit {
+	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
+}
+alias exit-force='command exit'
 
 if [[ -f ~/bin/rbuzz_rcd ]]; then
 	function tox {

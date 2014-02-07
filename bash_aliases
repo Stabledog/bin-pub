@@ -47,7 +47,7 @@ if $CYGWIN; then
 	}
 else
 	function gopen {
-		gnome-open "$@"
+		xdg-open "$@"
 	}
 fi
 

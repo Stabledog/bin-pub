@@ -49,16 +49,19 @@ function loadConfig {
 }
 
 function checkPrereqs {
-	if ! which aplay >/dev/null; then
-		errExit "aplay not found"
+	if ! which mpg123 >/dev/null; then
+		errExit "mpg123 not found"
 	fi
 
 }
 
 function runPlay {
 	local tracklist="$1"
-	while true; do
-		aplay $tracklist
+	quitRequest=false
+	echo "Use spacebar/enter to pause and resume."
+	trap 'quitRequest=true' SIGINT
+	while ! $quitRequest; do
+		mpg123 -C $tracklist
 	done
 }
 

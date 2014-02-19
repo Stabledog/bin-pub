@@ -55,9 +55,11 @@ function checkPrereqs {
 
 }
 
-function startPlay {
+function runPlay {
 	local tracklist="$1"
-	aplay $tracklist
+	while true; do
+		aplay $tracklist
+	done
 }
 
 if [[ -z $sourceMe ]]; then
@@ -69,7 +71,7 @@ if [[ -z $sourceMe ]]; then
 
 	checkPrereqs
 
-	startPlay "$tracklist"
+	runPlay "$tracklist"
 
 fi
 

@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# playnoise {config-name}
+# 
+# We keep configs in ~/.config/playnoise/conf.d
+# Each is a set of sourced params
+#
+# If no config-name supplied, we use the conf named 'default',
+# which may be a symlink.
+#
+# Use --list to print the config names
+#
+# Depends only on aplay.
+
+#  tracklist={file/path file/path ...}
+
+pnRoot=$HOME/.config/playnoise
+cfgRoot=$pnRoot/conf.d
+
+tracklist=""
+cfgname="default"
+
+function errExit {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+function parseParams {
+	while [[ ! -z $1 ]]; do
+		case $1 in
+			--list | -L)
+				ls -1 $cfgRoot
+				exit 0
+			;;
+			*)
+				cfgname=$1
+				;;
+		esac
+		shift
+	done
+	if [[ ! -f $cfgRoot/$cfgname ]]; then
+		errExit "Can't find config $cfgname in $cfgRoot"
+	fi
+}
+
+function loadConfig {
+	local cfgfile="$1"
+	source $cfgfile || errExit "Failed sourcing $cfgfile"
+}
+
+function checkPrereqs {
+	if ! which aplay >/dev/null; then
+		errExit "aplay not found"
+	fi
+
+}
+
+function startPlay {
+	local tracklist="$1"
+	aplay $tracklist
+}
+
+if [[ -z $sourceMe ]]; then
+	mkdir -p $cfgRoot
+
+	parseParams "$@"
+
+	loadConfig "$cfgRoot/$cfgname"
+
+	checkPrereqs
+
+	startPlay "$tracklist"
+
+fi
+
+
+
+	
+

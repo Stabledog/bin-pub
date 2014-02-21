@@ -10,7 +10,7 @@
 #
 # Use --list to print the config names
 #
-# Depends only on aplay.
+# Depends only on mpg123
 
 #  tracklist={file/path file/path ...}
 

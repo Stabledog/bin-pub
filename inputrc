@@ -1,0 +1,3 @@
+# My inputrc.  Symlink to ~/.inputrc enables this.
+#
+set editing-mode vi

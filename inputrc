@@ -4,7 +4,7 @@ set editing-mode vi
 # Remap ESC to use my 'jk' keypress to toggle insert or command mode
 $if mode=vi
     set keymap vi-command
-    "jk": vi-insertion-mode
+
     set keymap vi-insert
     "jk": vi-movement-mode
 
@@ -13,5 +13,7 @@ $if mode=vi
     \C-j: previous-history
     # And then for consistency, Ctrl+k will go forward in history:
     \C-k: next-history
+	"\e.": yank-last-arg
+	"\e_": yank-last-arg
 $endif
 

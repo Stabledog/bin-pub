@@ -40,6 +40,45 @@ function chrome {
 	chromium-browser &>/dev/null &
 }
 
+function bash_xtrace_setup {
+	# Set the BASH_XTRACEFD environment variable to a file descriptor, so
+	# that when you turn on -x, the output goes to that file.
+	# 
+	export BASH_XTRACEFD_FILE=/tmp/bash-xtrace-$$
+	exec 19>&-
+	exec 19>$BASH_XTRACEFD_FILE
+	export BASH_XTRACEFD=19
+}
+
+function bash_xtrace_shutdown {
+	# Complement of bash_xtrace_setup.
+	set +x
+	unset BASH_XTRACEFD
+	exec 19>&-
+}
+
+# Show the trace:
+function bash_xtrace_view {
+	if [[ -z $BASH_XTRACEFD_FILE ]]; then
+		echo "ERROR: BASH_XTRACEFD_FILE not set.  Use bash_xtrace_setup()"
+		false; return
+	fi
+
+	if [[ ! -f $BASH_XTRACEFD_FILE ]]; then
+		echo "ERROR: No file found for BASH_XTRACEFD_FILE ($BASH_XTRACEFD_FILE)" >&2
+		false; return
+	fi
+	cat $BASH_XTRACEFD_FILE
+}
+
+# Wipe out the trace file
+function bash_xtrace_erase {
+	[[ -z $BASH_XTRACEFD_FILE ]] && { false; return; }
+	[[ -f $BASH_XTRACEFD_FILE ]] || { false; return; }
+	rm $BASH_XTRACEFD_FILE -f
+	[[ -f $BASH_XTRACEFD_FILE ]]
+}
+
 # Cygwin-only helpers:
 if $CYGWIN; then
 	function gopen {
@@ -47,7 +86,7 @@ if $CYGWIN; then
 	}
 else
 	function gopen {
-		gnome-open "$@"
+		xdg-open "$@"
 	}
 fi
 

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This script runs as root and tunnels to a "home" server over the Internet.
+# It is intended to run in the background headlessly, detecting any connection
+# failure and retrying.   So if you launch this with init or whatever,
+# the connection should be alive whenever practical, as you might want
+# when keeping your home or office server reachable at all times behind
+# the firewall.
+#
+# Method:
+#
+# 	The ssh Tunnel config param is invoked to set up tunnel devices on the 
+#  local and home machines, and then we add IPs and routing and so forth.
+#  That ssh session runs in the background, and we start a cron job that
+#  checks the connection periodically, restarting as needed.   
+#
+#  The only setup required on the server is to ensure that the PermitTunnel
+#  option is turned on in /etc/ssh/sshd_config.
+#
+#

@@ -29,14 +29,16 @@
   toggle_scrollbar = <Ctrl><Shift>p
 [profiles]
   [[default]]
-    scrollbar_position = hidden
+    backspace_binding = automatic
     font = Courier 10 Pitch 11
+    scrollbar_position = hidden
     foreground_color = "#ffffff"
 [layouts]
   [[default]]
     [[[child1]]]
       type = Terminal
       parent = window0
+      profile = default
     [[[window0]]]
       type = Window
       parent = ""

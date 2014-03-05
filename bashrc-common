@@ -71,6 +71,8 @@ function histrc {
 
 histrc
 
+TERM=xterm-256color
+
 DEBEMAIL="les.matheson@gmail.com"
 DEBFULLNAME="Les Matheson"
 

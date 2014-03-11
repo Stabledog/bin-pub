@@ -36,6 +36,13 @@ function pathadd () {
     fi
 }
 
+# Enable colors for ls and alias the command to use it:
+function enableLsColor {
+	eval $(dircolors)
+	alias ls='ls --color=auto '
+}
+
+enableLsColor
 
 # Write a note to the bash history.  -l means 'list histNotes'.
 function histNote {

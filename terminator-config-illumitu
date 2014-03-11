@@ -1,5 +1,7 @@
 [global_config]
   enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
+  tab_position = hidden
+  inactive_color_offset = 0.61
 [keybindings]
   group_tab = <Ctrl><Shift>p
   resize_left = <Shift><Alt>h
@@ -29,10 +31,12 @@
   toggle_scrollbar = <Ctrl><Shift>p
 [profiles]
   [[default]]
-    backspace_binding = automatic
-    font = Courier 10 Pitch 11
     scrollbar_position = hidden
+    background_image = None
     foreground_color = "#ffffff"
+    backspace_binding = automatic
+    show_titlebar = False
+    font = Courier 10 Pitch 11
 [layouts]
   [[default]]
     [[[child1]]]

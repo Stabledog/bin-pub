@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Validate a media file by trying to play it with null output devices.
+
+function errExit {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+mplayer="$(type -p mplayer)"
+
+[[ -z $mplayer ]] && errExit "Can't find mplayer"
+
+file="$1"
+
+[[ -z "$file" ]] && errExit "No media file specified"
+
+[[ -f "$file" ]] || errExit "No such file: $file"
+
+$mplayer -ao null -vo null "$file"

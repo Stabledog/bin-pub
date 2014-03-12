@@ -1,18 +1,26 @@
 #!/bin/bash
-#  ~/bin/bash_aliases for lmatheson
+#  ~/bin/bash_aliases 
 
 # Whenever displaying the prompt, write the previous line to disk
 export PROMPT_COMMAND="history -a"
 
 # Directory listing
-alias ll='ls -alF' --color=none
-alias la='ls -A'
-alias l='ls -CF'
+function dir_aliases {
+	alias ll='ls -alF' 
+	alias la='ls -AF'
+	alias l='ls -CF'
+	alias lr='ls -lirtF'
+}
 
+dir_aliases
 
 # Bash history
-alias his=history
-alias hisg='history | grep '
+function history_aliases {
+	alias his=history
+	alias hisg='history | grep '
+}
+
+history_aliases
 
 # Navigation
 alias pd='pushd '
@@ -143,37 +151,9 @@ if ! $zsh; then
 
 fi
 
-# When doing an ssh -Y into another box, this makes many gnome apps behave:
-alias dbus-up='export $(dbus-launch)'
-
-# Usage: popup {msg}
-alias popup='zenity --info --text '
-
-# A new bash script is handy:
-function newBashScript {
-	local orgArgs="$@"
-	while [[ "$1" != "" ]]; do
-		if [[ ! -f $1 ]]; then
-			echo "#!/bin/bash
-# $1
-
-function errExit {
-    echo \"ERROR: \$1\" >&2
-    exit 1
-}
-" > $1
-		else
-			echo "$1 already exists"
-		fi
-		chmod +x $1
-		shift
-	done
-
-	$EDITOR $orgArgs
-}
 
 
-function pathadd () {
+function pathadd  {
     if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
        if [ "$2" = "after" ] ; then
           PATH=$PATH:$1
@@ -186,61 +166,10 @@ function pathadd () {
 # Adds the current directory to the PATH:
 alias addpath='pathadd $PWD'
 
-# Pipe aids
-alias cutc='cut -c '
 
-# Environment
-alias envg='set | grep '
-
-# Remove tabs from a file
-function removeTabs {
-	if [[ -z $1 ]]; then
-		echo "Usage: removeTabs [file]"
-		return
-	fi
-	cat "$1" | expand -t 4 > /tmp/killtabs && mv /tmp/killtabs "$1"
-}
-
-
-function repeat {
-    n=$1
-    shift
-    while [ $(( n -= 1 )) -ge 0 ]
-    do
-        "$@"
-    done
-}
-
-export SVN_EDITOR=vim
-
-function gitdiff {
-	if ! which diffuse >/dev/null; then
-		echo "Sorry, diffuse not installed.  Try {yum|apt-get} diffuse" >&2
-		false
-		return
-	fi
-
-	git difftool -t diffuse "$@"
-}
-
-function git-commit {
-	# Whatever we get as params is the message, and we push afterward:
-	git commit -am "$@"  && git push
-}
-
-function gitstatus {
-	git status
-}
-
-alias et='myEdit -t '
-
-alias e='myEdit '
-alias ek='myEdit -k '
-
+# We do want our bin folder on the PATH:
 if ! [[ "$PATH" =~ "$HOME/bin" ]]; then
     export PATH="$PATH:$HOME/bin"
 fi
 
-# Show that we're currently in a vim shell, if so:
-alias invim='pstree | grep -B1 pstree | grep vim'
 

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Add given dir to the PATH, print the result.  By default
+# we add the new dir to the start of the PATH, but if $2='after'
+# we'll place it at the end.
+
+# Is this dir already on the PATH?:
+if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
+
+	# Should we add before or after?
+	if [ "$2" = "after" ] ; then
+		echo $PATH:$1
+	else
+		echo $1:$PATH
+	fi
+else
+	# This dir is already on the PATH:
+	echo $PATH
+fi
+

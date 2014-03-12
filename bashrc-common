@@ -1,48 +1,41 @@
 #!/bin/bash
 
 
-CYGWIN=false
-if [[ -n "$ZSH_VERSION" ]]; then
-	inZsh=true
-	eval "function shopt {
-		local doNothing
-		# turn shopt into nothingness in zsh
-	}"
-else
-	inZsh=false
-fi
+alias pathadd=$HOME/bin/pathadd
 
-[[ -f /Cygwin.bat ]] && CYGWIN=true
+#----------------------------------------------------------------
+#  Shell identification
+#
+function shell_identify {
+	CYGWIN=false
+	if [[ -n "$ZSH_VERSION" ]]; then
+		inZsh=true
+		eval "function shopt {
+			local doNothing
+			# turn shopt into nothingness in zsh
+		}"
+	else
+		inZsh=false
+	fi
 
+	[[ -f /Cygwin.bat ]] && CYGWIN=true
 
+	# If not running interactively, don't do anything
+	if [[ ! -t 0 ]]; then
+		return
+	fi
+}
 
-# If not running interactively, don't do anything
-if [[ ! -t 0 ]]; then
-	return
-fi
-#[[ "$-" != *i* ]] && return
+shell_identify
+
+#----------------------------------------------------------------
 
 
 umask 0022
 IGNOREEOF="3"   # Don't close interactive shell for ^D
 
-function pathadd () {
-    if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
-       if [ "$2" = "after" ] ; then
-          PATH=$PATH:$1
-       else
-          PATH=$1:$PATH
-       fi
-    fi
-}
 
-# Enable colors for ls and alias the command to use it:
-function enableLsColor {
-	eval $(dircolors)
-	alias ls='ls --color=auto '
-}
 
-enableLsColor
 
 # Write a note to the bash history.  -l means 'list histNotes'.
 function histNote {
@@ -80,33 +73,37 @@ histrc
 
 TERM=xterm-256color
 
-DEBEMAIL="les.matheson@gmail.com"
-DEBFULLNAME="Les Matheson"
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
-function ls_aliases {
+function initLsStuff {
 	# some more ls aliases
 	alias ll='ls -alF'
 	alias la='ls -A'
 	alias l='ls -CF'
 	alias l1='ls -1'
 	alias lr='ls -lirt'
+	eval $(dircolors)
+	alias ls='ls --color=auto '
 }
+	
 
-# 'gc' is 'git commit'
-function gc {
-	if [[ -z $1 ]]; then
-		git commit
-	else
-		git commit -m "$@"
-	fi
-}
+initLsStuff
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
 
 
-function setup_git_aliases {
+function initGitStuff {
+	echo "git stuff"
+	# 'gc' is 'git commit'
+	function gc {
+		if [[ -z $1 ]]; then
+			git commit
+		else
+			git commit -m "$@"
+		fi
+	}
+
+
 	alias gs='git status'
 	alias ga='git add'
 	alias gp='git push'
@@ -114,7 +111,10 @@ function setup_git_aliases {
 	alias gpull='git pull'
 	alias gd='git diff'
 	alias gdt='git difftool'
+
 }
+
+initGitStuff
 
 function rdp-connect {
 	# Base code for connecting to an RDP server with rdesktop
@@ -122,16 +122,12 @@ function rdp-connect {
 	local xuser=$2
 	local xpwd=$3
 	rdesktop -u $xuser -p "$xpwd" -g 1366x768 -K -x lan $xhost &
-	
 }
 
 # Set the terminal title (bash only)
 function title {
 	echo -ne "\033]0;${1}\007"
 }
-
-ls_aliases
-setup_git_aliases
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
@@ -147,40 +143,19 @@ if ! $inZsh; then
 fi
 
 export EDITOR=$(which vim)
-export XEDITOR=$(which gvim 2>/dev/null)
-if [[ -z $XEDITOR ]]; then
-	XEDITOR=$EDITOR
-fi
+export XEDITOR=$EDITOR
 
 # disable flow control for terminal:
 stty -ixon -ixoff
 
-function raverc_stuff {
-	[[ -f ~/.raverc/raverc ]] && { source ~/.raverc/raverc; addpath ~/.raverc; }
-
-	#export SVNDIFF_COMPARETOOL="gvimdiff -f"
-
-	# Added by svnkit installer:
-	[[ -f ~/.svnkit ]] &&  source ~/.svnkit
-	# Added by rmake-update: 
-	[[ -f /opt/devel/rbin/rave.rc ]] && source /opt/devel/rbin/rave.rc
-}
-
-#raverc_stuff
-
-[[ -f ~/bin/ssh_aliases ]] && source ~/bin/ssh_aliases
-
 if $CYGWIN; then
     export DISPLAY=:0
-	PATH=$HOME/bin/cyg:$PATH
+	PATH=$( $HOME/bin/pathadd $HOME/bin/cyg)
 fi
 
 if [[ -d ${HOME}/binl ]]; then
-	export PATH="${HOME}/binl:${PATH}"
+	export PATH=$($HOME/bin/pathadd $HOME/binl)
 fi
-
-
-
 
 # xclip should use the X clipboard, oddly enough:
 alias xclip='xclip -se c'
@@ -205,7 +180,6 @@ function ip-show {
 function no-exit {
 	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
 }
-alias exit-force='command exit'
 
 if [[ -f ~/bin/rbuzz_rcd ]]; then
 	function tox {
@@ -222,27 +196,13 @@ else
 fi
 
 
-if [[ -f $HOME/binl/.cache-funcs ]]; then
-	source $HOME/binl/.cache-funcs
-fi
-
-if [[ -f $HOME/binl/mediacracy-funcs ]]; then
-	source $HOME/binl/mediacracy-funcs
-fi
-
-if  which taskrc-shell &>/dev/null ; then
-	source $(which taskrc-shell)
-fi
-
-# For transient or uncontrolled shell-startup stuff:
-if [[ -f ${HOME}/.bashrc-ext ]]; then
-	source ${HOME}/.bashrc-ext
-fi
 
 function loadTaskrcs {
+	# Load everything in $HOME/.taskrc, sorting alpha.  Most
+	# of these should be symlinks.
 	while read line; do
 		source $line
-	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null)
+	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null | sort)
 }
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,

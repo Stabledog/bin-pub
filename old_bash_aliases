@@ -2,7 +2,6 @@
 #  ~/bin/bash_aliases 
 
 # Whenever displaying the prompt, write the previous line to disk
-export PROMPT_COMMAND="history -a"
 
 # Directory listing
 function dir_aliases {

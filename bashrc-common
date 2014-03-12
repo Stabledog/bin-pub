@@ -37,17 +37,6 @@ IGNOREEOF="3"   # Don't close interactive shell for ^D
 
 
 
-# Write a note to the bash history.  -l means 'list histNotes'.
-function histNote {
-	if [[ "$1" == "-l" ]]; then
-		history | egrep -A 2 '#--histNote'
-	else
-		history -s "#--histNote------------H-I-S-T-N-O-T-E--$(date):"
-		history -s "cd $PWD"
-		history -s "$@"
-		history -s "# . . ."
-	fi
-}
 
 function histrc {
 	# don't put duplicate lines in the history. See bash(1) for more options
@@ -66,6 +55,19 @@ function histrc {
 	alias hist='history '
 	alias hn='histNote '
 	alias hl='histNote -l'
+	export PROMPT_COMMAND="history -a"
+	
+	# Write a note to the bash history.  -l means 'list histNotes'.
+	function histNote {
+		if [[ "$1" == "-l" ]]; then
+			history | egrep -A 2 '#--histNote'
+		else
+			history -s "#--histNote------------H-I-S-T-N-O-T-E--$(date):"
+			history -s "cd $PWD"
+			history -s "$@"
+			history -s "# . . ."
+		fi
+	}
 
 }
 
@@ -93,7 +95,7 @@ shopt -s checkwinsize
 
 
 function initGitStuff {
-	echo "git stuff"
+
 	# 'gc' is 'git commit'
 	function gc {
 		if [[ -z $1 ]]; then

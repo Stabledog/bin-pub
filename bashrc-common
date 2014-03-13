@@ -39,6 +39,7 @@ IGNOREEOF="3"   # Don't close interactive shell for ^D
 
 
 function histrc {
+    
 	# don't put duplicate lines in the history. See bash(1) for more options
 	# ... or force ignoredups and ignorespace
 	HISTCONTROL=ignoredups:ignorespace
@@ -69,6 +70,7 @@ function histrc {
 		fi
 	}
 
+    
 }
 
 histrc

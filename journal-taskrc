@@ -53,6 +53,10 @@ function time-show {
     reviewTimecardLatest $HOME/journal/timecard
 }
 
+function time-edit {
+    $EDITOR + $HOME/journal/timecard
+}
+
 function time-in {
     # Punch in, using the default timecard (~/journal/timecard is a symlink
     # that points to whatever)

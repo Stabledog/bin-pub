@@ -5,14 +5,13 @@
 # We use the following markup rules:
 #
 #  1.  A new date is introduced with ">> 2013-12-21".  Whatever comes after the date is ignored,
-#     but that date becomes the new 'current_date' for subsequent rows.
+#      but that date becomes the new 'current_date' for subsequent rows.
 #  
 #  2.  Punch-ins are defined with hh:mm[am|pm]>>.   No whitespace, please.
 #  
 #  3.  Punch-outs are identified by hh:mm[am|pm]<<.   No whitespace.  Anything following on the same line will become the summary comment.
 #
 
-# Input comes from stdin, we write results to stdout.
 
 # We're dependent on ./make-worklog-table.awk
 
@@ -132,10 +131,6 @@ function parseAndNormalize {
 }
 
 
-function parseEvent {
-	local line="$1"
-
-}
 
 function timeToSeconds {
 	# Invoke date... the base date is irrelevant, as we only really care about the relative elapsed:

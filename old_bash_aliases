@@ -86,16 +86,6 @@ function bash_xtrace_erase {
 	[[ -f $BASH_XTRACEFD_FILE ]]
 }
 
-# Cygwin-only helpers:
-if $CYGWIN; then
-	function gopen {
-		cygstart "$@"
-	}
-else
-	function gopen {
-		xdg-open "$@"
-	}
-fi
 
 
 if ! $zsh; then

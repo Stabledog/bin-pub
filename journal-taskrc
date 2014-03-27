@@ -50,25 +50,25 @@ function reviewTimecardLatest {
 }
 
 function time-show {
-    reviewTimecardLatest $HOME/journal/timecard
+    reviewTimecardLatest $HOME/journal/timecard.markdown
 }
 
 function time-edit {
-    $EDITOR + $HOME/journal/timecard
+    $EDITOR + $HOME/journal/timecard.markdown
 }
 
 function time-in {
-    # Punch in, using the default timecard (~/journal/timecard is a symlink
+    # Punch in, using the default timecard (~/journal/timecard.markdown is a symlink
     # that points to whatever)
-    appendTimecardEntry $HOME/journal/timecard true
+    appendTimecardEntry $HOME/journal/timecard.markdown true
     time-show
     
 }
 
 function time-out {
-    # Punch in, using the default timecard (~/journal/timecard is a symlink
+    # Punch in, using the default timecard (~/journal/timecard.markdown is a symlink
     # that points to whatever)
-    appendTimecardEntry $HOME/journal/timecard false
+    appendTimecardEntry $HOME/journal/timecard.markdown false
     time-show
 }
 

@@ -4,11 +4,7 @@
 # gopen
 #
 if $CYGWIN; then
-	function gopen {
-		cygstart "$@"
-	}
+    cygstart "$@"
 else
-	function gopen {
-		xdg-open "$@"
-	}
+    xdg-open "$@"
 fi

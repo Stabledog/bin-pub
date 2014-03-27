@@ -7,7 +7,7 @@ alias pathadd=$HOME/bin/pathadd
 #  Shell identification
 #
 function shell_identify {
-	CYGWIN=false
+	export CYGWIN=false
 	if [[ -n "$ZSH_VERSION" ]]; then
 		inZsh=true
 		eval "function shopt {

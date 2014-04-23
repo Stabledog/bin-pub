@@ -96,6 +96,10 @@ initLsStuff
 shopt -s checkwinsize
 
 
+if [[ -d $HOME/bin ]]; then
+    PATH=$(pathadd $HOME/bin)
+fi
+
 function initGitStuff {
 
 	# 'gc' is 'git commit'
@@ -169,6 +173,7 @@ alias xclip='xclip -se c'
 function wifi-restart {
 	echo "Restarting wpa_supplicant and network-manager:"
 	sudo killall wpa_supplicant
+	sudo rfkill unblock all
 	sudo service network-manager restart
 	while !  ping 8.8.8.8 -c 1; do
 		sleep 1

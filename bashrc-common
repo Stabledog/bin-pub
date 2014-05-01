@@ -97,7 +97,7 @@ shopt -s checkwinsize
 
 
 if [[ -d $HOME/bin ]]; then
-    PATH=$(pathadd $HOME/bin)
+    PATH=$($HOME/bin/pathadd $HOME/bin)
 fi
 
 function initGitStuff {

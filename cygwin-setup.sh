@@ -73,8 +73,8 @@ function runSetup {
 	
 	echo "Command line: $cmdline" >&2
 	# Testing: put the command line on the clipboard:
-	echo "$cmdline" > /dev/clipboard
-	#$cmdline
+	#echo "$cmdline" > /dev/clipboard
+	$cmdline
 
 }
 

@@ -165,9 +165,16 @@ if [[ -d ${HOME}/binl ]]; then
 	export PATH=$($HOME/bin/pathadd $HOME/binl)
 fi
 
-# xclip should use the X clipboard, oddly enough:
-alias xclip='xclip -se c'
+function xclipDefine {
+    if $CYGWIN; then
+        alias xclip='cat /dev/clipboard'
+    else
+        # xclip should use the X clipboard, oddly enough:
+        alias xclip='xclip -se c'
+    fi
+}
 
+xclipDefine
 
 # Restart network to fix wifi on Kubuntu roaming:
 function wifi-restart {

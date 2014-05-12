@@ -1,0 +1,164 @@
+#!/bin/bash
+#  ~/bin/bash_aliases 
+
+# Whenever displaying the prompt, write the previous line to disk
+
+# Directory listing
+function dir_aliases {
+	alias ll='ls -alF' 
+	alias la='ls -AF'
+	alias l='ls -CF'
+	alias lr='ls -lirtF'
+}
+
+dir_aliases
+
+# Bash history
+function history_aliases {
+	alias his=history
+	alias hisg='history | grep '
+}
+
+history_aliases
+
+# Navigation
+alias pd='pushd '
+
+function dpList {
+    dirs -p
+    echo "(cancel)"
+}
+
+function dp {
+    select wxdir in $(dirs -p); do
+        if [[ "$wxdir" == "(cancel)" ]]; then
+            return
+        fi
+        eval "pushd $wxdir"
+        return
+    done
+}
+
+function chrome {
+    if ! which chromium-browser &>/dev/null; then
+		echo "We need to install Chrome for this command:"
+		sudo apt-get install chromium-browser || return
+	fi
+	chromium-browser &>/dev/null &
+}
+
+function bash_xtrace_setup {
+	# Set the BASH_XTRACEFD environment variable to a file descriptor, so
+	# that when you turn on -x, the output goes to that file.
+	# 
+	export BASH_XTRACEFD_FILE=/tmp/bash-xtrace-$$
+	exec 19>&-
+	exec 19>$BASH_XTRACEFD_FILE
+	export BASH_XTRACEFD=19
+}
+
+function bash_xtrace_shutdown {
+	# Complement of bash_xtrace_setup.
+	set +x
+	unset BASH_XTRACEFD
+	exec 19>&-
+}
+
+# Show the trace:
+function bash_xtrace_view {
+	if [[ -z $BASH_XTRACEFD_FILE ]]; then
+		echo "ERROR: BASH_XTRACEFD_FILE not set.  Use bash_xtrace_setup()"
+		false; return
+	fi
+
+	if [[ ! -f $BASH_XTRACEFD_FILE ]]; then
+		echo "ERROR: No file found for BASH_XTRACEFD_FILE ($BASH_XTRACEFD_FILE)" >&2
+		false; return
+	fi
+	cat $BASH_XTRACEFD_FILE
+}
+
+# Wipe out the trace file
+function bash_xtrace_erase {
+	[[ -z $BASH_XTRACEFD_FILE ]] && { false; return; }
+	[[ -f $BASH_XTRACEFD_FILE ]] || { false; return; }
+	rm $BASH_XTRACEFD_FILE -f
+	[[ -f $BASH_XTRACEFD_FILE ]]
+}
+
+
+
+if ! $zsh; then
+	# set a fancy prompt (non-color, unless we know we "want" color)
+	case "$TERM" in
+		xterm-color) color_prompt=yes;;
+	esac
+
+	# uncomment for a colored prompt, if the terminal has the capability; turned
+	# off by default to not distract the user: the focus in a terminal window
+	# should be on the output of commands, not on the prompt
+	force_color_prompt=yes
+
+	if [ -n "$force_color_prompt" ]; then
+		if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+		# We have color support; assume it's compliant with Ecma-48
+		# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+		# a case would tend to support setf rather than setaf.)
+		color_prompt=yes
+		else
+		color_prompt=
+		fi
+	fi
+
+	if [ "$color_prompt" = yes ]; then
+		PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	else
+		PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+	fi
+	unset color_prompt force_color_prompt
+
+	# If this is an xterm set the title to user@host:dir
+	case "$TERM" in
+	xterm*|rxvt*)
+		PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+		;;
+	*)
+		;;
+	esac
+
+	# enable color support of ls and also add handy aliases
+	if [ -x /usr/bin/dircolors ]; then
+		test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+		alias ls='ls --color=auto'
+		#alias dir='dir --color=auto'
+		#alias vdir='vdir --color=auto'
+
+		alias grep='grep --color=auto'
+		alias fgrep='fgrep --color=auto'
+		alias egrep='egrep --color=auto'
+	fi
+
+fi
+
+
+
+function pathadd  {
+    if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
+       if [ "$2" = "after" ] ; then
+          PATH=$PATH:$1
+       else
+          PATH=$1:$PATH
+       fi
+    fi
+}
+
+# Adds the current directory to the PATH:
+alias addpath='pathadd $PWD'
+
+
+# We do want our bin folder on the PATH:
+if ! [[ "$PATH" =~ "$HOME/bin" ]]; then
+    export PATH="$PATH:$HOME/bin"
+fi
+
+

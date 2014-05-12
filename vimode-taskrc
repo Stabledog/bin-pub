@@ -1,0 +1,9 @@
+# See some tips here:
+# http://www.catonmat.net/blog/bash-vi-editing-mode-cheat-sheet/
+#  (That site also has a vi-mode cheatsheet)
+#
+# Enable vi mode in bash
+set -o vi
+
+
+

@@ -1,0 +1,246 @@
+#!/bin/bash
+
+
+alias pathadd=$HOME/bin/pathadd
+
+
+function isSunos {
+    if [[ $(uname) == "SunOS" ]]; then
+        true
+        return
+    fi
+    false
+}
+
+
+#----------------------------------------------------------------
+#  Shell identification
+#
+function shell_identify {
+	export CYGWIN=false
+	if [[ -n "$ZSH_VERSION" ]]; then
+		inZsh=true
+		eval "function shopt {
+			local doNothing
+			# turn shopt into nothingness in zsh
+		}"
+	else
+		inZsh=false
+	fi
+
+	[[ -f /Cygwin.bat ]] && CYGWIN=true
+
+	# If not running interactively, don't do anything
+	if [[ ! -t 0 ]]; then
+		return
+	fi
+}
+
+shell_identify
+
+#----------------------------------------------------------------
+
+
+alias which='type -p '
+
+umask 0022
+IGNOREEOF="3"   # Don't close interactive shell for ^D
+
+
+
+
+
+function histrc {
+    
+	# don't put duplicate lines in the history. See bash(1) for more options
+	# ... or force ignoredups and ignorespace
+	HISTCONTROL=ignoredups:ignorespace
+
+
+	# append to the history file, don't overwrite it
+	shopt -s histappend
+	shopt -s histverify # Load history events for editing rather than immediate execution
+	# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+	HISTSIZE=10000
+	HISTFILESIZE=20000
+	PROMPT_COMMAND='history -n'
+
+	alias hist='history '
+	alias hn='histNote '
+	alias hl='histNote -l'
+	export PROMPT_COMMAND="history -a"
+	
+	# Write a note to the bash history.  -l means 'list histNotes'.
+	function histNote {
+		if [[ "$1" == "-l" ]]; then
+			history | egrep -A 2 '#--histNote'
+		else
+			history -s "#--histNote------------H-I-S-T-N-O-T-E--$(date):"
+			history -s "cd $PWD"
+			history -s "$@"
+			history -s "# . . ."
+		fi
+	}
+}
+
+histrc
+
+TERM=xterm-256color
+
+
+function initLsStuff {
+	# some more ls aliases
+	alias ll='ls -alF'
+	alias la='ls -A'
+	alias l='ls -CF'
+	alias l1='ls -1'
+	alias lr='ls -lirt'
+	eval $(dircolors)
+	if isSunos; then 
+        alias ls='ls -F '
+    else
+        alias ls='ls --color=auto '
+    fi
+}
+	
+
+initLsStuff
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+
+if [[ -d $HOME/bin ]]; then
+    PATH=$($HOME/bin/pathadd $HOME/bin)
+fi
+
+
+function initGitStuff {
+
+    type git &>/dev/null || return
+#
+	# 'gc' is 'git commit'
+	function gc {
+		if [[ -z $1 ]]; then
+			git commit
+		else
+			git commit -m "$@"
+		fi
+	}
+
+
+	alias gs='git status'
+	alias ga='git add'
+	alias gp='git push'
+	alias gl='git log'
+	alias gpull='git pull'
+	alias gd='git diff'
+	alias gdt='git difftool'
+
+}
+
+initGitStuff
+
+function rdp-connect {
+	# Base code for connecting to an RDP server with rdesktop
+	local xhost=$1
+	local xuser=$2
+	local xpwd=$3
+	rdesktop -u $xuser -p "$xpwd" -g 1366x768 -K -x lan $xhost &
+}
+
+# Set the terminal title (bash only)
+function title {
+	echo -ne "\033]0;${1}\007"
+}
+
+[[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
+
+isSunos && return
+
+if $CYGWIN; then
+	source ~/bin/cyg/cyg-utils
+	alias sudo="$@"
+fi
+
+if ! $inZsh; then
+	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+		. /etc/bash_completion
+	fi
+fi
+
+
+export EDITOR=$(path -p vim)
+export XEDITOR=$EDITOR
+
+# disable flow control for terminal:
+stty -ixon -ixoff
+
+if $CYGWIN; then
+    export DISPLAY=:0
+	PATH=$( $HOME/bin/pathadd $HOME/bin/cyg)
+fi
+
+if [[ -d ${HOME}/binl ]]; then
+	export PATH=$($HOME/bin/pathadd $HOME/binl)
+fi
+
+
+# xclip should use the X clipboard, oddly enough:
+if which xclip >/dev/null; then
+    alias xclip='xclip -se c'
+fi
+
+
+# Restart network to fix wifi on Kubuntu roaming:
+function wifi-restart {
+	echo "Restarting wpa_supplicant and network-manager:"
+	sudo killall wpa_supplicant
+	sudo rfkill unblock all
+	sudo service network-manager restart
+	while !  ping 8.8.8.8 -c 1; do
+		sleep 1
+	done
+}
+
+# Show ip address of given NIC
+function ip-show {
+	ip addr show dev $1
+}
+
+# If we want a shell to not quit, here's how:
+function no-exit {
+	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
+}
+
+if [[ -f ~/bin/rbuzz_rcd ]]; then
+	function tox {
+		newDir="$($HOME/bin/rbuzz_rcd $@)"
+		if [[ ! -z "$newDir" ]]; then
+			pushd $newDir >/dev/null
+		fi
+		unset newDir
+	}
+else
+	function tox {
+		echo "This function only works if ~/bin/rbuzz_rcd is present."
+	}
+fi
+
+
+function loadTaskrcs {
+	# Load everything in $HOME/.taskrc, sorting alpha.  Most
+	# of these should be symlinks.
+	while read line; do
+		source $line
+	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null | sort)
+}
+
+# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
+# just source everything found there.
+if [[ -d $HOME/.taskrc ]]; then
+	loadTaskrcs
+fi
+
+

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+lucasVmPath="/mnt/data/vms/lucas2/lucas-vmware.vmx"
+lucasPwd=$(cat $HOME/.config/lucas/pwd 2>/dev/null)
+
+function vmware-start {
+	sudo service vmware start
+}
+
+function vmware-stop {
+	sudo service vmware stop
+}
+
+function lucas-kb-repair {
+	# vmware screws up the ctrl/alt/shift keys badly:
+	setxkbmap
+}
+
+function lucas-connect {
+	rdp-connect lucas lmatheson $lucasPwd
+}
+
+function lucas-start {
+	echo "Starting lucas:"
+	vmware-start
+	cd $(dirname $lucasVmPath)
+	sudo vmrun start $lucasVmPath nogui
+	while ! ping -c 1 lucas; do
+	    echo "Waiting for lucas to respond to pings"
+	    sleep 1
+	done
+	#sudo vmrun start $lucasVmPath 
+}
+
+function lucas-suspend {
+	echo "Suspending lucas:"
+	sudo vmrun suspend $lucasVmPath
+	echo "You can use vmware-stop to shut that down too, if you like."
+	}
+
+function lucas-stop {
+	echo "Stopping lucas:"
+	sudo vmrun stop $lucasVmPath
+	vmware-stop
+	}

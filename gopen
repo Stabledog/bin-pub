@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+#
+# gopen
+#
+if $CYGWIN; then
+    cygstart "$@"
+else
+    xdg-open "$@"
+fi

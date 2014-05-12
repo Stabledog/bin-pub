@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# journal-taskrc
+#
+
+function printErr {
+    echo "ERROR: $@" >&2
+    false
+}
+
+function getCurTimestamp {
+    # Prints like '12:13PM'
+    date +%l:%M%p | sed -e 's/AM/am/' -e 's/PM/pm/'
+
+}
+
+function printTimecardMarker {
+    # prints like 12:13pm<< or 1:15am>>.
+    # Default $1=null, punch-out.  If $1=true, punch-in.
+    local punchIn=false
+    [[ ! -z $1 ]] && punchIn=$1
+
+    if $punchIn; then
+        echo  "$(getCurTimestamp)>>"
+    else
+        echo "$(getCurTimestamp)<<"
+    fi
+
+}
+
+function appendTimecardEntry {
+    # Appends to file $1, $2=true to punch-in
+    local file=$1
+    local punchIn=false
+    [[ ! -z $2 ]] && punchIn=$2
+
+    [[ -f $file ]] || { printErr "Can't find $file in appendTimecardEntry"; return; }
+
+    echo "$(printTimecardMarker $punchIn)" >> $file
+
+}
+
+function reviewTimecardLatest {
+    # Print the most recent day's entries:
+    local file=$1
+    [[ -f $file ]] || { printErr "Can't find $file in reviewTimecardLatest"; return; }
+
+    echo "(from $(readlink -f $file) ):"
+    tail -n 10 $file
+}
+
+function time-show {
+    reviewTimecardLatest $HOME/journal/timecard.markdown
+}
+
+function time-edit {
+    $EDITOR + $HOME/journal/timecard.markdown
+}
+
+function time-in {
+    # Punch in, using the default timecard (~/journal/timecard.markdown is a symlink
+    # that points to whatever)
+    appendTimecardEntry $HOME/journal/timecard.markdown true
+    time-show
+    
+}
+
+function time-out {
+    # Punch in, using the default timecard (~/journal/timecard.markdown is a symlink
+    # that points to whatever)
+    appendTimecardEntry $HOME/journal/timecard.markdown false
+    time-show
+}
+

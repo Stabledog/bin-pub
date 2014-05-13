@@ -1,7 +1,0 @@
-#!/bin/bash
-
-sudo apt-add-repository ppa:ehoover/compholio || exit 1
-sudo apt-add-repository ppa:mqchael/pipelight || exit 1
-sudo apt-get update || exit 1
-sudo apt-get install pipelight || exit 1
-

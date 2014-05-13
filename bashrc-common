@@ -157,7 +157,6 @@ function title {
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
-isSunos && return
 
 if $CYGWIN; then
 	source ~/bin/cyg/cyg-utils
@@ -171,8 +170,9 @@ if ! $inZsh; then
 fi
 
 
-export EDITOR=$(path -p vim)
+export EDITOR=$(which  vim)
 export XEDITOR=$EDITOR
+
 
 # disable flow control for terminal:
 stty -ixon -ixoff
@@ -242,5 +242,6 @@ function loadTaskrcs {
 if [[ -d $HOME/.taskrc ]]; then
 	loadTaskrcs
 fi
+
 
 

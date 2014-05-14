@@ -1,0 +1,35 @@
+#!/bin/bash
+# tagRebuild
+#
+
+
+
+function errExit {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+
+if [[ -z $sourceMe ]]; then
+    cd ~/mars
+    # We keep the list of dirs to tag in ~/bin/mars-tags-dirs-list.txt
+    local dirMap=$HOME/bin/mars-tags-dirs-list.txt
+    local line
+
+    rm ./tags
+    
+    (
+        exec 8< <( grep -v '^#' $dirMap )
+        while read -u 8 line; do
+            # Append these tags to existing ./tags file:
+            [[ -z $line ]] && continue
+            ctags -a -R "$line"  || errExit "Failed tagging $line (see $dirMap)"
+        done
+        exec 8<&-
+    )
+fi
+
+
+
+
+

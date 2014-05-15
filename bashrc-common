@@ -95,12 +95,8 @@ function initLsStuff {
 	alias l='ls -CF'
 	alias l1='ls -1'
 	alias lr='ls -lirt'
-	eval $(dircolors)
-	if isSunos; then 
-        alias ls='ls -F '
-    else
-        alias ls='ls --color=auto '
-    fi
+	eval $(/usr/local/gnu/bin/dircolors $HOME/bin/my-dircolors)
+    alias ls='/usr/local/gnu/bin/ls --color=auto '
 }
 	
 

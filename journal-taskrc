@@ -8,6 +8,11 @@ function printErr {
     false
 }
 
+
+function journal-edit {
+    vim $HOME/journal/worklog.markdown
+}
+
 function getCurTimestamp {
     # Prints like '12:13PM'
     date +%l:%M%p | sed -e 's/AM/am/' -e 's/PM/pm/'

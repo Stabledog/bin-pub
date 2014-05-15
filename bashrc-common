@@ -89,13 +89,13 @@ TERM=xterm-256color
 
 
 function initLsStuff {
+	eval $(/usr/local/gnu/bin/dircolors $HOME/bin/my-dircolors)
 	# some more ls aliases
-	alias ll='ls -alF'
+	alias ll='ls -al'
 	alias la='ls -A'
-	alias l='ls -CF'
+	alias l='ls -C'
 	alias l1='ls -1'
 	alias lr='ls -lirt'
-	eval $(/usr/local/gnu/bin/dircolors $HOME/bin/my-dircolors)
     alias ls='/usr/local/gnu/bin/ls --color=auto '
 }
 	

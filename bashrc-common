@@ -85,7 +85,7 @@ function histrc {
 
 histrc
 
-TERM=xterm-256color
+TERM=xterm
 
 
 function initLsStuff {
@@ -116,16 +116,8 @@ function initGitStuff {
 
     type git &>/dev/null || return
 #
-	# 'gc' is 'git commit'
-	function gc {
-		if [[ -z $1 ]]; then
-			git commit
-		else
-			git commit -m "$@"
-		fi
-	}
 
-
+    alias gc='git commit'
 	alias gs='git status'
 	alias ga='git add'
 	alias gp='git push'
@@ -167,7 +159,7 @@ fi
 
 
 export EDITOR=$(which  vim)
-export XEDITOR=$EDITOR
+export XEDITOR=$(which gvim)
 
 
 # disable flow control for terminal:

@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # for the sun machines:
-rxvt -fg rgb:20/D0/C0 -bg rgb:30/30/50 -cr wheat -fn rom14 -geometry 103x45 -ls -e /bin/bash
+#rxvt -fg rgb:20/D0/C0 -bg rgb:30/30/50 -cr wheat -fn rom14 -geometry 103x45 -ls -e /bin/bash
+
+xterm &
+
 
 

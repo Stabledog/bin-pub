@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+cd $HOME/mars/scripts;
+bld -libs -tasks -target=m_eqstst,eqstst -quick
+

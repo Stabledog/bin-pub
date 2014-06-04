@@ -52,6 +52,7 @@ rxvt*saveLines:32768
 
 *Customization: -color
 
+| Font -hp-hp system-*-*-*-*-*-140-*-*-*-*-*-*
 
 Mwm.keyboardFocusPolicy:	explicit
 Mwm*XClock*clientDecoration:	Border

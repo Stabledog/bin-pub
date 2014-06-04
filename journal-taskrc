@@ -10,7 +10,10 @@ function printErr {
 
 
 function journal-edit {
-    vim $HOME/journal/worklog.markdown
+    (
+        cd $HOME/journal
+        $XEDITOR ./worklog.markdown
+    )
 }
 
 function getCurTimestamp {

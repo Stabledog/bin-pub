@@ -163,7 +163,8 @@ export XEDITOR=$(which gvim)
 
 
 # disable flow control for terminal:
-stty -ixon -ixoff
+stty -ixoff
+stty -ixon 
 
 if $CYGWIN; then
     export DISPLAY=:0

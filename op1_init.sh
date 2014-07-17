@@ -50,8 +50,7 @@ set_svc eqstst
 
 function Xeval {
     # Workaround the weaknesses of the X clipboard in Xceeed:
-    tx1="$(cat)"
-    eval "$tx1"
+    eval "$(cat)"
 }
 
 # List the latest logfiles for service:
@@ -66,11 +65,25 @@ function list_logs {
     ls -1rt ${Xlogdir}/${Xlogbase}*$2
 }
 
+# Show one or more logs for service: same params as list_logs
+function less_logs {
+    less $(list_logs $@)
+}
+
+function actlog_grep {
+    cat /bb/data/act.log | grep "$*"
+}
+
 function help {
     echo "
-list_logs {service-name|.} {filename-tail}    # Show filenames of logs for service-name
+actlog_grep {pattern}                         # Grep act.log for given pattern
+less_logs {service-name|.} {filename-tail}    # Show logs for service-name, ascending-date
+list_logs {service-name|.} {filename-tail}    # Show filenames of logs for service-name, ascending-date 
 Xeval                                         # Input script text
 set_svc {service-name}                        # Set Xsvc, implicit argument for commands that need a service name
+# Notes:
+#    1.  the '.', when supplied in place of a service-name, refers to the 'current service', which
+#        can be set with 'set_svc'
 "
 }
 

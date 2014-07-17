@@ -1,0 +1,45 @@
+# vim:ft=sh
+# Settings
+set -o vi
+
+#Assumes that host_mem_api_new.c is present in the task
+pathmapbig() {    
+    # Delete all old mappings:
+    pathmap -d 1 2 3 4 5 6 7 8 9  2>/dev/null
+    filesout=$(files host_mem_api_new.c);    
+    bigsource=$(echo $filesout|sed 's/[^/]*\(\/.*\(big[0-9.]*\/\|trunk\|source\|stage\|stp\)\).*/\1/g');
+    bigname=$(basename $bigsource);    
+    pathmap -c $bigsource/share /bb/build/share/$bigname;
+}
+
+# See DRQS  53917160
+#dbxenv macro_source compiler
+
+pathmapbig
+
+#alias sc=" gvim --servername DBX --remote-silent $vfile +$vlineno"
+#when stop { gvim --servername DBX +$vlineno --remote-silent $vfile ;}
+
+# The various dbxenv settings can be found with "help dbxenv" in the dbx console.
+dbxenv language_mode c++
+dbxenv output_max_string_length 4096  # Print this many chars of a string (-L to override at debug time)
+dbxenv output_no_literal off  # Print the whole string if its a char*
+#dbxenv output_pretty_print on   # Use -p by default when printing values
+
+# dbx can log all of its commands and output if asked:
+dbxenv session_log_file_name /bb/data/tmp/dbxlog-$USER-$$
+
+# This is the log of commands only, no output:
+dbxenv output_log_file_name /bb/data/tmp/dbxout-$USER
+
+function eqstst_args1 {
+    runargs -t eqstst9 -u v eqstst-test.cfg 
+}
+
+function eqstst_load {
+    cd $HOME/mars/offlines/m_eqstst
+    debug $PWD/eqstst.tsk
+    pathmapbig
+}
+
+

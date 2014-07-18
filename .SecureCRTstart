@@ -32,7 +32,7 @@ fi
 ## Set up X-only Environment variables...
 ####
 #XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -fn '-hp-hp system-*-*-*-*-*-140-*-*-*-*-*-*'"
-XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY}"
+XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -bg black -fg white -font 8x13"
 
 
 if [ -z "${HOSTNAME}" ]

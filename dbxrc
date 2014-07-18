@@ -2,7 +2,11 @@
 # Settings
 set -o vi
 
-#Assumes that host_mem_api_new.c is present in the task
+bigname=""  # e.g. 'big2014.29', set by pathmapbig()
+
+# pathmapbig() sets up the dbx pathmap so that it can translate from file references in
+# the symbol table to equivalent files available on the debugger machine.   If you get
+# a "dbx: warning: can't find file yada/yada/yada", your pathmap is deficient in some way.
 pathmapbig() {    
     # Delete all old mappings:
     pathmap -d 1 2 3 4 5 6 7 8 9  2>/dev/null
@@ -10,6 +14,9 @@ pathmapbig() {
     bigsource=$(echo $filesout|sed 's/[^/]*\(\/.*\(big[0-9.]*\/\|trunk\|source\|stage\|stp\)\).*/\1/g');
     bigname=$(basename $bigsource);    
     pathmap -c $bigsource/share /bb/build/share/$bigname;
+
+    # / bbsrc has a bunch of symlinks to things like a_comdb2:
+    pathmap -c /bb/robobuild/32/cbuild/$bigname/share/adapters /bbsrc
 }
 
 # See DRQS  53917160

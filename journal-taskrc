@@ -12,7 +12,7 @@ function printErr {
 function journal-edit {
     (
         cd $HOME/journal
-        $XEDITOR ./worklog.markdown
+        $EDITOR ./worklog.markdown
     )
 }
 

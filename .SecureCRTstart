@@ -32,7 +32,7 @@ fi
 ## Set up X-only Environment variables...
 ####
 #XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -fn '-hp-hp system-*-*-*-*-*-140-*-*-*-*-*-*'"
-XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -bg black -fg white -font 8x13"
+XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -bg black -fg white -font 9x15"
 
 
 if [ -z "${HOSTNAME}" ]
@@ -51,7 +51,7 @@ RXCmd ()
 		XARGS="${*}"
 		if [ -z "${XARGS}" ]
 		then
-			XARGS="-geometry 80x24+200+200"
+			XARGS="-geometry 109x43+200+200"
 		fi
 		if [ "${HOST}" = "${HOSTNAME}" ]
 		then

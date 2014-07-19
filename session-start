@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Start a master session: launch multiple gnome-terminals
+#
+for sx in alpha beta gamma delta; do
+    gnome-terminal --window-with-profile=$sx &
+done
+

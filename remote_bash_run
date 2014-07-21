@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# mars_remote_build:  Run a build on 'buildhost'.
+# remote_bash_run:  Run a build on 'buildhost'.
 #
 #  Environment 'buildhost' specifies the remote machine.
 #  Command param $1 specifies a command-line name, see allParamSets() for the available variants.
@@ -10,9 +10,11 @@ function allParamSets {
     # Each of these is a command line to be run remotely.  The first word is
     # a name for the corresponding line, to act as an alias.  That first word
     # is not passed to the shell at the remote end.
-    echo "test1       ls / -l"
-    echo "eqstst      cd mars/offlines/m_eqstst; plink m_eqstst.mk"
-    echo "eqstst-all  cd mars/offlines/m_eqstst; plink m_eqstst.mk; plink eqstst.mk"
+    echo "test1                 ls / -l"
+    echo "eqstst                cd mars/offlines/m_eqstst; plink m_eqstst.mk"
+    echo "eqstst-all            cd mars/offlines/m_eqstst; plink m_eqstst.mk; plink eqstst.mk"
+    echo "dbxtool-eqstst        cd mars/offlines/m_eqstst; dbxtool"
+    echo "comdb2sql-eqststdx    cd mars/offlines/m_eqstst; comdb2sql eqststdx -"
 }
 
 # Use a login shell on the given machine ($) to run the command line given

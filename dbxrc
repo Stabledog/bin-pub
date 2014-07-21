@@ -34,13 +34,17 @@ dbxenv output_no_literal off  # Print the whole string if its a char*
 #dbxenv output_pretty_print on   # Use -p by default when printing values
 
 # dbx can log all of its commands and output if asked:
-dbxenv session_log_file_name /bb/data/tmp/dbxlog-$USER-$$
+dbxenv session_log_file_name $HOME/tmp/dbxlog
 
 # This is the log of commands only, no output:
-dbxenv output_log_file_name /bb/data/tmp/dbxout-$USER
+dbxenv output_log_file_name $HOME/tmp/dbxout
 
 function eqstst_args1 {
     runargs -t eqstst9 -u v eqstst-test.cfg 
+}
+
+function eqstst_args2 {
+    runargs -t eqstst9 eqstst-test.cfg
 }
 
 function eqstst_load {

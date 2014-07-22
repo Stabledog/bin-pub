@@ -40,11 +40,15 @@ dbxenv session_log_file_name $HOME/tmp/dbxlog
 dbxenv output_log_file_name $HOME/tmp/dbxout
 
 function eqstst_args1 {
-    runargs -t eqstst9 -u v eqstst-test.cfg 
+    xargs="-t eqstst9 -u v eqstst-test.cfg "
+    echo "runargs $xargs"
+    runargs $xargs
 }
 
 function eqstst_args2 {
-    runargs -t eqstst9 eqstst-test.cfg
+    xargs="-t eqstst9 eqstst-test.cfg"
+    echo "runargs $xargs"
+    runargs $xargs
 }
 
 function eqstst_load {

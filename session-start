@@ -2,7 +2,22 @@
 
 # Start a master session: launch multiple gnome-terminals
 #
-for sx in alpha beta gamma delta; do
-    gnome-terminal --window-with-profile=$sx &
+
+startXpixel=2309
+startYpixel=200
+startWidth=60
+startHeight=20
+
+commonArgs=--geometry=${startWidth}x${startHeight}+$startXpixel+$startYpixel
+# Alpha window is front-and-center:
+
+gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha &
+
+# Extra windows get placed to the side:
+for sx in beta gamma delta epsilon; do
+    gnome-terminal $commonArgs --window-with-profile=$sx &
 done
+
+# Journal window:
+gnome-terminal --geometry=120x45+100+100 --window-with-profile=journal -e 'journal-edit' &
 

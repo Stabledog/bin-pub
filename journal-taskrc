@@ -9,12 +9,6 @@ function printErr {
 }
 
 
-function journal-edit {
-    (
-        cd $HOME/journal
-        $EDITOR ./worklog.markdown
-    )
-}
 
 function getCurTimestamp {
     # Prints like '12:13PM'

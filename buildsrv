@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#  A cheap-and-dirty "build server".  Runs in a loop, listening for
+#  orders on ~/tmp/buildsrv-in, and sending output to ~/tmp/buildsrv-out.
+#
+#  Mainly used so that one can do builds from within an editor on a different machine,
+#  without having to launch an ssh login shell each time -- the buildsrv script picks
+#  up requests one at a time and runs them, then goes idle again, reducing the
+#  shell init time.
+#
+echo "buildsrv startup: $(date)"
+cd $HOME
+
+inpipe=~/tmp/buildsrv-in
+outpipe=~/tmp/buildsrv-out
+
+for x in $inpipe $outpipe; do
+    mknod $x p
+done
+
+while true; do
+    line=""
+    while read line < $inpipe; do
+        echo "::: start-of-job @$(date) ($line) :::"  | tee -a $outpipe
+        # We expect the contents of $line to be a valid command for remote_bash_run:
+        (buildhost=localhost ~/bin/remote_bash_run $line 2>&1 ) | tee -a $outpipe
+        echo "::: end-of-job @$(date) ($line) :::" | tee -a $outpipe
+    done
+    sleep 1
+    echo -n "."  # Show that we're still alive.
+done
+

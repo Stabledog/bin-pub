@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# remote_bash_run:  Run a build on 'buildhost'.
+# remote_bash_run:  Run a build on 'buildhost'.  If buildhost=localhost, skip the ssh
+# and just run a shell.
 #
 #  Environment 'buildhost' specifies the remote machine.
 #  Command param $1 specifies a command-line name, see allParamSets() for the available variants.
@@ -29,9 +30,9 @@ function sshLoginInvoke {
 # Prints the command-line associated with the given name.
 function getCmdLineByName {
     local name=$1
-    # Print the command sets, select the named line, then trim that first field to yield
+    # Print the command sets, strip comments, select the named line, then trim that first field to yield
     # the remainder, which is the command line to be used to do the build.
-    allParamSets | grep "^$name " | cut -d ' ' -f 2-
+    allParamSets | grep -v '^#' | grep "^$name " | cut -d ' ' -f 2-
 }
 
 [[ -z $buildhost ]] && buildhost="sundev9"
@@ -50,11 +51,15 @@ if [[ -z $sourceMe ]]; then
         allParamSets >&2
         exit 1
     fi
-    echo "To run on $buildhost, cmdline=$cmdline"
+    echo "::: running on $buildhost, cmdline=$cmdline :::"
     
-    sshLoginInvoke $buildhost "$cmdline"
+    if [ $buildhost == "localhost" ]; then
+        ( eval "$cmdline" 2>&1 ) 
+    else
+        sshLoginInvoke $buildhost "$cmdline"
+    fi
     if [ $? -ne 0 ]; then
-        echo "FAILED: sshLoginInvoke $buildhost $cmdline " >&2
+        echo "FAILED: $buildhost $cmdline " >&2
         exit 1
     fi
 

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# buildsrv-send
+#
+#   Intended to be invoked over ssh from an editor, this sends the given build command
+# to buildsrv, running in a long-term shell with the right build environment.
+#
+#   Build commands are named keys which correspond to command lines defined in
+# ~/bin/remote_bash_run.
+#
+#   Example:
+#   $   ssh sundev9 '~/bin/buildsrv-send test1'
+#
+#   If you look in ~/bin/remote_bash_run, you'll find the definition of 'test1'.
+#
+
+function killDeadTails {
+    # If dead tail commands hang around, they can interfere with our ability
+    # to scrape output.  We dislike this.
+    local myPids=$(ps -u $UID -o pid,args)
+    local badPids=$(echo "$myPids" | grep 'tail.*buildsrv-out' | awk '{print $1}')
+    if [[ !  -z $badPids ]]; then
+        kill -9 $badPids
+    fi
+}
+
+function outwatcher {
+    # monitor the stream for our end of job marker
+    local line
+    while read line; do
+        if [[ "$line" == *end-of-job* ]]; then
+            killDeadTails
+            exit 1
+        fi
+        echo "$line"
+    done
+}
+
+
+killDeadTails
+
+echo "$*" > ~/tmp/buildsrv-in
+
+tail -f ~/tmp/buildsrv-out | outwatcher
+
+

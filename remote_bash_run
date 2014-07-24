@@ -51,11 +51,12 @@ if [[ -z $sourceMe ]]; then
         allParamSets >&2
         exit 1
     fi
-    echo "::: running on $buildhost, cmdline=$cmdline :::"
     
     if [ $buildhost == "localhost" ]; then
+        echo "### running on $(hostname), cmdline=$cmdline ###"
         ( eval "$cmdline" 2>&1 ) 
     else
+        echo "### running on $buildhost, cmdline=$cmdline ###"
         sshLoginInvoke $buildhost "$cmdline"
     fi
     if [ $? -ne 0 ]; then

@@ -11,13 +11,23 @@ startHeight=20
 commonArgs=--geometry=${startWidth}x${startHeight}+$startXpixel+$startYpixel
 # Alpha window is front-and-center:
 
-gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha &
 
-# Extra windows get placed to the side:
-for sx in beta gamma delta epsilon; do
+# Extra windows get placed to the side.  The sleep calls ensure
+# that our icons get placed as desired, by reducing races
+for sx in beta gamma delta ; do
     gnome-terminal $commonArgs --window-with-profile=$sx &
+    sleep 0.5
 done
+
+gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha &
+sleep 0.5
+
 
 # Journal window:
 gnome-terminal --geometry=120x45+100+100 --window-with-profile=journal -e 'journal-edit' &
+sleep 0.5
+
+# Code window:
+gnome-terminal --geometry=120x45+200+200 --window-with-profile=code -e 'code-edit' &
+#gnome-terminal --geometry=120x45+200+200 --window-with-profile=code &
 

@@ -18,13 +18,14 @@ for x in $inpipe $outpipe; do
     mknod $x p
 done
 
+echo "Ready for build commands on $inpipe, my pid is $$"
 while true; do
     line=""
     while read line < $inpipe; do
-        echo "::: start-of-job @$(date) ($line) :::"  | tee -a $outpipe
+        echo "### start-of-job @$(date) ($line) ###"  | tee -a $outpipe
         # We expect the contents of $line to be a valid command for remote_bash_run:
         (buildhost=localhost ~/bin/remote_bash_run $line 2>&1 ) | tee -a $outpipe
-        echo "::: end-of-job @$(date) ($line) :::" | tee -a $outpipe
+        echo "### end-of-job @$(date) ($line) ###" | tee -a $outpipe
     done
     sleep 1
     echo -n "."  # Show that we're still alive.

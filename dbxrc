@@ -45,6 +45,18 @@ function eqstst_args1 {
     runargs $xargs
 }
 
+function eqstst_args3 {
+    xargs="-t eqstst9 -u r eqstst-test.cfg "
+    echo "runargs $xargs"
+    runargs $xargs
+}
+
+function eqstst_args4 {
+    xargs="-t eqstst9 -u q eqstst-test.cfg "
+    echo "runargs $xargs"
+    runargs $xargs
+}
+
 function eqstst_args2 {
     xargs="-t eqstst9 eqstst-test.cfg"
     echo "runargs $xargs"

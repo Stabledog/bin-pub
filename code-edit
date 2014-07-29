@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function code-edit_f {
+    (
+        while true; do
+            cd $MARSTOP
+            ~/bin/vim-eqstst
+            
+            echo " You're in an endless code-edit loop. Exit will return to editor.  Kill $$ to really escape the loop."
+            bash
+        done
+    )
+}
+
+code-edit_f
+

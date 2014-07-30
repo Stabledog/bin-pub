@@ -29,5 +29,5 @@ sleep 0.5
 
 # Code window:
 gnome-terminal --geometry=120x45+200+200 --window-with-profile=code -e 'code-edit' &
-#gnome-terminal --geometry=120x45+200+200 --window-with-profile=code &
+
 

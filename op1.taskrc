@@ -1,9 +1,3 @@
-function op1-copy {
-   cat $HOME/bin/op1_init.sh | $HOME/bin/xclip
-   echo "op1_init.sh has been copied to the X clipboard.  Use Xeval in the target window,"
-   echo "or this:"
-   echo "   eval \"\$(tx1)\" "
-}
-
+alias op1-copy='$HOME/bin/op1-X-init.sh'
 
 

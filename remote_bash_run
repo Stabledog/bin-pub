@@ -12,6 +12,7 @@ function allParamSets {
     # a name for the corresponding line, to act as an alias.  That first word
     # is not passed to the shell at the remote end.
     echo "test1                 ls / -l"
+    echo "test2                 while true; do echo x.$$.\$(date); sleep 1; done"
     echo "eqstst                cd mars/offlines/m_eqstst; plink m_eqstst.mk"
     echo "eqstst-all            cd mars/offlines/m_eqstst; plink m_eqstst.mk; plink eqstst.mk"
     echo "dbxtool-eqstst        cd mars/offlines/m_eqstst; dbxtool"
@@ -45,9 +46,9 @@ if [[ -z $sourceMe ]]; then
         shift
         # select the named command line, then append whatever our caller passed, so they
         # can add options:
-        cmdline="$(getCmdLineByName $param_set_name) $*"
+        cmdline=$(getCmdLineByName $param_set_name) $*
         if [[ -z $cmdline ]]; then
-            echo "No command line corresponds to parameter set named \"$param_set_name\".  Valid parameter sets:" >&2
+            echo "No command line corresponds to parameter set named \"$param_set_name $*\".  Valid parameter sets:" >&2
             allParamSets >&2
             exit 1
         fi
@@ -56,7 +57,7 @@ if [[ -z $sourceMe ]]; then
         allParamSets >&2
         exit 1
     fi
-    
+
     if [ $buildhost == "localhost" ]; then
         echo "### running on $(hostname), cmdline=$cmdline ###"
         ( eval "$cmdline" 2>&1 ) 

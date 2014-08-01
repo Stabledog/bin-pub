@@ -53,13 +53,14 @@ if [[ -z $sourceMe ]]; then
                     exit 1
                 fi
                 echo "Command received: $line" >&2
-                echo "*** start-of-job $(date) ($line) ***"  | tee  $outpipe
+                echo "*** start-of-job $$ $(date) ($line) ***"  | tee  $outpipe
                 # We expect the contents of $line to be a valid command for remote_bash_run:
                 (
                     buildhost=localhost ~/bin/remote_bash_run $line 2>&1 
                 ) | tee  $outpipe
-                echo "*** end-of-job @$(date) ($line) ***" | tee  $outpipe
+                echo "*** end-of-job $$ $(date) ($line) ***" | tee  $outpipe
             fi
+            read -t 1 <$inpipe  # clear the inpipe.
         )
         echo "*** buildsrv cleanup ***" >&2
         sleep 1

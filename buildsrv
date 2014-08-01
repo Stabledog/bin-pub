@@ -11,23 +11,58 @@
 echo "buildsrv startup: $(date)"
 cd $HOME
 
-inpipe=~/tmp/buildsrv-in
-outpipe=~/tmp/buildsrv-out
 
-for x in $inpipe $outpipe; do
-    mknod $x p
-done
 
-echo "Ready for build commands on $inpipe, my pid is $$"
-while true; do
-    line=""
-    while read line < $inpipe; do
-        echo "### start-of-job @$(date) ($line) ###"  | tee -a $outpipe
-        # We expect the contents of $line to be a valid command for remote_bash_run:
-        (buildhost=localhost ~/bin/remote_bash_run $line 2>&1 ) | tee -a $outpipe
-        echo "### end-of-job @$(date) ($line) ###" | tee -a $outpipe
+function detectPreviousInstance {
+    local exePath=$1
+    local list=$( psef "$exePath" | grep $USER )  # List of running instances
+    if ((  $(echo "$list" | wc -l) <= 2 )); then
+        false  # We allow the 2 instances (ourself and parent).  No more.
+        return
+    fi
+    true
+}
+
+if detectPreviousInstance "$HOME/bin/buildsrv" ; then
+    echo "ERROR: A previous instance of buildsrv is already running for $USER as pid(s): $previousPids" >&2
+    psef "$HOME/bin/buildsrv" | grep $USER >&2
+    exit 1
+fi
+
+
+if [[ -z $sourceMe ]]; then
+
+    export inpipe=~/tmp/buildsrv-in
+    export outpipe=~/tmp/buildsrv-out
+
+    for x in $inpipe $outpipe; do
+        mknod $x p
     done
-    sleep 1
-    echo -n "."  # Show that we're still alive.
-done
+
+    # When the client end sends 'quit', that aborts a build and restarts the loop.
+    # Likewise if someone does Ctrl+C at the buildsrv console.
+    while true; do
+        (
+            trap 'echo "Ctrl+C received"; echo quit > $inpipe;' SIGINT
+
+            echo "Ready for build command on $inpipe, my pid is $$" >&2
+            line=""
+            if read line <>${inpipe}; then
+                if [[ "$line" == *quit* ]]; then
+                    echo "Quit received"
+                    exit 1
+                fi
+                echo "Command received: $line" >&2
+                echo "*** start-of-job $(date) ($line) ***"  | tee  $outpipe
+                # We expect the contents of $line to be a valid command for remote_bash_run:
+                (
+                    buildhost=localhost ~/bin/remote_bash_run $line 2>&1 
+                ) | tee  $outpipe
+                echo "*** end-of-job @$(date) ($line) ***" | tee  $outpipe
+            fi
+        )
+        echo "*** buildsrv cleanup ***" >&2
+        sleep 1
+    done
+fi
 

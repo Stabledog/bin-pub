@@ -46,6 +46,11 @@ if [[ -z $sourceMe ]]; then
         # select the named command line, then append whatever our caller passed, so they
         # can add options:
         cmdline="$(getCmdLineByName $param_set_name) $*"
+        if [[ -z $cmdline ]]; then
+            echo "No command line corresponds to parameter set named \"$param_set_name\".  Valid parameter sets:" >&2
+            allParamSets >&2
+            exit 1
+        fi
     else
         echo "No param set specified.  Here's the list:" >&2
         allParamSets >&2

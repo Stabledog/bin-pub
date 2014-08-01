@@ -12,22 +12,45 @@ commonArgs=--geometry=${startWidth}x${startHeight}+$startXpixel+$startYpixel
 # Alpha window is front-and-center:
 
 
-# Extra windows get placed to the side.  The sleep calls ensure
-# that our icons get placed as desired, by reducing races
-for sx in beta gamma delta ; do
-    gnome-terminal $commonArgs --window-with-profile=$sx &
-    sleep 0.5
-done
+function launchSingle {
+    local name=$1
+    case $name in
+        alpha )
+            gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha &
+            sleep 0.5
+            ;;
+        beta | gamma | delta ) 
+            gnome-terminal $commonArgs --window-with-profile=$sx &
+            sleep 0.5
+            ;;
+        journal-edit )
+            gnome-terminal --geometry=120x45+100+100 --window-with-profile=journal -e 'journal-edit' &
+            sleep 0.5
+            ;;
+        code-edit )
+            gnome-terminal --geometry=120x45+200+200 --window-with-profile=code -e 'code-edit' &
+            sleep 0.5
+            ;;
+        *)
+            echo "Unknown window name $name" >&2
+            exit 1
+            ;;
+    esac
 
-gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha &
-sleep 0.5
+}
 
+if [[ -z $1 ]]; then
+    # Default to "all windows":
+    for sx in beta gamma delta alpha code-edit journal-edit; do
+        launchSingle $sx
+    done
+else
+    while [[ ! -z $1 ]]; do
+        # Just the windows requested on cmd line:
+        launchSingle $1
+        shift
+    done
+fi
 
-# Journal window:
-gnome-terminal --geometry=120x45+100+100 --window-with-profile=journal -e 'journal-edit' &
-sleep 0.5
-
-# Code window:
-gnome-terminal --geometry=120x45+200+200 --window-with-profile=code -e 'code-edit' &
 
 

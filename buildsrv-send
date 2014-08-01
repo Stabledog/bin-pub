@@ -9,7 +9,7 @@
 # ~/bin/remote_bash_run.
 #
 #   Example:
-#   $   ssh sundev9 '~/bin/buildsrv-send test1'
+#   $   ssh -t sundev9 '~/bin/buildsrv-send test1'
 #
 #   If you look in ~/bin/remote_bash_run, you'll find the definition of 'test1'.
 #
@@ -50,10 +50,17 @@ function handle_ctrl_c {
         # When we kill the build process, that will bubble through back to us
         # as an end-of-job from buildsrv, so we don't need to commit suicide.
         kill ${serverPids}
-        read -t 3 line <~/tmp/buildsrv-out  # Clean up the tail of the pipe
-        echo "$line"
-        read -t 3 line <~/tmp/buildsrv-out  # Clean up the tail of the pipe
-        echo "$line"
+        echo "Cleaning output pipe:"
+        line=""
+        read -t 5 line <>~/tmp/buildsrv-out  # Clean up the tail of the pipe
+        if [ $? -eq 0 ]; then
+            echo "$line"
+            if [[ "$line" != *end-of-job* ]]; then
+                line=""
+                read -t 5 line <>~/tmp/buildsrv-out  # Clean up the tail of the pipe
+                echo "$line"
+            fi
+        fi
     else
         # Suicide.  Something's wrong on the other end.
         echo "Can't find server pids.  Client suicide:"

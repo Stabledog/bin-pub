@@ -20,7 +20,7 @@ function launchSingle {
             sleep 0.5
             ;;
         beta | gamma | delta ) 
-            gnome-terminal $commonArgs --window-with-profile=$sx &
+            gnome-terminal $commonArgs --window-with-profile=$name &
             sleep 0.5
             ;;
         journal-edit )

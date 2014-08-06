@@ -163,8 +163,11 @@ export XEDITOR=$(which gvim)
 
 
 # disable flow control for terminal:
-stty -ixoff
-stty -ixon 
+stty -ixoff -ixon
+
+# Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
+# {cmd-frag}!<space> to expand the last command that started with that frag.
+bind Space:magic-space
 
 if $CYGWIN; then
     export DISPLAY=:0

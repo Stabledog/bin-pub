@@ -22,6 +22,7 @@ function killDeadTails {
     if [[ !  -z $badPids ]]; then
         kill -9 $badPids
     fi
+    read -t 1 <>~/tmp/buildsrv-out # Flush any old output
 }
 
 
@@ -43,7 +44,7 @@ function handle_ctrl_c {
     # when the user hits Ctrl+C on the client, we need to echo that signal 
     # to the remote_bash_run processes as 'die!':
     echo -n "Client-side Ctrl+C: "
-    local serverPids=$( ps -U $UID -f | grep remote_bash_run | grep -v grep | awk '{print $2}')
+    local serverPids=$( ps -U $UID -f | grep remote_bash_run\|plink | grep -v grep | awk '{print $2}')
     if [[ ! -z "$serverPids" ]]; then
         echo "Killing server pid(s):  ${serverPids}"
         #echo "quit" > ~/tmp/buildsrv-in &
@@ -58,7 +59,7 @@ function handle_ctrl_c {
             if [[ "$line" != *end-of-job* ]]; then
                 line=""
                 read -t 5 line <>~/tmp/buildsrv-out  # Clean up the tail of the pipe
-                echo "$line"
+                echo "$line" 
             fi
         fi
     else
@@ -71,9 +72,16 @@ function handle_ctrl_c {
 
 killDeadTails
 
-echo "$*" > ~/tmp/buildsrv-in
+echo "Sending $* to $(hostname):"
+echo "$*" > ~/tmp/buildsrv-in &
 
 trap 'handle_ctrl_c' SIGINT
-tail -f ~/tmp/buildsrv-out | outwatcher
+stty -echo -onlcr
+tail -f ~/tmp/buildsrv-out | outwatcher &
+sleep 1
+echo "$*" > ~/tmp/buildsrv-in &
+
+
+wait
 
 

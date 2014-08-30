@@ -153,6 +153,7 @@ fi
 export EDITOR=$(which vim)
 export XEDITOR=$EDITOR
 
+
 # disable flow control for terminal:
 stty -ixon -ixoff
 
@@ -226,4 +227,6 @@ function loadTaskrcs {
 if [[ -d $HOME/.taskrc ]]; then
 	loadTaskrcs
 fi
+
+set -o vi
 

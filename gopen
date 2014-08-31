@@ -8,3 +8,4 @@ if $CYGWIN; then
 else
     xdg-open "$@"
 fi
+

@@ -227,7 +227,7 @@ function printPs1 {
     sx="${sx/linxdev/lx}"
 
     dx="${PWD/#$HOME/~}"   # Swap out home dir
-    echo "$sx: $dx\$ "
+    echo "$sx:$shell_id $dx\$ "
 }
 
 function setPs1 {

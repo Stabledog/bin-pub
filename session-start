@@ -3,7 +3,7 @@
 # Start a master session: launch multiple gnome-terminals
 #
 
-startXpixel=2309
+startXpixel=1309
 startYpixel=200
 startWidth=60
 startHeight=20
@@ -16,11 +16,11 @@ function launchSingle {
     local name=$1
     case $name in
         alpha )
-            gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha &
+            gnome-terminal --geometry=120x55+500+500 --window-with-profile=alpha -e "basic_shell $name" &
             sleep 0.5
             ;;
         beta | gamma | delta ) 
-            gnome-terminal $commonArgs --window-with-profile=$name &
+            gnome-terminal $commonArgs --window-with-profile=$name -e "basic_shell $name" &
             sleep 0.5
             ;;
         journal-edit )
@@ -41,7 +41,7 @@ function launchSingle {
 
 if [[ -z $1 ]]; then
     # Default to "all windows":
-    for sx in beta gamma delta alpha code-edit journal-edit; do
+    for sx in alpha beta gamma delta journal-edit code-edit ; do
         launchSingle $sx
     done
 else

@@ -4,9 +4,9 @@
 # we add the new dir to the start of the PATH, but if $2='after'
 # we'll place it at the end.
 
-# Is this dir already on the PATH?:
 [[ -z $PATH ]] && { echo ""; exit 1; }
 
+# Is this dir already on the PATH?:
 if ! echo $PATH | /bin/egrep "(^|:)$1($|:)" >/dev/null ; then
 
 	# Should we add before or after?

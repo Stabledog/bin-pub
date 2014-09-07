@@ -102,17 +102,8 @@ fi
 
 function initGitStuff {
 
-	# 'gc' is 'git commit'
-	function gc {
-		if [[ -z $1 ]]; then
-			git commit
-		else
-			git commit -m "$@"
-		fi
-	}
-
-
 	alias gs='git status'
+	alias gc='git commit'
 	alias ga='git add'
 	alias gp='git push'
 	alias gl='git log'

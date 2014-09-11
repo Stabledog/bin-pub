@@ -23,6 +23,10 @@ function launchSingle {
             gnome-terminal $commonArgs --window-with-profile=$name -e "basic_shell $name" &
             sleep 0.5
             ;;
+        sd61 | ibm9 | sd9 ) 
+            gnome-terminal $commonArgs --window-with-profile=$name -e "ssh $name " &
+            sleep 0.5
+            ;;
         journal-edit )
             gnome-terminal --geometry=120x45+100+100 --window-with-profile=journal -e 'journal-edit' &
             sleep 0.5
@@ -41,7 +45,7 @@ function launchSingle {
 
 if [[ -z $1 ]]; then
     # Default to "all windows":
-    for sx in alpha beta gamma delta journal-edit code-edit ; do
+    for sx in alpha beta sd61 journal-edit code-edit ; do
         launchSingle $sx
     done
 else

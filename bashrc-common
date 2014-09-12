@@ -253,5 +253,6 @@ if [[ -d $HOME/.taskrc ]]; then
 	loadTaskrcs
 fi
 
-
+##  BB-specific
+alias cd-mylibs='cd $MYLIBS'
 

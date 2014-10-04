@@ -1,4 +1,0 @@
-#!/bin/bash
-sourceMe=1 source ~/bin/ssh_aliases
-ssh -Y $(getSshLovesMe) root@pigs-green.bacon.illumina.com 'terminator'
-

@@ -9,7 +9,7 @@ Xpwd=$PWD
 # implicit service name:
 #
 Xsvc=
-Xlogdir=/bb/data
+Xlogdir=/bb/logs/mars
 Xlogbase=
 
 
@@ -27,7 +27,7 @@ function view {
 function logMap {
     # Columns are [key] [log dir] [logfile basename]
     echo "
-eqstst /bb/data/tmp eqstst
+eqstst /bb/logs/mars eqstst
 xapp1 /bb/logs/mars xapp1
 xapp4 /bb/logs/mars xapp4
 xapp3 /bb/logs/mars xapp3

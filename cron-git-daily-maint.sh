@@ -6,6 +6,7 @@
 #
 #
 HOME=/home/lmatheson4
+export PATH=$PATH:/opt/swt/bin:$HOME/bin
 
 myCronLogfile=$HOME/tmp/cron-git-daily-maint.log
 

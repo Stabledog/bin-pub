@@ -11,7 +11,7 @@ export PATH=$PATH:/opt/swt/bin:$HOME/bin
 myCronLogfile=$HOME/tmp/cron-git-daily-maint.log
 
 export writeStderr
-[[ -z $writeStderr ]] && writeStderr=false
+[[ -z $writeStderr ]] && writeStderr=false  # Used for debuggging only.
 
 function errExit {
     if $writeStderr; then

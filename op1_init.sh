@@ -28,6 +28,7 @@ function logMap {
     # Columns are [key] [log dir] [logfile basename]
     echo "
 eqstst /bb/logs/mars eqstst
+eqstst2 /bb/data/tmp eqstst
 xapp1 /bb/logs/mars xapp1
 xapp4 /bb/logs/mars xapp4
 xapp3 /bb/logs/mars xapp3

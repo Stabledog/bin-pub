@@ -10,8 +10,13 @@ export PATH=$PATH:/opt/swt/bin:$HOME/bin
 
 myCronLogfile=$HOME/tmp/cron-git-daily-maint.log
 
+export writeStderr
+[[ -z $writeStderr ]] && writeStderr=false
+
 function errExit {
-    echo "ERROR: $* " >&2
+    if $writeStderr; then
+        echo "ERROR: $* " >&2
+    fi
     echo "ERROR: $* " >> $myCronLogfile
 }
 

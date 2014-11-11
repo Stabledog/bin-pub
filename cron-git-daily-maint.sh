@@ -25,6 +25,8 @@ function dailyAutocommits {
     echo "$HOME/journal"
     echo "$HOME/bin"
     echo "$HOME/.vim"
+    echo "$HOME/.taskrc"
+    echo "$HOME/ksymkit"
 }
 
 function autoCommit {

@@ -20,6 +20,9 @@ function shell_identify {
 
 	[[ -f /Cygwin.bat ]] && CYGWIN=true
 
+	# We treat Mobaterm as cygwin too:
+    [[ -d /home/mobaxterm ]]  && CYGWIN=true
+
 	# If not running interactively, don't do anything
 	if [[ ! -t 0 ]]; then
 		return

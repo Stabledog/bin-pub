@@ -14,6 +14,7 @@ function gitkit-help {
 	echo gd='git diff'
 	echo gdt='git difftool'
 	echo glu='git-list-untracked-files'
+	echo gfr='git-find-root'
 }
 
 
@@ -21,12 +22,11 @@ function initGitAliases {
     alias gc='git commit'
 	alias gs='git status'
 	alias ga='git add'
-	alias gp='git push'
 	alias gl='git log'
-	alias gpull='git pull'
 	alias gd='git diff'
 	alias gdt='git difftool'
 	alias glu='git-list-untracked-files'
+	alias gfr='git-find-root'
 }
 
 

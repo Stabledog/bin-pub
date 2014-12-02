@@ -112,23 +112,6 @@ if [[ -d $HOME/bin ]]; then
 fi
 
 
-function initGitStuff {
-
-    type git &>/dev/null || return
-#
-
-    alias gc='git commit'
-	alias gs='git status'
-	alias ga='git add'
-	alias gp='git push'
-	alias gl='git log'
-	alias gpull='git pull'
-	alias gd='git diff'
-	alias gdt='git difftool'
-
-}
-
-initGitStuff
 
 function rdp-connect {
 	# Base code for connecting to an RDP server with rdesktop

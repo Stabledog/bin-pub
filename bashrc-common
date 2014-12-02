@@ -213,12 +213,19 @@ function printPs1 {
     echo "$sx:$shell_id $dx\$ "
 }
 
-function setPs1 {
+function setOldPs1 {
     export MYPS='$(echo -n "${PWD/#$HOME/~}" | awk -F "/" '"'"'{if (length($0) > 14) { if (NF>4) print $1 "/" $2 "/.../" $(NF-1) "/" $NF; else if (NF>3) print $1 "/" $2 "/.../" $NF; else print $1 "/.../" $NF; } else print $0;}'"'"')'
     PS1='$(eval "echo ${MYPS}")$ '
 }
 
-PS1='$(printPs1)'
+function setFancyPs1 {
+PS1='
+\[\033[1;33m\][\D{%Y-%m-%d %H:%M.%S}]\[\033[0m\]  \[\033[1;35m\]\w\[\033[0m\]
+\[\033[1;36m\][\u.\h]\[\033[0m\] > '
+}
+
+#PS1='$(printPs1)'
+setFancyPs1
 
 #setPs1
 

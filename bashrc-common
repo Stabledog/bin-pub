@@ -98,10 +98,18 @@ initLsStuff
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+if [[ -d /usr/bin ]]; then
+    PATH=$($HOME/bin/pathadd /usr/bin)
+fi
+
+if [[ -d /usr/local/bin ]]; then
+    PATH=$($HOME/bin/pathadd /usr/local/bin)
+fi
 
 if [[ -d $HOME/bin ]]; then
     PATH=$($HOME/bin/pathadd $HOME/bin)
 fi
+
 
 function initGitStuff {
 

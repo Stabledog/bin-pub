@@ -5,16 +5,16 @@
 # we'll place it at the end.
 
 # Is this dir already on the PATH?:
-if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
 
+#if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
+if [[ ":$PATH:" == *":$1:"* ]]; then
+    echo $PATH  # No change needed
+else
 	# Should we add before or after?
 	if [ "$2" = "after" ] ; then
 		echo $PATH:$1
 	else
 		echo $1:$PATH
 	fi
-else
-	# This dir is already on the PATH:
-	echo $PATH
 fi
 

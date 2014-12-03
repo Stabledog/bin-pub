@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Print the platform name as 'sun', 'aix, 'linux', or 'hp-ux'
+
+UNAME=`uname`
+if [ "$UNAME" == "SunOS" ]; then
+    echo "sun"
+elif [ "$UNAME" == "AIX" ]; then
+    echo "aix"
+elif [ "$UNAME" == "HP-UX" ]; then
+    echo "hp-ux"
+elif [ "$UNAME" == "Linux" ]; then
+    echo "linux"
+else
+    echo "unknown"
+fi
+

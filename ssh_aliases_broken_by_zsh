@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Populate SSH_ALIASES
+
+declare -a SSH_ALIASES
+
+SSH_ALIASES=( 
+    "mediacracy lmatheson@mediacracy"
+    "med2iacracy lmatheson@mediacracy.dynalias.net -p 12254 "
+    "cachet	   cachet@mediacracy"
+    "openstacker    lmatheson@openstacker"
+    "cyg lmatheson@lapcygwin"
+    "pig lmatheson@pigsadmin"
+    "math lmatheson@pigsmath"
+    "ftiweb-test1 lmatheson@ftiweb-test1"
+    "base lmatheson@ftiweb-base"
+
+    )
+
+function ssh-launch {
+    local tgt="$1"  # This is either a full spec (user@host), a pseudo-spec (mypc), or empty.   If it's
+         # empty, we present a list menu.  If it's a pseudo-spec, we do a lookup.  Otherwise,
+         # go straight to the full spec.
+    local spec="$(interpretSshSpec $1)"
+    if [[ -z "$spec" ]]; then
+        spec="$(ssh-menu $@ | awk '{print $2}')"
+        if [[ -z "$spec" ]]; then
+            return
+        fi
+    fi
+    shift
+	which ssh
+	echo "<ssh -Y $spec $@>"
+	/usr/bin/ssh -Y $spec $@
+}
+
+
+function interpretSshSpec  {
+    local spec=$1
+    if [[ -z "$spec" ]]; then
+		false
+		return
+    fi
+    # Translate an ssh spec into a user@hostname form:
+    if [[ $spec =~ .+@.+ ]]; then
+		echo $1
+		true
+		return
+    fi
+
+    # Is there an alias starting with this spec?
+    local len=${#spec}
+    for a in "${SSH_ALIASES[@]}"; do
+		if [[ "${a:0:$len}" == "$spec" ]]; then
+			echo "$a" | awk '{$1=""; print }'
+			true
+			return
+		fi
+	done
+
+    false
+}
+
+function ssh-menu {
+    # List the available specs from getSshAliases and let the user choose:
+
+    select item in "${SSH_ALIASES[@]}"; do
+		echo $item
+		return
+    done
+}
+
+alias xsh='ssh-launch'

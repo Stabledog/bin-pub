@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function xgrep {
+    grep -n $* *.cpp *.h
+}
+
+function vxgrep {
+    xgrep $* | view -
+}
+
+

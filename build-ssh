@@ -1,0 +1,26 @@
+#!/bin/bash
+# build-ssh: invoke from vim with:
+#
+#    set makeprg=~/bin/build-ssh\ sdv61\ eqstst
+#
+#    The last param is one of the names in ./remote_bash_run allParamSets()
+#    New command lines can be added there.
+#
+
+cd $HOME/bin
+
+
+# Get the allParamSets() function:
+sourceMe=1 source ./remote_bash_run
+
+host=$1  # What machine shall we run on?
+
+buildname=$2  # What's the symbol for the command line in remote_bash_run?
+
+cmdline=$(allParamSets | grep "^$buildname " | awk '{$1=""; print;}')
+
+echo "Command: $cmdline"
+
+echo "$cmdline" | ssh $host bin/ssh_xcmd 
+
+

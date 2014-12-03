@@ -1,0 +1,8 @@
+alias op1-copy='$HOME/bin/op1-X-init.sh'
+
+function pw {
+    command pw                # Invoke the real pw first
+    $HOME/bin/op1-X-init.sh   # Load the X clipboard with our helpers
+
+}
+

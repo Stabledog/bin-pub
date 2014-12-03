@@ -44,7 +44,10 @@ function rebuildIndex {
     find * -type d | grep -vF "/arm
 /ia32
 /.svn
+<<<<<<< HEAD
 /.git
+=======
+>>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 /x86
 /clfs" > /tmp/.tox-index
     cp /tmp/.tox-index $gotoRoot/.tox-index

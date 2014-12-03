@@ -1,0 +1,12 @@
+" .vrapperrc
+"  See http://vrapper.sourceforge.net/documentation/
+
+
+let mapleader=','
+
+imap jk <ESC>
+
+nmap s :w<CR>
+nmap <ctrl_z> u
+nmap u 
+

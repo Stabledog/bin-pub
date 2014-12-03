@@ -1,0 +1,11 @@
+# buildsrv-taskrc
+#
+
+# Run buildsrv on the specified machine.  This runs until forcibly
+# terminated.
+function run_buildsrv_on_host {
+    local host=$1
+    ssh $host 'bash -l -c ~/bin/buildsrv'
+}
+
+

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Intended as a command wrapper for remote invocation via ssh, this
+# Reads input from stdin and sources it in a login shell.  So you can
+# invoke like so:
+#
+#   echo "ls /
+#   find /" | ssh myserver bin/ssh_xcmd 
+#
+# Both the 'ls' and the 'find' command will run in the same shell, which is
+# started with a 'bash -l' to get the environment setup.
+
+inner=$1
+
+if [ -z "$inner" ]; then
+    # We are the outer invocation:
+    bash -l $0 inner
+else
+    # We are the inner invocation, so environment should be ready:
+    while read line; do
+        eval "$line"
+    done
+fi
+

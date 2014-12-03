@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export shell_id=root-loop
+while true; do
+    bash
+    echo "$shell_id, pid=$$"
+done
+

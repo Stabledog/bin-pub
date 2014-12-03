@@ -3,11 +3,17 @@
 #
 # gopen
 #
+<<<<<<< HEAD
 echo "gopen $1"
 
+=======
+>>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 if $CYGWIN; then
     cygstart "$@"
 else
     xdg-open "$@"
 fi
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61

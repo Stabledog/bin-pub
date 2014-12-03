@@ -3,8 +3,6 @@
 
 alias pathadd=$HOME/bin/pathadd
 
-<<<<<<< HEAD
-=======
 
 function isSunos {
     if [[ $(uname) == "SunOS" ]]; then
@@ -15,7 +13,7 @@ function isSunos {
 }
 
 
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
+
 #----------------------------------------------------------------
 #  Shell identification
 #
@@ -33,12 +31,10 @@ function shell_identify {
 
 	[[ -f /Cygwin.bat ]] && CYGWIN=true
 
-<<<<<<< HEAD
+
 	# We treat Mobaterm as cygwin too:
     [[ -d /home/mobaxterm ]]  && CYGWIN=true
 
-=======
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 	# If not running interactively, don't do anything
 	if [[ ! -t 0 ]]; then
 		return
@@ -50,11 +46,9 @@ shell_identify
 #----------------------------------------------------------------
 
 
-<<<<<<< HEAD
-=======
 alias which='type -p '
 
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
+
 umask 0022
 IGNOREEOF="3"   # Don't close interactive shell for ^D
 
@@ -93,16 +87,11 @@ function histrc {
 			history -s "# . . ."
 		fi
 	}
-<<<<<<< HEAD
-
-    
-=======
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 }
 
 histrc
 
-<<<<<<< HEAD
+
 TERM=xterm-256color
 
 function initLsStuff {
@@ -114,20 +103,6 @@ function initLsStuff {
 	alias lr='ls -lirt'
 	eval $(dircolors)
 	alias ls='ls --color=auto '
-=======
-TERM=xterm
-
-
-function initLsStuff {
-	eval $($HOME/bin/dircolors $HOME/bin/my-dircolors)
-	# some more ls aliases
-	alias ll='ls -al'
-	alias la='ls -A'
-	alias l='ls -C'
-	alias l1='ls -1'
-	alias lr='ls -lirt'
-    alias ls='$HOME/bin/ls --color=auto '
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 }
 	
 
@@ -137,7 +112,7 @@ initLsStuff
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-<<<<<<< HEAD
+
 if [[ -d /usr/bin ]]; then
     PATH=$($HOME/bin/pathadd /usr/bin)
 fi
@@ -145,15 +120,13 @@ fi
 if [[ -d /usr/local/bin ]]; then
     PATH=$($HOME/bin/pathadd /usr/local/bin)
 fi
-=======
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 
 if [[ -d $HOME/bin ]]; then
     PATH=$($HOME/bin/pathadd $HOME/bin)
 fi
 
 
-<<<<<<< HEAD
+
 function initGitStuff {
 
 	alias gs='git status'
@@ -168,8 +141,6 @@ function initGitStuff {
 }
 
 initGitStuff
-=======
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 
 function rdp-connect {
 	# Base code for connecting to an RDP server with rdesktop
@@ -186,10 +157,6 @@ function title {
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 if $CYGWIN; then
 	source ~/bin/cyg/cyg-utils
 	alias sudo="$@"
@@ -201,26 +168,18 @@ if ! $inZsh; then
 	fi
 fi
 
-<<<<<<< HEAD
+
 export EDITOR=$(which vim)
 export XEDITOR=$EDITOR
 
 
 # disable flow control for terminal:
 stty -ixon -ixoff
-=======
-
-export EDITOR=$(which  vim)
-export XEDITOR=$(which gvim)
-
-
-# disable flow control for terminal:
-stty -ixoff -ixon
 
 # Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
 # {cmd-frag}!<space> to expand the last command that started with that frag.
 bind Space:magic-space
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
+
 
 if $CYGWIN; then
     export DISPLAY=:0
@@ -231,7 +190,7 @@ if [[ -d ${HOME}/binl ]]; then
 	export PATH=$($HOME/bin/pathadd $HOME/binl)
 fi
 
-<<<<<<< HEAD
+
 function xclipDefine {
     if $CYGWIN; then
         alias xclip='cat /dev/clipboard'
@@ -242,14 +201,14 @@ function xclipDefine {
 }
 
 xclipDefine
-=======
+
 
 # xclip should use the X clipboard, oddly enough:
 #if which xclip >/dev/null; then
 #    alias xclip='xclip -se c'
 #fi
 
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
+
 
 # Restart network to fix wifi on Kubuntu roaming:
 function wifi-restart {
@@ -287,8 +246,6 @@ else
 fi
 
 
-<<<<<<< HEAD
-=======
 function printPs1 {
     local dx
     sx="${HOSTNAME/sundev/sd}"  # Abbreviate server names
@@ -313,7 +270,7 @@ PS1='
 setFancyPs1
 
 #setPs1
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
+
 
 function loadTaskrcs {
 	# Load everything in $HOME/.taskrc, sorting alpha.  Most
@@ -329,10 +286,4 @@ if [[ -d $HOME/.taskrc ]]; then
 	loadTaskrcs
 fi
 
-<<<<<<< HEAD
-set -o vi
-=======
-##  BB-specific
-alias cd-mylibs='cd $MYLIBS'
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 

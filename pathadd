@@ -4,31 +4,19 @@
 # we add the new dir to the start of the PATH, but if $2='after'
 # we'll place it at the end.
 
-<<<<<<< HEAD
+
 # Is this dir already on the PATH?:
 
-#if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
+
 if [[ ":$PATH:" == *":$1:"* ]]; then
     echo $PATH  # No change needed
 else
-=======
-[[ -z $PATH ]] && { echo ""; exit 1; }
 
-# Is this dir already on the PATH?:
-if ! echo $PATH | /bin/egrep "(^|:)$1($|:)" >/dev/null ; then
-
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 	# Should we add before or after?
 	if [ "$2" = "after" ] ; then
 		echo $PATH:$1
 	else
 		echo $1:$PATH
 	fi
-<<<<<<< HEAD
-=======
-else
-	# This dir is already on the PATH:
-	echo $PATH
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 fi
 

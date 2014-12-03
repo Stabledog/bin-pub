@@ -8,11 +8,6 @@ function printErr {
     false
 }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 7e9aeff551204a2bbd6fbecbddcc1ddf61a8ae61
 function getCurTimestamp {
     # Prints like '12:13PM'
     date +%l:%M%p | sed -e 's/AM/am/' -e 's/PM/pm/'

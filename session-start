@@ -23,7 +23,7 @@ function launchSingle {
             gnome-terminal $commonArgs --window-with-profile=$name -e "basic_shell $name" &
             sleep 0.5
             ;;
-        sd61 | ibm9 | sd9 ) 
+        sd61 | sdv61 | ibm9 | sd9 |  sdv9 ) 
             gnome-terminal $commonArgs --window-with-profile=$name -e "ssh $name " &
             sleep 0.5
             ;;

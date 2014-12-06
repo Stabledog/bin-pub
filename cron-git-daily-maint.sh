@@ -24,6 +24,7 @@ function dailyAutocommits {
     # List of dirs to get auto-commits
     echo "$HOME/journal"
     echo "$HOME/bin"
+    echo "$HOME/mars-overlay"
     echo "$HOME/.vim"
     echo "$HOME/.taskrc"
     echo "$HOME/ksymkit"

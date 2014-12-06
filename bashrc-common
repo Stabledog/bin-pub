@@ -3,6 +3,8 @@
 
 alias pathadd=$HOME/bin/pathadd
 
+# This line was added with netrw plugin!
+
 #----------------------------------------------------------------
 #  Shell identification
 #

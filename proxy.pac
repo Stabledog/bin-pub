@@ -7,7 +7,8 @@
 var direct = "DIRECT";
 
 // UK Proxy Server
-var ukProxy = "PROXY 83.170.113.116:80";
+//var ukProxy = "PROXY 83.170.113.116:80";
+var ukProxy = "PROXY proxy.mysetup.co.uk:80";
 
 // Default localhost for denied connections
 var deny = "PROXY 127.0.0.1:65535";

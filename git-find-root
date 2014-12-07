@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Print the root of the repository.  Exit 1 if not in a repo
+
+if ! git rev-parse --show-toplevel 2>/dev/null; then
+    exit 1
+fi

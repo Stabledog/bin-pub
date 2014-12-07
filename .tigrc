@@ -1,0 +1,6 @@
+# Customizing tig.  See http://jonas.nitro.dk/tig/tigrc.5.html
+
+color date yellow default
+color mode yellow default
+color status yellow default
+

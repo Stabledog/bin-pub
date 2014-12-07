@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "this is an empty script intended to mask the Windows 'debug' tool"
+
+

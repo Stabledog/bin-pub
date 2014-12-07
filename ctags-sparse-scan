@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# ctags-sparse-scan
+#
+#  Rebuild a ./tags file from a list of directories supplied on the command line, capturing
+#  only .cpp, .c,  and .h files
+
+dirlist=$PWD  # Default
+tagfile=$PWD/tags
+
+if [[ -z $sourceMe ]]; then
+
+    dirlist=$@
+    rm $tagfile
+    for d in $dirlist; do
+        echo "Scanning $d:"
+        ctags -a -f $tagfile  $d/*.cpp $d/*.h $d/*.c
+    done
+
+fi
+
+
+

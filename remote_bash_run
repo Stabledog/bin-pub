@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# remote_bash_run:  Run a build on 'buildhost'.  If buildhost=localhost, skip the ssh
+# and just run a shell.
+#
+#  Environment 'buildhost' specifies the remote machine.
+#  Command param $1 specifies a command-line name, see allParamSets() for the available variants.
+#  Any other params are appended to the build command provided by the command-line name
+
+function allParamSets {
+    # Each of these is a command line to be run remotely.  The first word is
+    # a name for the corresponding line, to act as an alias.  That first word
+    # is not passed to the shell at the remote end.
+    echo "test1                 ls / -l"
+    echo "test2                 while true; do echo x.$$.\$(date); sleep 1; done"
+    echo "eqstst                cd mars/offlines/m_eqstst; plink m_eqstst.mk"
+    echo "eqstst-all            cd mars/offlines/m_eqstst; plink m_eqstst.mk; plink eqstst.mk"
+    echo "dbxtool-eqstst        cd mars/offlines/m_eqstst; dbxtool"
+    echo "comdb2sql-eqststdx    cd mars/offlines/m_eqstst; comdb2sql eqststdx -"
+}
+
+# Use a login shell on the given machine ($) to run the command line given
+# by the rest of the args.  We presume that ssh keys are already installed.
+function sshLoginInvoke {
+    local tgtHost=$1
+    shift
+    local cmd="$@"
+    ssh -Y -t $tgtHost "/bin/bash -l -c \"$cmd\""
+}
+
+# Prints the command-line associated with the given name.
+function getCmdLineByName {
+    local name=$1
+    # Print the command sets, strip comments, select the named line, then trim that first field to yield
+    # the remainder, which is the command line to be used to do the build.
+    allParamSets | grep -v '^#' | grep "^$name " | cut -d ' ' -f 2-
+}
+
+[[ -z $buildhost ]] && buildhost="sundev9"
+
+cmdline=""
+
+if [[ -z $sourceMe ]]; then
+    if [[ ! -z $1 ]]; then
+        param_set_name=$1
+        shift
+        # select the named command line, then append whatever our caller passed, so they
+        # can add options:
+        cmdline=$(getCmdLineByName $param_set_name) $*
+        if [[ -z $cmdline ]]; then
+            echo "No command line corresponds to parameter set named \"$param_set_name $*\".  Valid parameter sets:" >&2
+            allParamSets >&2
+            exit 1
+        fi
+    else
+        echo "No param set specified.  Here's the list:" >&2
+        allParamSets >&2
+        exit 1
+    fi
+
+    if [ $buildhost == "localhost" ]; then
+        echo "### running on $(hostname), cmdline=$cmdline ###"
+        ( eval "$cmdline" 2>&1 ) 
+    else
+        echo "### running on $buildhost, cmdline=$cmdline ###"
+        sshLoginInvoke $buildhost "$cmdline"
+    fi
+    if [ $? -ne 0 ]; then
+        echo "FAILED: $buildhost $cmdline " >&2
+        exit 1
+    fi
+
+fi
+
+

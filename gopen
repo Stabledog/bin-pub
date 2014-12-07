@@ -3,6 +3,9 @@
 #
 # gopen
 #
+
+echo "gopen $1"
+
 if $CYGWIN; then
     cygstart "$@"
 else

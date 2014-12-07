@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# basic_shell provides the outer wrapper for the alpha..epsilon shells launched by session-start
+#
+
+export shell_id=$1 
+cd $HOME
+while true; do
+    (
+        bash
+        reset
+        echo "You are in a basic_shell loop ($1).  Kill $$ to quit"
+    )
+done
+

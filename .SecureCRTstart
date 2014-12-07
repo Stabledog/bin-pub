@@ -1,0 +1,94 @@
+#!/bin/sh
+
+####
+## $HOME/.SecureCRTstart
+##
+## This file will be executed the each time the user logs in through
+## xdm.  Since this file is in the user's home directory it can be
+## customized for that particular user, typically by adding additional
+## clients to be started at the bottom of the file.
+####
+
+####
+## Append the PATH variable to make sure the X command are found:
+####
+if echo ":${PATH}:" | grep -v ":/usr/bin/X11:" > /dev/null
+then
+  PATH=${PATH}:/usr/bin/X11
+  export PATH
+fi
+
+
+####
+## Load user resources into the server:
+####
+if [ -r $HOME/.Xdefaults ]
+then
+  xrdb -merge $HOME/.Xdefaults
+fi
+
+
+####
+## Set up X-only Environment variables...
+####
+#XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -fn '-hp-hp system-*-*-*-*-*-140-*-*-*-*-*-*'"
+XTERM="/usr/bin/X11/xterm -ls -sb -sl 4000 -display ${DISPLAY} -bg black -fg white -font 9x15"
+
+
+if [ -z "${HOSTNAME}" ]
+then
+  HOSTNAME=`hostname`
+fi
+export XTERM HOSTNAME
+RXCmd ()
+{
+	HOST="${1}"
+	if [ -z ${HOST} ]
+	then
+		echo "Error: hostname not specified."
+	else
+		shift 1
+		XARGS="${*}"
+		if [ -z "${XARGS}" ]
+		then
+			XARGS="-geometry 109x43+200+200"
+		fi
+		if [ "${HOST}" = "${HOSTNAME}" ]
+		then
+			${XTERM} -name ${HOST} ${XARGS} &
+		else
+			XCOOKIE=`/usr/bin/X11/xauth list ${DISPLAY}`
+			ssh ${HOST} "(
+				PATH=$PATH:/usr/bin/X11
+				DISPLAY=$DISPLAY
+				export PATH DISPLAY
+				xauth add ${XCOOKIE} > /dev/null 2>&1
+				/usr/bin/nohup ${XTERM} -name ${HOST} \
+					${XARGS} >/dev/null 2>&1 &
+			)" &
+		fi
+	fi
+}
+
+####
+## Start xterm clients
+####
+RXCmd ${HOSTNAME}				#Local xterm
+
+## Additional clients should be added below this line.
+
+##############################################################################
+##**  Example of an xterm to a remote system.  Just jank this line down   **##
+##**  and change the hostname.  You can add any xterm arguments you want  **##
+##**  after the hostname.  See man xterm for more information.            **##
+##############################################################################
+#RXCmd dg1fddi
+#RXCmd dgintel4 -geometry 100x40+250+250		#Customized geometry
+
+## Additional clients should be added above this line.
+
+
+####
+## Wait to clean up after the other clients started in the shell script.
+####
+wait

@@ -44,6 +44,7 @@ function rebuildIndex {
     find * -type d | grep -vF "/arm
 /ia32
 /.svn
+/.git
 /x86
 /clfs" > /tmp/.tox-index
     cp /tmp/.tox-index $gotoRoot/.tox-index

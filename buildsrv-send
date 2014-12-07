@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# buildsrv-send
+#
+#   Intended to be invoked over ssh from an editor, this sends the given build command
+# to buildsrv, running in a long-term shell with the right build environment.
+#
+#   Build commands are named keys which correspond to command lines defined in
+# ~/bin/remote_bash_run.
+#
+#   Example:
+#   $   ssh -t sundev9 '~/bin/buildsrv-send test1'
+#
+#   If you look in ~/bin/remote_bash_run, you'll find the definition of 'test1'.
+#
+
+function killDeadTails {
+    # If dead tail commands hang around, they can interfere with our ability
+    # to scrape output.  We dislike this.
+    local myPids=$(ps -u $UID -o pid,args)
+    local badPids=$(echo "$myPids" | grep 'tail.*buildsrv-out' | awk '{print $1}')
+    if [[ !  -z $badPids ]]; then
+        kill -9 $badPids
+    fi
+    read -t 1 <>~/tmp/buildsrv-out # Flush any old output
+}
+
+
+function outwatcher {
+    # monitor the stream for our end of job marker
+    local line
+    while read line; do
+        if [[ "$line" == *end-of-job* ]]; then
+            echo "End of job detected"
+            killDeadTails
+            kill $PPID
+            exit 1
+        fi
+        echo "$line"
+    done
+}
+
+function handle_ctrl_c {
+    # when the user hits Ctrl+C on the client, we need to echo that signal 
+    # to the remote_bash_run processes as 'die!':
+    echo -n "Client-side Ctrl+C: "
+    local serverPids=$( ps -U $UID -f | grep remote_bash_run\|plink | grep -v grep | awk '{print $2}')
+    if [[ ! -z "$serverPids" ]]; then
+        echo "Killing server pid(s):  ${serverPids}"
+        #echo "quit" > ~/tmp/buildsrv-in &
+        # When we kill the build process, that will bubble through back to us
+        # as an end-of-job from buildsrv, so we don't need to commit suicide.
+        kill ${serverPids}
+        echo "Cleaning output pipe:"
+        line=""
+        read -t 5 line <>~/tmp/buildsrv-out  # Clean up the tail of the pipe
+        if [ $? -eq 0 ]; then
+            echo "$line"
+            if [[ "$line" != *end-of-job* ]]; then
+                line=""
+                read -t 5 line <>~/tmp/buildsrv-out  # Clean up the tail of the pipe
+                echo "$line" 
+            fi
+        fi
+    else
+        # Suicide.  Something's wrong on the other end.
+        echo "Can't find server pids.  Client suicide:"
+        kill -9 $$ 
+    fi
+}
+
+
+killDeadTails
+
+echo "Sending $* to $(hostname):"
+echo "$*" > ~/tmp/buildsrv-in &
+
+trap 'handle_ctrl_c' SIGINT
+stty -echo -onlcr
+tail -f ~/tmp/buildsrv-out | outwatcher &
+sleep 1
+echo "$*" > ~/tmp/buildsrv-in &
+
+
+wait
+
+

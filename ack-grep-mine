@@ -1,0 +1,13 @@
+#!/bin/bash
+# Simulate the default behavior of ack-grep on systems which lack it 
+#
+
+searchStr="$1"
+shift
+options="$*"
+
+if [ -z $options ]; then
+    options=" *.cpp *.c *.h *.mk"
+fi
+
+grep "$searchStr" -n $options

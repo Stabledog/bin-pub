@@ -1,0 +1,40 @@
+# : vim: set filetype=sh :
+
+# gitkit-taskrc
+#
+# Various aids for git
+
+function gitkit-help {
+    echo gc='git commit'
+	echo gs='git status'
+	echo ga='git add'
+	echo gp='git push'
+	echo gl='git log'
+	echo gpull='git pull'
+	echo gd='git diff'
+	echo gdt='git difftool'
+	echo glu='git-list-untracked-files'
+	echo gfr='git-find-root'
+}
+
+
+function initGitAliases {
+    alias gc='git commit'
+	alias gs='git status'
+	alias ga='git add'
+	alias gl='git log'
+	alias gd='git diff'
+	alias gdt='git difftool'
+	alias glu='git-list-untracked-files'
+	alias gfr='git-find-root'
+}
+
+
+
+if type -P git &>/dev/null; then
+    # Run this only if git is installed:
+    initGitAliases
+fi
+
+
+

@@ -4,7 +4,7 @@ function journal-edit {
     (
         while true; do
             cd $HOME/journal
-            $EDITOR ./worklog.markdown
+            $EDITOR ./worklog.jrnl
             echo " You're in an endless journal-edit loop. Exit will return to editor.  Kill $$ to really escape the loop."
             bash
         done

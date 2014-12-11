@@ -25,8 +25,9 @@ function dailyAutocommits {
     echo "$HOME/journal"
     echo "$HOME/bin"
     echo "$HOME/mars-overlay"
-    echo "$HOME/.vim"
+    echo "$HOME/vim-common"
     echo "$HOME/.taskrc"
+    echo "$HOME/.dbxrc.d"
     echo "$HOME/ksymkit"
 }
 

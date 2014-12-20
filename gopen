@@ -9,5 +9,5 @@ echo "gopen $1"
 if $CYGWIN; then
     cygstart "$@"
 else
-    xdg-open "$@"
+    /usr/bin/xdg-open "$@"
 fi

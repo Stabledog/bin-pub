@@ -1,7 +1,8 @@
 alias op1-copy='$HOME/bin/op1-X-init.sh'
 
 function pw {
-    command pw                # Invoke the real pw first
+    [[ -x /bb/bin/getprdwin ]] || { echo "Can't find /bb/bin/getprdwin!" ; return; }
+    /bb/bin/getprdwin         # Invoke the real pw first
     $HOME/bin/op1-X-init.sh   # Load the X clipboard with our helpers
 
 }

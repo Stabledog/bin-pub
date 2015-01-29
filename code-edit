@@ -5,7 +5,7 @@ function code-edit_f {
         while true; do
             cd $EqststTop
             ~/bin/vim-eqstst
-            
+            echo "MARSTOP=$MARSTOP"
             echo " You're in an endless code-edit loop. Exit will return to editor.  Kill $$ to really escape the loop."
             bash
         done

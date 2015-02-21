@@ -10,6 +10,7 @@
 --cpp
 --journal
 #--NOEXT
+--perl
 --python
 --shell
 

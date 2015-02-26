@@ -8,6 +8,11 @@ cd $HOME
 while true; do
     (
         bash
+        if [[  $? -ne 0 ]]; then
+            echo "bash returned  an error" >&2
+            read
+            exit 1
+        fi
         reset
         echo "You are in a basic_shell loop ($1).  Kill $$ to quit"
     )

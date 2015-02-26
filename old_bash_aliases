@@ -51,7 +51,7 @@ function bash_xtrace_setup {
 	# Set the BASH_XTRACEFD environment variable to a file descriptor, so
 	# that when you turn on -x, the output goes to that file.
 	# 
-	export BASH_XTRACEFD_FILE=/tmp/bash-xtrace-$$
+	export BASH_XTRACEFD_FILE=~/tmp/bash-xtrace-$$
 	exec 19>&-
 	exec 19>$BASH_XTRACEFD_FILE
 	export BASH_XTRACEFD=19

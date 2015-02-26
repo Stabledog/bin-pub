@@ -27,13 +27,13 @@
 #  		Any place where commands are invoked without an interactive terminal and
 #  		may need to be debugged.
 #
-#   - crontest writes its own stuff to /tmp/crontest.log
+#   - crontest writes its own stuff to ~/tmp/crontest.log
 #
 #   - If GNU screen isn't available, neither is --bashdb
 #
 
-crontestLog=/tmp/crontest.log
-lockfile=$(if [[ -d /var/lock ]]; then echo /var/lock/crontest.lock; else echo /tmp/crontest.lock; fi )
+crontestLog=~/tmp/crontest.log
+lockfile=$(if [[ -d /var/lock ]]; then echo /var/lock/crontest.lock; else echo ~/tmp/crontest.lock; fi )
 useBashdb=false
 useScreen=$( if which screen &>/dev/null; then echo true; else echo false; fi )
 innerArgs="$@"

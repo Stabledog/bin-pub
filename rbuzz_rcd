@@ -45,8 +45,8 @@ function rebuildIndex {
 /ia32
 /.svn
 /x86
-/clfs" > /tmp/.tox-index
-    cp /tmp/.tox-index $gotoRoot/.tox-index
+/clfs" > ~/tmp/.tox-index
+    cp ~/tmp/.tox-index $gotoRoot/.tox-index
     popd >/dev/null
 }
 

@@ -68,6 +68,7 @@ function histrc {
 	alias hist='history '
 	alias hn='histNote '
 	alias hl='histNote -l'
+	alias hisg='history | grep '
 	export PROMPT_COMMAND="history -a"
 	
 	# Write a note to the bash history.  -l means 'list histNotes'.

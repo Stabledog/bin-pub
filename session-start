@@ -45,7 +45,7 @@ function launchSingle {
 
 if [[ -z $1 ]]; then
     # Default to "all windows":
-    for sx in alpha beta sd61 journal-edit code-edit ; do
+    for sx in alpha beta sd9 sd24 journal-edit code-edit ; do
         launchSingle $sx
     done
 else

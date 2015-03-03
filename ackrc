@@ -2,6 +2,7 @@
 # Run ack --help-types to see ack's list of file types
 # Note the use of --type-set to define custom patterns
 #
+--smart-case
 --type-set=journal=.jrnl
 --type-set=comdb2=.csc2
 #--type-set=NOEXT:match:/^[^.]+$/

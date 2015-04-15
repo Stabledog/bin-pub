@@ -11,6 +11,7 @@
 #
 
 pudb_helpers_root=/home/lmatheson4/downloads
+export PYTHONPATH=$PWD
 
 # List of symlinks to create.  {symlink_name} {target-relative-to-pudb_helpers_root}
 function helpers {

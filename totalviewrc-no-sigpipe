@@ -1,0 +1,22 @@
+# Stolen from  /home/aran3/.totalview/stable/tvdrc
+#
+# This file should be symlinked or placed in ~/.totalview/tvdrc
+#
+#source /opt/swt/etc/tv.custom/bsl_map.tvd
+#source /opt/swt/etc/tv.custom/bsl_vector.tvd
+
+# Support for Bloomberg C++ types:
+TV::source_safely /home/aran3/.totalview/stable/bsl_string2.tvd
+TV::source_safely /home/aran3/.totalview/stable/bsl_rbtree4.tvd
+TV::source_safely /home/aran3/.totalview/stable/bsl_map4.tvd
+TV::source_safely /home/aran3/.totalview/stable/bsl_set4.tvd
+TV::source_safely /home/aran3/.totalview/stable/bsl_vector.tvd
+
+dset -set_as_default SOURCE_SEARCH_MAPPINGS { ~^/bb/robobuild/.*/(trunk|big\d{4}\.\d{2})/.*?/?share/~ = ~/bb/build/share/\1/~ }
+
+
+
+# turns off SIGPIPE handling:
+dset TV::signal_handling_mode {Discard=SIGPIPE}
+
+

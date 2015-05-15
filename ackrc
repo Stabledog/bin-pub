@@ -5,10 +5,12 @@
 --smart-case
 --type-set=journal=.jrnl
 --type-set=comdb2=.csc2
+--type-set=make=.mk
 #--type-set=NOEXT:match:/^[^.]+$/
 
 --comdb2
 --cpp
+--make
 --journal
 #--NOEXT
 --perl

@@ -142,7 +142,7 @@ function initGitStuff {
 
 initGitStuff
 
-function rdp-connect {
+function rdp_connect {
 	# Base code for connecting to an RDP server with rdesktop
 	local xhost=$1
 	local xuser=$2

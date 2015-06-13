@@ -29,6 +29,7 @@ function dailyAutocommits {
     echo "$HOME/.taskrc"
     echo "$HOME/.dbxrc.d"
     echo "$HOME/ksymkit"
+    echo "$HOME/.gconf"
 }
 
 function autoCommit {
@@ -37,7 +38,7 @@ function autoCommit {
     (
         cd $xdir || errExit "Bad directory in autoCommit: $xdir"
         echo "
-        [[ $(date): Starting autoCommit for $PWD : ]] " >> $myCronLogfile
+        [[ $(date): Starting autoCommit for $(hostname):$PWD : ]] " >> $myCronLogfile
         git add . >> $myCronLogfile || errExit "git add failed in autoCommit for $xdir"
 
         git commit . -m "Sync by ~/bin/cron-git-daily-maint.sh"  >> $myCronLogfile || errExit "git commit failed in autoCommit for $xdir"

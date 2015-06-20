@@ -16,15 +16,15 @@ function launchSingle {
     local name=$1
     case $name in
         alpha )
-            gnome-terminal --geometry=120x55+500+500 --window-with-profile=Default -e "basic_shell $name" &
+            gnome-terminal --geometry=120x55+500+500 --window-with-profile=Default -e "basic_shell $name" --title=$name &
             sleep 0.5
             ;;
         beta | gamma | delta ) 
-            gnome-terminal $commonArgs --window-with-profile=Default -e "basic_shell $name" &
+            gnome-terminal $commonArgs --window-with-profile=Default -e "basic_shell $name" --title=$name &
             sleep 0.5
             ;;
         sd61 | sdv61 | ibm9 | sd9 | sd18 |  sdv9 | sd24 ) 
-            gnome-terminal $commonArgs --window-with-profile=SunOS -e "ssh $name " &
+            gnome-terminal $commonArgs --window-with-profile=SunOS -e "ssh $name " --title=$name &
             sleep 0.5
             ;;
         journal-edit )

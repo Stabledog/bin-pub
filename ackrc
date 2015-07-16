@@ -6,6 +6,7 @@
 --type-set=journal=.jrnl
 --type-set=comdb2=.csc2
 --type-set=json=.json
+--type-set=yaml=.xbd
 --type-set=make=.mk
 #--type-set=NOEXT:match:/^[^.]+$/
 
@@ -19,4 +20,5 @@
 --shell
 --xml
 --json
+--yaml
 

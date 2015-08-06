@@ -35,7 +35,8 @@ function initGitAliases {
 	alias gfr='git-find-root'
 }
 
-
+# vimgit loads all the files returned by 'git ls-files':
+alias vimgit='vim $(git ls-files) '
 
 if type -P git &>/dev/null; then
     # Run this only if git is installed:

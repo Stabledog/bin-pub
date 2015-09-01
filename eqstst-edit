@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function code-edit_f {
+function eqstst-edit_f {
     (
         while true; do
             cd $EqststTop
@@ -17,5 +17,5 @@ function code-edit_f {
     )
 }
 
-code-edit_f
+eqstst-edit_f
 

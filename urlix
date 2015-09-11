@@ -1,0 +1,6 @@
+#!/bin/bash
+# Launches the nextres urlix_tool, for working with URL-based text blobs
+
+source $MARSTOP/offlines/m_eqstst/nextres/urlix/urlix_tool.sh $*
+
+

@@ -1,0 +1,19 @@
+# .ackrc
+# Run ack --help-types to see ack's list of file types
+# Note the use of --type-set to define custom patterns
+#
+--smart-case
+--type-set=journal=.jrnl
+--type-set=comdb2=.csc2
+--type-set=make=.mk
+#--type-set=NOEXT:match:/^[^.]+$/
+
+--comdb2
+--cpp
+--make
+--journal
+#--NOEXT
+--perl
+--python
+--shell
+--xml

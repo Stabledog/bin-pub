@@ -39,6 +39,7 @@ function findBbpy {
     # There's more than one version of bbpy, plus we may want to fall back
     # to regular python...
 
+    [[ -z $BBPY_PATH ]] || { echo "$BBPY_PATH";  true; return; }
     for xp in "/bb/bin/bbpy" "/opt/bb/bin/bbpy" "/usr/bin/python"; do
         if [[ -x $xp ]]; then
             echo "$xp"

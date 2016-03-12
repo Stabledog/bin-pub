@@ -7,6 +7,7 @@
 function gitkit-help {
     echo gc='git commit'
 	echo gs='git status'
+	echo gsu='git status -uno'
 	echo gb='git branch'
 	echo ga='git add'
 	echo gp='git push'
@@ -23,6 +24,7 @@ function gitkit-help {
 function initGitAliases {
     alias gc='git commit'
 	alias gs='git status'
+	alias gsu='git status -uno'
 	alias gb='git branch'
 	alias ga='git add'
 	alias gp='git push'
@@ -35,8 +37,44 @@ function initGitAliases {
 	alias gfr='git-find-root'
 }
 
+function stub {
+    echo "stub: $*" >&2
+}
+
+function vimgit {
+    # If there's a .vimgit file in this dir, we source it to generate the 
+    # list of files-to-load:
+    #stub "pwd=$PWD"
+    if [[ -f ./.vimgit ]]; then
+        #stub xyz
+        # Record the existence of this .vimgit file for administration:
+        mkdir -p $HOME/.taskrc/vimgit-files &>/dev/null
+        local lo=$PWD/.vimgit
+        local lx=$(echo ${PWD:1} | tr '/' '.')
+        ( cd $HOME/.taskrc/vimgit-files && ln -sf $lo "./$lx.vimgit" )
+
+        $EDITOR $(source ./.vimgit $* ) 
+    else
+        # Fall-through behavior is provided by canonical:
+        $EDITOR $(source $HOME/.taskrc/vimgit-files/vimgit-canonical $* )
+    fi
+}
+
+function vimgit_init {
+    # Create a .vimgit file in this dir from the canonical template:
+    if [[ -f .vimgit ]]; then
+        echo "ERROR: there's already a .vimgit file in $PWD" >&2
+        false
+        return
+    fi
+    cp ~/.taskrc/vimgit-files/vimgit-canonical ./.vimgit || { echo "ERROR copying vimgit-canonical to .vimgit"; false; return; }
+
+    echo "Local .vimgit has been initialized  from ~/.taskrc/vimgit-files/vimgit-canonical"
+}
+
 # vimgit loads all the files returned by 'git ls-files':
-alias vimgit='vim $(git ls-files) '
+#alias vimgit='vimgit_main '
+
 
 if type -P git &>/dev/null; then
     # Run this only if git is installed:

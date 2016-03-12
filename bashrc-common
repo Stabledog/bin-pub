@@ -234,7 +234,9 @@ function loadTaskrcs {
 	# Load everything in $HOME/.taskrc, sorting alpha.  Most
 	# of these should be symlinks.
 	while read line; do
-		source $line
+		if [[ -f $line ]]; then 
+            source $line
+        fi
 	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null | sort)
 }
 

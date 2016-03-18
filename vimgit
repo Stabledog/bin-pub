@@ -1,0 +1,23 @@
+#!/opt/bb/bin/bash
+
+function do_vimgit {
+    # If there's a .vimgit file in this dir, we source it to generate the 
+    # list of files-to-load:
+    #stub "pwd=$PWD"
+    if [[ -f ./.vimgit ]]; then
+        #stub xyz
+        # Record the existence of this .vimgit file for administration:
+        mkdir -p $HOME/.taskrc/vimgit-files &>/dev/null
+        local lo=$PWD/.vimgit
+        local lx=$(echo ${PWD:1} | tr '/' '.')
+        ( cd $HOME/.taskrc/vimgit-files && ln -sf $lo "./$lx.vimgit" )
+
+        $EDITOR $(source ./.vimgit $* ) 
+    else
+        # Fall-through behavior is provided by canonical:
+        $EDITOR $(source $HOME/.taskrc/vimgit-files/vimgit-canonical $* )
+    fi
+}
+
+do_vimgit $*
+

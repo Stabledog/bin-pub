@@ -5,7 +5,9 @@
 #  ( Created from template [ ~/.taskrc/vimgit-files/vimgit-canonical ] )
 #
 
+
 [[ -z $1 ]] && { git ls-files; exit 0; }  # Default if no args
+
 
 while [[ ! -z $1 ]]; do
     case $1 in
@@ -24,7 +26,7 @@ while [[ ! -z $1 ]]; do
             ;;
 
         py)   # Python files
-            git ls-files | grep '\.cpp$'
+            git ls-files | grep '\.py$'
             ;;
 
         sh)   # Shell scripts

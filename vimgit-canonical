@@ -29,6 +29,10 @@ while [[ ! -z $1 ]]; do
             git ls-files | grep '\.py$'
             ;;
 
+        xspec)  # Xspec and test xml stuff
+            git ls-files mars/nextres/test | grep '\.xspec$'
+            git ls-files mars/nextres/test | grep '\.xml$' 
+            ;;
         sh)   # Shell scripts
             git ls-files | grep '\.sh$'
             ;;

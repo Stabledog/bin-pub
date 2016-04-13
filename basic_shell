@@ -5,6 +5,8 @@
 
 export shell_id=$1 
 cd $HOME
+alias exit='echo "Outermost shell. Type [command exit] to really exit"'
+bash
 while true; do
     (
         bash

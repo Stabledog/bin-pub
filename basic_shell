@@ -5,8 +5,6 @@
 
 export shell_id=$1 
 cd $HOME
-alias exit='echo "Outermost shell. Type [command exit] to really exit"'
-bash
 while true; do
     (
         bash
@@ -16,7 +14,8 @@ while true; do
             exit 1
         fi
         reset
-        echo "You are in a basic_shell loop ($1).  Kill $$ to quit"
+        echo "You are in a basic_shell loop ($1). Enter will start a fresh shell, Ctrl+C will close the window"
+        read
     )
 done
 

@@ -4,18 +4,20 @@ function eqstst-edit_f {
     (
         while true; do
             cd $EqststTop
-            ~/bin/vim-eqstst
+            vim
             if [[ $? -ne 0 ]]; then
                 echo "vim failed to load." >&2
                 read
                 exit 1
             fi
             echo "MARSTOP=$MARSTOP"
-            echo " You're in an endless code-edit loop. Exit will return to editor.  Kill $$ to really escape the loop."
-            bash
+
+            echo " You're in an endless code-edit loop. Enter will return to editor. Ctrl+C will close the window"
+            read 
         done
     )
 }
 
 eqstst-edit_f
+
 

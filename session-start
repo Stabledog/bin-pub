@@ -31,7 +31,7 @@ function launchSingle {
             gnome-terminal --geometry=120x45+100+100 --window-with-profile=journal -e 'journal-edit' &
             sleep 0.5
             ;;
-        code-edit )
+        code-edit | code )
             gnome-terminal --geometry=120x45+200+200 --window-with-profile=code -e 'eqstst-edit' &
             sleep 0.5
             ;;

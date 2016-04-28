@@ -18,17 +18,14 @@ alias ll='ls -al'
 alias lr='ls -lirt'
 alias l1='ls -1rt'
 alias la='ls -a'
+set -o vi
 
-
-function view {
-    less
-}
 
 function logMap {
     # Columns are [key] [log dir] [logfile basename]
     echo "
-eqstst /bb/logs/mars eqstst
-eqstst2 /bb/data/tmp eqstst
+eqstst /bb/logs/mars eqstst3
+eqstst2 /bb/data/tmp eqstst3
 xapp1 /bb/logs/mars xapp1
 xapp4 /bb/logs/mars xapp4
 xapp3 /bb/logs/mars xapp3

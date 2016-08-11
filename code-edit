@@ -1,4 +1,9 @@
 #!/bin/bash
+# Launch code-editor loop.  Use -g to use gvim
+#
+#
+
+[[ "$1" == "-g" ]] && { EDITOR=gvim; shift; }
 
 function promptDir {
     while true; do 
@@ -7,6 +12,7 @@ function promptDir {
             echo "$x) m$x" >&2
         done
         echo "h) home" >&2
+        echo "s) shell" >&2
         echo "q) quit" >&2
         read -s -n1
         case $REPLY in
@@ -16,6 +22,11 @@ function promptDir {
                 ;;
             q) 
                 echo "--quit--"
+                return
+                ;;
+            s) 
+                $SHELL -i
+                echo "--continue--"
                 return
                 ;;
             [0-3])
@@ -33,15 +44,19 @@ function eqstst-edit_f {
             xdir=$(promptDir)
             if [[ $xdir == "--quit--" ]]; then
                 return
+            elif [[ $xdir == "--continue--" ]]; then
+                continue
             fi
             cd $xdir || { echo "Error: can't cd to $xdir" >&2; read -p "Press a key to exit"; exit 1; }
-            echo "Launching vim with dir=$PWD"
-            vim
+            [[ -z $EDITOR ]] && EDITOR=vim
+            echo "Launching $EDITOR with dir=$PWD"
+            $EDITOR
             if [[ $? -ne 0 ]]; then
                 echo "vim failed to load." >&2
                 read
                 return
             fi
+            wait
         done
     )
 }

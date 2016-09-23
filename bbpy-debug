@@ -41,7 +41,7 @@ function findBbpy {
     # to regular python...
 
     [[ -z $BBPY_PATH ]] || { echo "$BBPY_PATH";  true; return; }
-    for xp in "/bb/bin/bbpy" "/opt/bb/bin/bbpy" "/usr/bin/python"; do
+    for xp in "/opt/bb/bin/bbpy2.7" "/bb/bin/bbpy" "/opt/bb/bin/bbpy" "/usr/bin/python"; do
         if [[ -x $xp ]]; then
             echo "$xp"
             true

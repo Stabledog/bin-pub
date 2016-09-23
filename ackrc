@@ -2,6 +2,10 @@
 # Run ack --help-types to see ack's list of file types
 # Note the use of --type-set to define custom patterns
 #
+
+# Use -r explicitly on the command line to override our --no-recurse option
+--no-recurse  
+
 --smart-case
 --type-set=journal=.jrnl
 --type-set=comdb2=.csc2

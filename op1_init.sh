@@ -51,7 +51,7 @@ function Xeval {
     eval "$(cat)"
 }
 
-# List the latest logfiles for service:
+# List the latest logfiles for service, in reverse time order:
 function list_logs {
     loc_svc=$1
     # You can use '.' to represent the value of Xsvc 
@@ -60,7 +60,7 @@ function list_logs {
     fi
     set_svc $loc_svc
 
-    ls -1rt ${Xlogdir}/${Xlogbase}*$2
+    ls -1t ${Xlogdir}/${Xlogbase}*$2
 }
 
 # Show one or more logs for service: same params as list_logs
@@ -75,8 +75,8 @@ function actlog_grep {
 function help {
     echo "
 actlog_grep {pattern}                         # Grep act.log for given pattern
-less_logs {service-name|.} {filename-tail}    # Show logs for service-name, ascending-date
-list_logs {service-name|.} {filename-tail}    # Show filenames of logs for service-name, ascending-date 
+less_logs {service-name|.} {filename-tail}    # Show logs for service-name, descending-date
+list_logs {service-name|.} {filename-tail}    # Show filenames of logs for service-name, descending-date 
 Xeval                                         # Input script text
 set_svc {service-name}                        # Set Xsvc, implicit argument for commands that need a service name
 # Notes:

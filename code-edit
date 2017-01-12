@@ -30,7 +30,7 @@ function promptDir {
                 return
                 ;;
             [0-3])
-                xpr="echo \"\$Mars${REPLY}/offlines/m_eqstst\""
+                xpr="echo \"\$Mars${REPLY}\""
                 export MARSTOP=$(eval "$xpr")
                 eval "$xpr"
                 return

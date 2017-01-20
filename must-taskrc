@@ -1,0 +1,16 @@
+# must-taskrc
+
+export MtxRoot0=$HOME/must/0
+export MtxRoot1=$HOME/must/1
+export MtxRoot2=$HOME/must/2
+
+export MtxRoot=$MtxRoot0
+
+alias cd-must='cd $MtxRoot'
+alias cd-mtest='cd $MtxRoot/musttest'
+
+
+alias m0='cd $MtxRoot0'
+alias m1='cd $MtxRoot1'
+alias m2='cd $MtxRoot2'
+

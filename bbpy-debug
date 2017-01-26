@@ -5,9 +5,20 @@
 #   Runs a Python script in pudb, using the Bloomberg-specific 'bbpy' interpreter.  If
 #   bbpy isn't found, falls back to whatever you have for 'python'.
 #
-#   IMPORTANT: This script creates symlinks in the current dir to debugger-specific Python
-#   code.  You must have write permissions, naturally.  It's also a good idea not to
-#   commit these symlinks to source control.
+#   Notes: 
+#
+#       1.  This script creates symlinks in the current dir to debugger-specific Python
+#           code.  You must have write permissions, naturally.  It's also a good idea not to
+#           commit these symlinks to source control.
+#
+#       2.  There are a number of python interpreters floating around the BB environment. We 
+#           search the list of interpreters shown in 'findBbpy()' below to determine which
+#           will be used.
+#
+#           If that finds the wrong interpreter, then you should set $BBPY_PATH in the 
+#           environment before calling bbpy-debug, e.g.:
+#
+#              BBPY_PATH=/bb/bin/marscorepy2.6.tsk bbpy-debug ./myscript.py
 #
 
 pudb_helpers_root=/home/lmatheson4/downloads

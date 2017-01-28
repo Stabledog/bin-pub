@@ -1,0 +1,40 @@
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# .bbprofile (chimera framework control)
+# see {TEAM deveng:chimera} for info
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# enable bash shell
++ flag/bash
+
+# ensure /bb/bin is not in path
+#- flag/bbbin
+
+# troubleshooting
+# this will send information to g146 and then comment itself
+# back out after a new shell is obtained only use if asked to
+#+ flag/dumpinfo
+ 
+# verbose login info & other stuff (if you like seeing what's up)
+#+ flag/verbose
+
+# propagate chimera aliases to subshells
+# (should not be necessary if all shells are login shells)
+# if your Xwindows are not login shells and you have alias issues
+# uncomment
+#+ flag/aliasexport
+
+# adds extra compiler support
++ contrib/compilers
+
+# Something to do with migrating away from /opt/bb/bin binaries...:
++ contrib/optbb
+
+# See DPKG help - https://bbgithub.dev.bloomberg.com/pages/dpkg/dpkg-docs/how_to.html
++ contrib/dpkg
+
+# Enable bash tab-completion
++ contrib/gitshell
+
+# Disable slow git prompt
+- flag/git_prompt
+

@@ -30,6 +30,8 @@ function dailyAutocommits {
     echo "$HOME/.dbxrc.d"
     echo "$HOME/ksymkit"
     echo "$HOME/.gconf"
+    echo "$HOME/.totalview"
+    echo "$HOME/sr_hire"
 }
 
 function autoCommit {
@@ -42,6 +44,8 @@ function autoCommit {
         git add . >> $myCronLogfile || errExit "git add failed in autoCommit for $xdir"
 
         git commit . -m "Sync by ~/bin/cron-git-daily-maint.sh"  >> $myCronLogfile || errExit "git commit failed in autoCommit for $xdir"
+
+        git push origin >> $myCronLogfile || errExit "git push origin failed for $xdir"
 
     ) || { false; return; }
     

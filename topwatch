@@ -1,0 +1,33 @@
+#!/bin/bash
+# 
+#  topwatch program-name [top args]
+#
+#  Loops, invoking 'top' in batch mode, and printing output to stdout as well as a logfile
+#
+#    e.g.:
+#
+#           topwatch gvim -o q
+#
+#           ... will produce log file 'topwatch_[machine-number]_[pid].log', showing instances of gvim
+#
+
+my_logfile=topwatch_$(mycpu)_$$.log
+
+program_name=$1
+shift
+
+function update_pidlist {
+    pid_list=$(pgrep "${program_name}" | head -n 19 | join_delim ',')
+}
+
+update_pidlist
+
+echo "Logging to $my_logfile, program=${program_name}, pids=${pid_list}"
+
+while true; do
+    echo "= = = = = $(date)" | tee -a $my_logfile
+    update_pidlist
+    top -n 1 -b -p ${pid_list}  $* | tee -a $my_logfile
+    sleep 2
+done
+

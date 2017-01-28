@@ -47,7 +47,15 @@ umask 0022
 IGNOREEOF="3"   # Don't close interactive shell for ^D
 
 
+function ptop {
+    # Run top, but filter on a specific command line string, e.g.:
+    #
+    #     $  ptop my_busy_proc
+    #
 
+    local cmd=$1
+    top -p $(pgrep ${cmd} | head -n 19 | tr '\n' ',')0
+}
 
 
 function histrc {

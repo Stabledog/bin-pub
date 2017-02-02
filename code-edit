@@ -6,17 +6,23 @@
 [[ "$1" == "-g" ]] && { EDITOR=gvim; shift; }
 
 function fn_map {
+    echo "Menu (from ~/bin/code-edit):" >&2
+    echo "----------------------------" >&2
     echo "0 must0 cd ~/must/0; $EDITOR"
     echo "1 must1 cd ~/must/1; $EDITOR"
     echo "2 must2 cd ~/must/2; $EDITOR"
-    echo "x eqstst-2 cd $Mars2/offlines/m_eqstst; $EDITOR"
+    echo " -- -- " 
     echo "y eqstst-0 cd $Mars0/offlines/m_eqstst; $EDITOR"
+    echo "x eqstst-2 cd $Mars2/offlines/m_eqstst; $EDITOR"
     echo "n mars-1 cd $Mars1; $EDITOR"
     echo "p mars-3 cd $Mars3; $EDITOR"
-    echo ""
+    echo " -- -- "
+    echo "t test-200k cd ~/test-100k; $EDITOR"
+    echo " -- -- " 
     echo "h home cd ~; $EDITOR"
     echo "s shell cd ~; bash"
     echo "q quit exit"
+    echo "" 
 }
 
 function printMenu {
@@ -31,7 +37,7 @@ function getCmd {
 
 while true; do
     printMenu
-    read -n1 
+    read -s -n1 
     cmd=$(getCmd "$REPLY")
 
     echo "You want to run: $cmd" >&2
@@ -40,69 +46,3 @@ while true; do
 done
 
 
-# function promptDir {
-#     while true; do 
-#         echo "Code-edit loop" >&2
-#         for x in 0 1 2; do
-#             echo "$x) m$x" >&2
-#         done
-#         echo "h) home" >&2
-#         echo "x) Eqstst in Mars2" >&2
-#         echo "s) shell" >&2
-#         echo "q) quit" >&2
-#         read -s -n1
-#         case $REPLY in
-#             h)
-#                 echo "$HOME"
-#                 return
-#                 ;;
-#             q) 
-#                 echo "--quit--"
-#                 return
-#                 ;;
-#             s) 
-#                 $SHELL -i
-#                 echo "--continue--"
-#                 return
-#                 ;;
-#             x)
-#                 echo "$Mars2/offlines/m_eqstst"
-#                 return
-#                 ;;
-#             [0-2])
-#                 xpr="echo \"\$MtxRoot${REPLY}\""
-#                 export MtxRoot=$(eval "$xpr")
-#                 eval "$xpr"
-#                 return
-#         esac
-#     done
-# }
-# 
-# function eqstst-edit_f {
-#     (
-#         while true; do
-#             xdir=$(promptDir)
-#             if [[ $xdir == "--quit--" ]]; then
-#                 return
-#             elif [[ $xdir == "--continue--" ]]; then
-#                 continue
-#             fi
-#             cd $xdir || { echo "Error: can't cd to $xdir" >&2; read -p "Press a key to exit"; exit 1; }
-#             [[ -z $EDITOR ]] && EDITOR=vim
-#             echo "Launching $EDITOR with dir=$PWD"
-#             $EDITOR
-#             if [[ $? -ne 0 ]]; then
-#                 echo "vim failed to load." >&2
-#                 read
-#                 return
-#             fi
-#             wait
-#         done
-#     )
-# }
-# 
-# if [[ -z $sourceMe ]]; then
-#     eqstst-edit_f
-# fi
-# 
-# 

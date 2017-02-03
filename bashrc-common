@@ -257,3 +257,5 @@ fi
 ##  BB-specific
 alias cd-mylibs='cd $MYLIBS'
 
+
+PATH=/opt/bb/bin:$PATH

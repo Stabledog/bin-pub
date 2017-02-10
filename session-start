@@ -35,6 +35,11 @@ function launchSingle {
             gnome-terminal --geometry=120x45+200+200 --window-with-profile=code -e 'eqstst-edit' &
             sleep 0.5
             ;;
+        tmux )
+            gnome-terminal --geometry=120x45+200+200 --window-with-profile=tmux -e 'tmux_shell' &
+            sleep 0.5
+            ;;
+
         *)
             echo "Unknown window name $name" >&2
             exit 1

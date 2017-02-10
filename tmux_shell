@@ -1,0 +1,8 @@
+#!/opt/bb/bin/bash
+
+# tmux_shell 
+#
+
+
+/opt/bb/bin/tmux
+

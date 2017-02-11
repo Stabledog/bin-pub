@@ -4,5 +4,5 @@
 #
 
 
-/opt/bb/bin/tmux
+/opt/bb/bin/tmux -2  # For 256 colors
 

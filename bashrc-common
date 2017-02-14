@@ -130,9 +130,11 @@ function rdp-connect {
 	rdesktop -u $xuser -p "$xpwd" -g 1366x768 -K -x lan $xhost &
 }
 
-# Set the terminal title (bash only)
+# Set the terminal title (tmux only)
 function title {
-	echo -ne "\033]0;${1}\007"
+#	echo -ne "\033]0;${1}\007" 
+
+    printf '\033]2;%s\033\\' "$*"
 }
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases

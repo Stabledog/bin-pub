@@ -36,7 +36,7 @@ function launchSingle {
             sleep 0.5
             ;;
         tmux )
-            gnome-terminal --geometry=120x45+200+200 --window-with-profile=tmux -e 'tmux_shell' &
+            gnome-terminal  --full-screen --geometry=298x82+0+0 --window-with-profile=tmux -e 'tmux_shell' &
             sleep 0.5
             ;;
 

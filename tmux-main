@@ -1,0 +1,28 @@
+#!/bin/bash
+# tmux-main: starting tmux with a canned window set
+#
+
+# Create the session, but don't attach:
+tmux new-session -d -s A -n main
+
+# Split the main window:
+tmux split-window -h
+
+# Split it again:
+tmux split-window -v 
+tmux split-window -h 
+
+# Capture the window layout.  Once you're in a tmux terminal, you can run
+#
+#     $ tmux-restore-layout 
+#
+# ...to bring back the original window config:
+# export tmx_orig_layout=$(tmux display-message -p "#{window_layout}")
+
+# Create another window:
+#tmux new-window 'mutt'
+
+# Now attach the current terminal to the session.
+# The -d dumps any other terminals on that session.
+tmux -2 attach-session -d
+

@@ -4,5 +4,7 @@
 #
 
 
-/opt/bb/bin/tmux -2  # For 256 colors
+#/opt/bb/bin/tmux -2  # For 256 colors
+
+/home/lmatheson4/bin/tmux-main
 

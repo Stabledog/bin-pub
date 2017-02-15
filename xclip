@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# xclip wrapper
+
+
+/home/lmatheson4/mylibs/linux/bin/xclip -selection c $*
+

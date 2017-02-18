@@ -203,7 +203,10 @@ function no-exit {
 if [[ -f ~/bin/rbuzz_rcd ]]; then
 	function tox {
 		newDir="$($HOME/bin/rbuzz_rcd $@)"
-		if [[ ! -z "$newDir" ]]; then
+		if [[ "${newDir:0:1}" == "!" ]]; then
+		    # rbuzz_rcd returned a command and we should run it:
+		    eval "${newDir:1}"
+        elif [[ ! -z "$newDir" ]]; then
 			pushd $newDir >/dev/null
 		fi
 		unset newDir

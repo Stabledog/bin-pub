@@ -50,6 +50,50 @@ function rebuildIndex {
     popd >/dev/null
 }
 
+function appendIndex {
+    [[ -z $gotoRoot ]] && { echo "ERROR: No .tox-index found from $PWD" >&2; return; }
+    local newDir=$1
+    (
+        cd $gotoRoot
+        newDir=$(echo "$newDir" | sed -r "s^${gotoRoot}/?^^") # Trim out the root to get relative path
+        if [[ -z $newDir ]]; then
+            echo "Can't add index root to the index.  Not necessary, use \"tox /\" for that." >&2
+            exit
+        fi
+        printMsg "Appending: [$newDir] to index at [$gotoRoot]"
+        echo "$newDir" >> .tox-index  # Trim out the root to get relative path
+        cat .tox-index | sort -u > .tox-index-tmp
+        mv .tox-index-tmp .tox-index
+    )
+
+}
+
+function indexInfo {
+    [[ -z $gotoRoot ]] && { echo "ERROR: No .tox-index found from $PWD" >&2; return; }
+    (
+        orgDir=$(pwd)
+        echo "PWD: [$orgDir]" >&2
+        orgDir=$(echo "$orgDir" | sed -r "s^${gotoRoot}/?^^") # Trim out the root to get relative path
+        cd $gotoRoot
+        echo "Index: [${gotoRoot}]" >&2
+        echo "# of dirs in index: $(cat .tox-index | wc -l)" >&2
+        if [[ -z "$orgDir" ]]; then
+            echo "PWD == index root" >&2
+        elif grep -q "^${orgDir}\$" .tox-index; then
+            echo "Index contains PWD"  >&2
+        else
+            echo "Index does NOT contain PWD" >&2
+        fi
+    )
+}
+
+function editIndex {
+    [[ -z $gotoRoot ]] && { echo "ERROR: No .tox-index found from $PWD" >&2; return; }
+
+    echo "Editing index at [$gotoRoot]:" >&2
+    echo "!${EDITOR} ${gotoRoot}/.tox-index"
+}
+
 function filterIndexRaw {
     local rgx="$1"
     cat $gotoRoot/.tox-index | grep "$rgx"
@@ -98,14 +142,26 @@ function gotoComponentCore {
         fi
     fi
     if [[ "$1" == "--help" ]]; then
-        printMsg "tox [-x] {dir_fragment} [index]
-    Quick-CD to a subdir matching dir_fragment.
-    -x: Rebuild dir index "
+        echo "tox [options] {dir_fragment} [index]" >&2
+        echo "  Quick-CD to a subdir matching dir_fragment." >&2
+        echo "  -x: Rebuild dir index " >&2
+        echo "  -a: Append current dir to index" >&2
+        echo "  -e: Edit current index" >&2
+        echo "  -q: Info about current index " >&2
         false
         return
     elif [[ "$1" == "-x" ]]; then
         shift
         rebuildIndex
+    elif [[ "$1" == "-a" ]]; then
+        shift
+        appendIndex $PWD
+    elif [[ "$1" == "-q" ]]; then
+        shift
+        indexInfo $PWD
+    elif [[ "$1" == "-e" ]]; then
+        shift
+        editIndex $PWD
     fi
 
     if ! indexExists ; then

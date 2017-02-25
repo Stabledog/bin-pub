@@ -1,0 +1,10 @@
+" .viemuwrc init file for ViEmu / Word
+" This file lives in c:\Users\lmatheson\.viemuwrc.
+"
+" On Parallels, that shows up in /Volumes/C/Users/lmatheson
+"
+" IMPORTANT: When using ViEmu for word, uncheck the "Implement insert mode passing all input to Word",
+" so that i*map commands will work!
+
+inoremap jk <esc>
+

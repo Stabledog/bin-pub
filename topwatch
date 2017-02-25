@@ -13,8 +13,26 @@
 
 my_logfile=topwatch_$(mycpu)_$$.log
 
+
+function usage {
+    echo "Invokes 'top' repetitively, capturing a time-series set of snapshots for specified tasks."
+    echo ""
+    echo "Usage:"
+    echo "\$  topwatch \"string-to-watch-for\" [top options]"
+    echo ""
+    echo "See 'man 1 top' for [top options]. topwatch passes these through to top"
+    echo ""
+    echo "Output logfile is like './topwatch_[cpuid]_[mypid].log'"
+    echo ""
+}
+
+[[ -z $1 ]] && { usage; exit 1; }
 program_name=$1
 shift
+
+isSun=false
+[[ $(uname) == "SunOS" ]] && isSun=true  # This is only need on Linux
+
 
 function update_pidlist {
     pid_list=$(pgrep "${program_name}" | head -n 19 | join_delim ',')
@@ -24,10 +42,27 @@ update_pidlist
 
 echo "Logging to $my_logfile, program=${program_name}, pids=${pid_list}"
 
-while true; do
-    echo "= = = = = $(date)" | tee -a $my_logfile
-    update_pidlist
-    top -n 1 -b -p ${pid_list}  $* | tee -a $my_logfile
-    sleep 2
-done
+if [[ -z $sourceMe ]]; then
+    while true; do
+        echo "= = = = = $(date)" | tee -a $my_logfile
+        update_pidlist
+        # top options:
+        #    -b: batch mode: don't read stdin
+        #    -p [pid]: pid to be watched
+        #    -n [cnt]: number of passes to run before exit
+        #    $* --> Forward all other arguments directly to top
+        #
+        #    The Linux and Sun versions of top have different options.
+        #
+
+        if $isSun; then
+            # top can't do pids on SunOS, so we use their 'prstat' instead
+            prstat -p ${pid_list} 1 2 $* | tee -a $my_logfile
+        else
+            top -n 1 -b -p ${pid_list}  $* | tee -a $my_logfile
+        fi
+        sleep 2
+    done
+fi
+
 

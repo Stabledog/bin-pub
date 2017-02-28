@@ -253,6 +253,12 @@ function loadTaskrcs {
 	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null | sort)
 }
 
+function reset {
+    # The standard reset doesn't restore the cursor, necessarily.
+    setterm -cursor on
+    command reset
+}
+
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.
 if [[ -d $HOME/.taskrc ]]; then

@@ -60,3 +60,5 @@ function doAllCommits {
 
 
 doAllCommits
+
+

@@ -270,5 +270,8 @@ alias cd-mylibs='cd $MYLIBS'
 #
 # Make tmux use 256 colors so vim highlighting works right:
 alias tmux='tmux -2'
+alias tmux-attach='tmux attach'
+alias tmux-detach='tmux detach'
+
 
 PATH=/opt/bb/bin:$PATH

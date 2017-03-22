@@ -1,8 +1,9 @@
 .ssh
-bar
+bartop/bar
 bin
 downloads
 journal
+marbltop/marbl-me
 mbig
 mbig/big.mars.dev2/offlines/m_eqstst
 mylibs

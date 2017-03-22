@@ -273,5 +273,7 @@ alias tmux='tmux -2'
 alias tmux-attach='tmux attach'
 alias tmux-detach='tmux detach'
 
+alias xbd=xbd
+
 
 PATH=/opt/bb/bin:$PATH

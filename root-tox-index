@@ -12,5 +12,6 @@ mylibs
 test-100k
 test-100k/csv-load
 tmp
+xapport
 xapport_local
 xappoz

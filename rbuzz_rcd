@@ -7,6 +7,11 @@ function printMsg {
     echo $1 >&2
 }
 
+function errExit {
+    echo "$*" >&2
+    exit 1
+}
+
 function indexExists {
     [[ -f $gotoRoot/.tox-index ]]
 }
@@ -24,21 +29,10 @@ function findIndex {
     findIndex
 }
 
-function findRootLocal {
-	# Walk up the filesystem until we find a raveRoot file:
-    if [[ "$PWD" == "/" ]]; then
-    	exit 1  # Can't find a rave root
-    fi
-    if [[ -f ./raveRoot ]]; then
-    	cd ..
-    	echo $PWD
-    	exit 0
-    fi
-    cd ..
-    findRootLocal  # Recurse
-}
-
 function rebuildIndex {
+    if protectIndex $gotoRoot/.tox-index; then
+        return
+    fi
     printMsg "(Re)building tree index..."
     pushd $gotoRoot >/dev/null
     find * -type d | grep -vF "/arm
@@ -52,6 +46,9 @@ function rebuildIndex {
 
 function appendIndex {
     [[ -z $gotoRoot ]] && { echo "ERROR: No .tox-index found from $PWD" >&2; return; }
+    if protectIndex $gotoRoot/.tox-index; then
+        return;
+    fi
     local newDir=$1
     (
         cd $gotoRoot
@@ -76,7 +73,7 @@ function indexInfo {
         orgDir=$(echo "$orgDir" | sed -r "s^${gotoRoot}/?^^") # Trim out the root to get relative path
         cd $gotoRoot
         echo "Index: [${gotoRoot}]" >&2
-        echo "# of dirs in index: $(cat .tox-index | wc -l)" >&2
+        echo "# of dirs in index: $(grep -v '^#protect' .tox-index | wc -l)" >&2
         if [[ -z "$orgDir" ]]; then
             echo "PWD == index root" >&2
         elif grep -q "^${orgDir}\$" .tox-index; then
@@ -96,17 +93,30 @@ function editIndex {
 
 function filterIndexRaw {
     local rgx="$1"
-    cat $gotoRoot/.tox-index | grep "$rgx"
+    grep -v '^#protect' $gotoRoot/.tox-index | grep "$rgx"
 }
 
 function filterIndex {
     local rgx="$1"
-    cat $gotoRoot/.tox-index | grep "$rgx"
+    grep -v '^#protect' $gotoRoot/.tox-index | grep "$rgx"
 }
 
 function filterIndexCount {
     local rgx="$1"
-    cat $gotoRoot/.tox-index | grep "$rgx" | wc -l
+    grep -v '^#protect' $gotoRoot/.tox-index | grep "$rgx" | wc -l
+}
+
+function protectIndex {
+    # if the index file starts with '#protect', don't overwrite it.
+    local ixfile=$1
+    if [[ -f $ixfile ]]; then
+        if head -n 1 $ixfile | grep -q '^#protect'; then
+            echo "Index PROTECTED at [$(dirname $ixfile)]" >&2
+            false
+            return
+        fi
+    fi
+    true
 }
 
 function initIndex {
@@ -122,14 +132,33 @@ function initIndex {
 			exit 1 ;;
 	esac
 	gotoRoot=$PWD
+	if protectIndex $gotoRoot/.tox-index; then
+	    errExit "Can't update .tox-index because it's marked #protect on the first line." >&2
+	fi
 	touch $gotoRoot/.tox-index # Create the index file
 	rebuildIndex
-	echo "Index creation completed.  Please re-run your original command now."
+	echo "Index creation completed.  Please re-run your original command now." >&2
 	exit 1
 }
 
+function printHelp {
+    echo "tox [options] {dir_fragment} [index]" 
+    echo "  Quick-CD to a subdir matching dir_fragment." 
+    echo "" 
+    echo "Options:"
+    echo "  -x: Rebuild dir index " 
+    echo "  -a: Append current dir to index" 
+    echo "  -e: Edit current index" 
+    echo "  -q: Info about current index " 
+    echo "   /: Go to the parent .tox-index host directory " 
+    echo "  //: Go to the user's home directory " 
+    echo "" 
+    echo "Notes:" 
+    echo "  1.  If a .tox-index file has '#protect' as the first line, it will not be updated by -x"
+}
+
 function gotoComponentCore {
-	gotoRoot=$(findRootLocal &2> /dev/null)
+    gotoRoot=""
     if [[ "$gotoRoot" == "" ]]; then
         # Scan up the tree looking for a .tox-index:
         gotoRoot=$(findIndex)
@@ -142,12 +171,8 @@ function gotoComponentCore {
         fi
     fi
     if [[ "$1" == "--help" ]]; then
-        echo "tox [options] {dir_fragment} [index]" >&2
-        echo "  Quick-CD to a subdir matching dir_fragment." >&2
-        echo "  -x: Rebuild dir index " >&2
-        echo "  -a: Append current dir to index" >&2
-        echo "  -e: Edit current index" >&2
-        echo "  -q: Info about current index " >&2
+        printHelp >&2
+
         false
         return
     elif [[ "$1" == "-x" ]]; then
@@ -175,6 +200,9 @@ function gotoComponentCore {
 	# Try to match it as a normal dirname:
     if [[ "$1" == "/" ]]; then
         echo $gotoRoot
+        return
+    elif [[ "$1" == "//" ]]; then
+        echo $HOME
         return
 	elif [[ -d $1 ]]; then
 		echo $1

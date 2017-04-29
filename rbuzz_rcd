@@ -112,11 +112,11 @@ function protectIndex {
     if [[ -f $ixfile ]]; then
         if head -n 1 $ixfile | grep -q '^#protect'; then
             echo "Index PROTECTED at [$(dirname $ixfile)]" >&2
-            false
+            true
             return
         fi
     fi
-    true
+    false
 }
 
 function initIndex {

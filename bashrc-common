@@ -32,7 +32,7 @@ function shell_identify {
 
 	[[ -f /Cygwin.bat ]] && CYGWIN=true
 
-	[[ "$TERM_PROGRAM" == "Apple_Terminal" ]] && MACOSX=true
+	[[ -d /Applications/Preview.app ]] && MACOSX=true
 
 	# We treat Mobaterm as cygwin too:
     [[ -d /home/mobaxterm ]]  && CYGWIN=true

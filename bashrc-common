@@ -177,6 +177,9 @@ fi
 
 
 export EDITOR=$(which vim)
+if ! which gvim &>/dev/null; then
+    alias gvim=vim
+fi
 export XEDITOR=$EDITOR
 
 alias vimgit='vim $(git ls-files) '

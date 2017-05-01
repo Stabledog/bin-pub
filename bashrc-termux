@@ -1,0 +1,6 @@
+# simplistic .bashrc
+
+termux=1 source $HOME/bin/bashrc-common
+source /data/data/com.termux/files/home/.taskrc/.termuxrc
+
+export EDITOR=vim

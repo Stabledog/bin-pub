@@ -3,7 +3,6 @@
 
 alias pathadd=$HOME/bin/pathadd
 
-
 function isSunos {
     if [[ $(uname) == "SunOS" ]]; then
         true

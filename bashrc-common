@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 alias pathadd=$HOME/bin/pathadd
 
 function isSunos {

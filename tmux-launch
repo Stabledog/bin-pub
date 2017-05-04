@@ -1,0 +1,6 @@
+#!/bin/bash
+if [[ -f /home/lmatheson4/downloads/tmux/tmux-startup-script ]] ; then
+    /home/lmatheson4/downloads/tmux/tmux-startup-script
+else
+    command tmux $*
+fi

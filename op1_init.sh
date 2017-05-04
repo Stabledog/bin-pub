@@ -1,1 +1,1 @@
-bbonly/op1_init.sh
+localsys/op1_init.sh

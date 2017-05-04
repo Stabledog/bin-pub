@@ -1,1 +1,1 @@
-bbonly/marstop-choose-dir.sh
+localsys/marstop-choose-dir.sh

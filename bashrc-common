@@ -265,7 +265,6 @@ if [[ -d $HOME/.taskrc ]]; then
 	loadTaskrcs
 fi
 
-##  BB-specific
 alias cd-mylibs='cd $MYLIBS'
 #
 # Make tmux use 256 colors so vim highlighting works right:
@@ -276,4 +275,5 @@ alias tmux-detach='tmux detach'
 alias xbd=xbd
 
 
-PATH=/opt/bb/bin:$PATH
+[[ -d /opt/bb/bin ]] && PATH=/opt/bb/bin:$PATH
+

@@ -1,1 +1,43 @@
-bbonly/vimgit-canonical
+#!/bin/bash
+
+# .vimgit [arg ...] -- expand args to file sets, pass remaining args through to $EDITOR
+#
+#  ( Created from template [ ~/.taskrc/vimgit-files/vimgit-canonical ] )
+#
+
+
+[[ -z $1 ]] && { git ls-files; exit 0; }  # Default if no args
+
+
+while [[ ! -z $1 ]]; do
+    case $1 in
+         # TODO: Add set names here, expand and filter:
+        cpp)   # C++ modules
+            git ls-files | grep '\.cpp$'
+            ;;
+
+        h)   # C/C++ Headers
+            git ls-files | grep '\.h$'
+            ;;
+
+        mk)   # Makefiles
+            git ls-files | grep '\.mk$'
+            git ls-files | grep 'akefile'
+            ;;
+
+        py)   # Python files
+            git ls-files | grep '\.py$'
+            ;;
+
+        sh)   # Shell scripts
+            git ls-files | grep '\.sh$'
+            ;;
+
+        *)  # Default: just pass ordinary file names through:
+            echo "$1"
+            ;;
+    esac
+    shift
+done
+
+

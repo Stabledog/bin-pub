@@ -1,11 +1,1 @@
-#!/bin/bash
-
-alias op1-copy='$HOME/bin/op1-X-init.sh'
-
-function pw {
-    [[ -x /bb/bin/getprdwin ]] || { echo "Can't find /bb/bin/getprdwin!" ; return; }
-    $HOME/bin/op1-X-init.sh   # Load the X clipboard with our helpers
-    /bb/bin/getprdwin -i -d test1 -u op1 $*         # Invoke the real pw first
-
-}
-
+bbonly/op1.taskrc

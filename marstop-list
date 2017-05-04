@@ -1,9 +1,1 @@
-# .marstop-list is used as a menu by marstop-choose-dir.sh
-#  List your MARS working trees here.
-
-0 /home/lmatheson4/mbig/big.mars.main   #  master and short-term stuff
-1 /home/lmatheson4/mbig/big.mars.dev1   # Long-range #1
-2 /home/lmatheson4/mbig/big.mars.dev2   # Long-range #2
-3 /home/lmatheson4/mbig/big.mars.dev3   # Long-range #3
-10 ~/tmp        # Junk entry for error testing
-
+bbonly/marstop-list

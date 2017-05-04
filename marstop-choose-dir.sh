@@ -1,1 +1,1 @@
-/home/lmatheson4/mars-overlay/bin/marstop-choose-dir.sh
+bbonly/marstop-choose-dir.sh

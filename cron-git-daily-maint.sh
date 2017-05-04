@@ -1,1 +1,1 @@
-localsys/cron-git-daily-maint.sh
+bbonly/cron-git-daily-maint.sh

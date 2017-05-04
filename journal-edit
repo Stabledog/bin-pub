@@ -1,14 +1,39 @@
 #!/bin/bash
 
+function strip_related {
+    while read line; do
+        if [[ -z $line ]]; then
+            return
+        fi
+        echo "$line" | tr -d '[' | tr -d ']' | awk '{print $1}'
+    done
+}
+
+function print_je_files {
+    # The "Related-files" section in worklog.jrnl is our source
+    (
+        cd $HOME/journal
+        grep -A 20 'Related-files' worklog.jrnl | tail -n +2 
+    ) | strip_related
+}
+
 function journal-edit {
     (
         while true; do
             cd $HOME/journal
-            $EDITOR ./worklog.markdown
+            $EDITOR ./worklog.jrnl $(print_je_files)
+            if [[ $? -ne 0 ]]; then
+                echo "$EDITOR returned an error" >&2
+                read
+                exit 1
+            fi
             echo " You're in an endless journal-edit loop. Exit will return to editor.  Kill $$ to really escape the loop."
             bash
         done
     )
 }
 
-journal-edit
+if [[ -z $sourceMe ]]; then
+    journal-edit
+fi
+

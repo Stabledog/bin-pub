@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# join_delim "delimiter"
+#   
+#   Reads stdin, replacing all whitespace with 'delimiter' in the output stream
+#
+#   Default delimiter is comma
+
+delim=$1
+[[ -z $delim ]] && delim=","
+
+firstpass=true
+
+npass=0
+
+while read; do
+    if ! $firstpass; then
+        echo -n "${delim}"
+    fi
+    firstpass=false
+    line=$(echo "$REPLY" | tr ' ' "${delim}")
+    echo -n "${line}"
+    #echo "[$npass]" >&2
+    npass=$(( $npass + 1 ))
+done

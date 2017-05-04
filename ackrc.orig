@@ -2,23 +2,15 @@
 # Run ack --help-types to see ack's list of file types
 # Note the use of --type-set to define custom patterns
 #
+<<<<<<< HEAD
 --smart-case
 --type-set=journal=.jrnl
 --type-set=comdb2=.csc2
---type-set=json=.json
---type-set=yaml=.xbd
 --type-set=make=.mk
 #--type-set=NOEXT:match:/^[^.]+$/
 
+=======
 
-#  How to ignore files:
-#--ignore-file=is:unit_test_list.h  # works
-#--ignore-file=match:unit_test_list.h # works
-#
-# It's  lovely that we can tell it to ignore a first-line matching  file: (ack-grep 2.0 and above only)
---ignore-file=firstlinematch:GENERATED\ FILE
---ignore-file=is:eqstst_flat.xsd
-#
 # Use -r explicitly on the command line to override our --no-recurse option
 --no-recurse  
 
@@ -31,16 +23,29 @@
 #--type-set=NOEXT:match:/^[^.]+$/
 
 
-#--NOEXT
+#  How to ignore files:
+#--ignore-file=is:unit_test_list.h  # works
+#--ignore-file=match:unit_test_list.h # works
+
+# It's  lovely that we can tell it to ignore a first-line matching  file: (ack-grep 2.0 and above only)
+--ignore-file=firstlinematch:GENERATED\ FILE
+--ignore-file=is:eqstst_flat.xsd
+
+>>>>>>> bbgithub/master
 --comdb2
 --cpp
---journal
---json
 --make
+--journal
+#--NOEXT
 --perl
 --python
 --shell
+<<<<<<< HEAD
 --tex
 --xml
+=======
+--xml
+--json
 --yaml
 
+>>>>>>> bbgithub/master

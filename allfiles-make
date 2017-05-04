@@ -1,0 +1,43 @@
+#!/bin/bash
+# allfiles-make creates/updates '.allfiles', which resides in the root of a git working copy.
+#     The idea is to have a full path to each file as a catalog of the controlled stuff, so that
+#     a tool which needs all filenames can have it readily.
+#
+#     This also produces a symlink to the root .allfiles in the current directory.
+#
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+function getRoot {
+    git rev-parse --show-toplevel || errExit "This isn't part of a git repo: $PWD"
+}
+
+if [[ -z $sourceMe ]]; then
+    origDir=$PWD
+
+    xroot=$(getRoot)
+
+    [[ -z $xroot ]] && errExit "This isn't part of a git repo: $PWD"
+    cd $xroot
+    xroot=$PWD  # Normalize the path
+
+    kroot=$(echo $xroot | sed 's^/^=^g')  # Use = for path delimiter, temporarily
+
+
+    git ls-files | sed 's^/^=^g' > .allfiles-tmp
+    rm .allfiles &>/dev/null
+    cat .allfiles-tmp | sed "s/.*/${kroot}=&/" | tr '=' '/' > .allfiles
+    rm .allfiles-tmp &>/dev/null
+   
+    cd $origDir
+    #echo "stub: [$origDir] [$xroot]"
+    if  [[ ! -f .allfiles ]]; then  # if it doesn't exist or is a symlink...:
+        rm .allfiles &>/dev/null
+        ln -s ${xroot}/.allfiles ./
+    fi
+    echo "$xroot/.allfiles"
+fi
+

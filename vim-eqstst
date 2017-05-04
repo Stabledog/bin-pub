@@ -1,6 +1,1 @@
-#!/bin/bash
-
-source ~/mars-overlay/offlines/m_eqstst/eqststrc
-
-vim-eqstst_f
-
+bbonly/vim-eqstst

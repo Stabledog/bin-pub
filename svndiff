@@ -1,13 +1,1 @@
-# svndiff
-#
-#
-# Invoke svndiffcmd with our preferred tool:
-
-if [[ ! -z $oldSvndiff ]]; then
-    export USERSVNDIFFTOOL="vimdiff"
-    /opt/swt/bin/svn diff --diff-cmd /bb/sys/package/s/svndiff/current/bb/bin/svndiffcmd $@
-else
-    export SVNKIT=$HOME/downloads/svnkit
-    $SVNKIT/bin/svndiff $@
-fi
-
+localsys/svndiff

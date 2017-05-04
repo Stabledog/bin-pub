@@ -1,5 +1,1 @@
-# mars-tags-dirs-list.txt: used by  tagRebuild
-marssetdbacc/*
-marsdbacc/*
-offlines/m_eqstst/*
-
+bbonly/mars-tags-dirs-list.txt

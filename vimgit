@@ -15,7 +15,7 @@ function do_vimgit {
         $EDITOR $(source ./.vimgit $* ) 
     else
         # Fall-through behavior is provided by canonical:
-        $EDITOR $( $HOME/.taskrc/vimgit-files/vimgit-canonical $* )
+        $EDITOR $( $HOME/bin/vimgit-canonical $* )
     fi
 }
 

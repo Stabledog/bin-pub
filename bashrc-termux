@@ -1,5 +1,6 @@
 # simplistic .bashrc
 
+export SHELL=/data/data/com.termux/files/usr/bin/bash
 termux=1 source $HOME/bin/bashrc-common
 source /data/data/com.termux/files/home/.taskrc/.termuxrc
 

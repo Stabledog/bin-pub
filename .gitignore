@@ -24,3 +24,6 @@ termux-only
 vimprobable
 visio
 winword
+pudb
+pygments
+urwid

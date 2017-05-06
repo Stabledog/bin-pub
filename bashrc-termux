@@ -5,3 +5,11 @@ termux=1 source $HOME/bin/bashrc-common
 source /data/data/com.termux/files/home/.taskrc/.termuxrc
 
 export EDITOR=vim
+
+# last step!
+if [[ -z $InTermuxChroot ]]; then
+    export InTermuxChroot=true
+    echo "Entering termux-chroot"
+    termux-chroot
+fi
+

@@ -126,6 +126,13 @@ initLsStuff
 shopt -s checkwinsize
 
 
+if [[ -d $HOME/bin ]]; then
+    PATH=$($HOME/bin/pathadd $HOME/bin)
+fi
+
+if [[ -d $HOME/bin/localsys ]]; then
+    PATH=$($HOME/bin/pathadd $HOME/bin/localsys)
+fi
 if [[ -d /usr/bin ]]; then
     PATH=$($HOME/bin/pathadd /usr/bin)
 fi
@@ -134,9 +141,6 @@ if [[ -d /usr/local/bin ]]; then
     PATH=$($HOME/bin/pathadd /usr/local/bin)
 fi
 
-if [[ -d $HOME/bin ]]; then
-    PATH=$($HOME/bin/pathadd $HOME/bin)
-fi
 
 
 

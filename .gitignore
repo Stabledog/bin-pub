@@ -6,6 +6,7 @@ bbonly
 bbwin-only
 dddbash
 localsys
+maconly
 mktemp
 msaccess
 msouc
@@ -16,12 +17,14 @@ onenote
 outlook
 powerpnt
 promo
+pudb
+pygments
 readlink
 selfcert
 setlang
 tags
 termux-only
+urwid
 vimprobable
 visio
 winword
-maconly

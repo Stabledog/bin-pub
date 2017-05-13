@@ -154,6 +154,7 @@ function initGitStuff {
 	alias gpull='git pull'
 	alias gd='git diff'
 	alias gdt='git difftool'
+	alias gitg='git ls-files | grep'
 
 }
 

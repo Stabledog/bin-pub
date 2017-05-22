@@ -1,7 +1,1 @@
-#!/bin/bash
-
-# Wraps the rainbow Python script.  See https://github.com/nicoulaj/rainbow, and ~/.rainbow/command.cfg
-#
-# 
-
-PYTHONPATH=/home/lmatheson4/downloads/rainbow /home/lmatheson4/downloads/rainbow/scripts/rainbow $*
+localsys/rainbow

@@ -1,11 +1,12 @@
 #!/bin/bash
 # Provides better symbol coverage for javascript in ctags
+# Cribbed from a comment on https://gist.github.com/tim-smart/199338
 
 SCAN_DIRS=$*  # Scan dirs can be any set of dirs or fileglobs that identify Javascript code.
 
 ctags \
 -R \
--f .ctags \
+-f tags \
 --langdef=js \
 --langmap=js:.js \
 --regex-js="/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*\{/\5/,object/" \

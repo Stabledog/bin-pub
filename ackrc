@@ -21,6 +21,7 @@
 #
 # Use -r explicitly on the command line to override our --no-recurse option
 --no-recurse  
+--follow
 
 --smart-case
 --type-set=journal=.jrnl
@@ -41,6 +42,7 @@
 --python
 --shell
 --tex
+--js
 --xml
 --yaml
 

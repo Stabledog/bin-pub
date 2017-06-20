@@ -1,0 +1,32 @@
+--langdef=journal
+--langmap=journal:.jrnl
+--regex-journal=/tag\.promise[ \t]+([a-zA-Z0-9_]+)/\1/s,promise,Promise to define topic later (promise)/
+--regex-journal=/tag\.pre[ \t]+([a-zA-Z0-9_]+)/\1/p,preview,Preliminary mention of a topic or idea (preview)/
+--regex-journal=/tag\.def[ \t]+([a-zA-Z0-9_]+)/\1/d,definition,Full treatment of a topic or idea (definition)/
+--regex-journal=/tag\.use[ \t]+([a-zA-Z0-9_]+)/\1/u,use,Reference to a previously-defined topic or idea (use)/
+--regex-journal=/tag\.cat[ \t]+([a-zA-Z0-9_]+)/\1/c,category,Provides one of N categories for a topic (category)/
+
+# Custom language definitions to support journal, etc.
+# ---------------------------------------------------
+#
+# This is a comment, comments must be at the end of this file.
+# ~/.ctags [ symlink to binj/ctags-cfg ]
+#
+#
+# %tag.pre emm  # A 'pre' tag indicates a casual forward reference for a 
+#   term or idea: something we'll explain or define later. Semantically like 
+#   an extern decl
+#
+# %tag.def emm  # A 'def' tag indicates a full definition.
+#
+# %tag.use emm  # A 'use' tag indicates a reference to a previous full 
+#   definition
+#
+# The general order is [ (pre,) [def] (use,): we want to ensure that uses
+# are defined previously, we'll tolerate 'preview' mentions but they 
+# shouldn't be the sole support for a 'use'
+#
+# Everything following the class specifier (pre/def/use) is just commentary
+#
+
+

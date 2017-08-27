@@ -127,14 +127,6 @@ shopt -s checkwinsize
 
 
 
-for xd in /usr/bin /usr/local/bin $HOME/bin $HOME/bin/localsys; do
-    if [[ -d $xd ]]; then
-        PATH=$xd:$PATH
-    fi
-done
-
-PATH=$($HOME/bin/path_undupe $PATH)
-
 
 function initGitStuff {
 
@@ -202,9 +194,6 @@ if $CYGWIN; then
 	PATH=$( $HOME/bin/pathadd $HOME/bin/cyg)
 fi
 
-if [[ -d ${HOME}/binl ]]; then
-	export PATH=$($HOME/bin/pathadd $HOME/binl)
-fi
 
 
 function xclipDefine {
@@ -330,5 +319,12 @@ alias tmux-detach='tmux detach'
 
 
 
-[[ -d /opt/bb/bin ]] && PATH=/opt/bb/bin:$PATH
+for xd in /usr/bin /usr/local/bin /opt/bb/bin $HOME/bin $HOME/binl  $HOME/bin/localsys; do
+    if [[ -d $xd ]]; then
+        PATH=$xd:$PATH
+    fi
+done
+
+PATH=$($HOME/bin/path_undupe $PATH)
+
 

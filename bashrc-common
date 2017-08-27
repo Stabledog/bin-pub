@@ -126,22 +126,14 @@ initLsStuff
 shopt -s checkwinsize
 
 
-if [[ -d $HOME/bin ]]; then
-    PATH=$($HOME/bin/pathadd $HOME/bin)
-fi
 
-if [[ -d $HOME/bin/localsys ]]; then
-    PATH=$($HOME/bin/pathadd $HOME/bin/localsys)
-fi
-if [[ -d /usr/bin ]]; then
-    PATH=$($HOME/bin/pathadd /usr/bin)
-fi
+for xd in /usr/bin /usr/local/bin $HOME/bin $HOME/bin/localsys; do
+    if [[ -d $xd ]]; then
+        PATH=$xd:$PATH
+    fi
+done
 
-if [[ -d /usr/local/bin ]]; then
-    PATH=$($HOME/bin/pathadd /usr/local/bin)
-fi
-
-
+PATH=$($HOME/bin/path_undupe $PATH)
 
 
 function initGitStuff {

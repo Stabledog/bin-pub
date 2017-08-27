@@ -1,0 +1,30 @@
+#!/bin/bash
+# path_undupe
+#  
+#  Parse, de-dupe, and print a path sequence.
+#
+#  e.g.:
+#
+#     a/b:b/c:a/b
+#   becomes...
+#     a/b:b/c
+#
+
+xresult=()
+
+containsElement () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+for xd in $(echo "$1" | tr ':' ' '); do
+    if containsElement "$xd" "${xresult[@]}"; then
+        continue
+    fi
+    xresult+=($xd)
+done
+
+echo ${xresult[@]} | tr ' ' ':'
+

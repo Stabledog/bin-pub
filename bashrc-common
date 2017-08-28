@@ -196,17 +196,17 @@ fi
 
 
 
-function xclipDefine {
-    if $CYGWIN; then
-        alias xclip='cat /dev/clipboard'
-    else
-        # xclip should use the X clipboard, oddly enough:
-        alias xclip='xclip -se c'
-    fi
-}
-
-xclipDefine
-
+# function xclipDefine {
+#     if $CYGWIN; then
+#         alias xclip='cat /dev/clipboard'
+#     else
+#         # xclip should use the X clipboard, oddly enough:
+#         alias xclip='xclip -se c'
+#     fi
+# }
+# 
+# xclipDefine
+# 
 
 # xclip should use the X clipboard, oddly enough:
 #if which xclip >/dev/null; then

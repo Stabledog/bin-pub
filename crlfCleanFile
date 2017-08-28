@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# To find files with dirty line-endings:
+#
+#    grep -l $'\r' *
+#
+# This function takes one file at a time and cleans it.
+#
+function cleanFile {
+    [[ -f $1 ]] || { echo "Can't find file [$1]" >&2; false; return; }
+    cat  $1 | tr -d '\r' > $1.clean
+    [[ -f $1.clean ]] && mv $1.clean $1
+}
+
+

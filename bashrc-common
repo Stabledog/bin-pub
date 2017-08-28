@@ -191,7 +191,7 @@ bind Space:magic-space
 
 if $CYGWIN; then
     export DISPLAY=:0
-	PATH=$( $HOME/bin/pathadd $HOME/bin/cyg)
+    cygPathAdd=$HOME/bin/cyg
 fi
 
 
@@ -321,7 +321,7 @@ alias tmux-detach='tmux detach'
 origPath=$PATH
 # These dirs are listed from most-general to most-specific. This wipes out any previous path, and  inserts
 # the most-specific dirs ahead of the least-specfic:
-for xd in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /opt/bb/bin $HOME/bin $HOME/binl  $HOME/bin/localsys; do
+for xd in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /bb/bin /opt/swt/bin /opt/bb/bin  $HOME/mylibs/${lmPlatform}/bin $HOME/bin $HOME/binl  $HOME/bin/localsys $cygPathAdd; do
     if [[ -d $xd ]]; then
         PATH=$xd:$PATH
     fi

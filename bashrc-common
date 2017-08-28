@@ -318,13 +318,15 @@ alias tmux-attach='tmux attach'
 alias tmux-detach='tmux detach'
 
 
-
-for xd in /usr/bin /usr/local/bin /opt/bb/bin $HOME/bin $HOME/binl  $HOME/bin/localsys; do
+origPath=$PATH
+# These dirs are listed from most-general to most-specific. This wipes out any previous path, and  inserts
+# the most-specific dirs ahead of the least-specfic:
+for xd in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /opt/bb/bin $HOME/bin $HOME/binl  $HOME/bin/localsys; do
     if [[ -d $xd ]]; then
         PATH=$xd:$PATH
     fi
 done
 
-PATH=$($HOME/bin/path_undupe $PATH)
-
+PATH=$($HOME/bin/path_undupe $PATH:$origPath)
+unset origPath
 

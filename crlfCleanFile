@@ -6,10 +6,19 @@
 #
 # This function takes one file at a time and cleans it.
 #
-function cleanFile {
+function doClean {
     [[ -f $1 ]] || { echo "Can't find file [$1]" >&2; false; return; }
     cat  $1 | tr -d '\r' > $1.clean
     [[ -f $1.clean ]] && mv $1.clean $1
 }
+
+while [[ ! -z $1 ]]; do
+    echo "Cleaning $1:"
+    doClean $1
+    shift
+done
+echo "Done"
+
+
 
 

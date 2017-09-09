@@ -304,11 +304,6 @@ function reset {
     command reset
 }
 
-# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
-# just source everything found there.
-if [[ -d $HOME/.taskrc ]]; then
-	loadTaskrcs
-fi
 
 alias cd-mylibs='cd $MYLIBS'
 #
@@ -317,6 +312,7 @@ alias tmux='tmux -2'
 alias tmux-attach='tmux attach'
 alias tmux-detach='tmux detach'
 
+#export Troot=~/mbig/scenario/xapscen
 
 origPath=$PATH
 # These dirs are listed from most-general to most-specific. This wipes out any previous path, and  inserts
@@ -329,4 +325,10 @@ done
 
 PATH=$($HOME/bin/path_undupe $PATH:$origPath)
 unset origPath
+
+# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
+# just source everything found there.
+if [[ -d $HOME/.taskrc ]]; then
+	loadTaskrcs
+fi
 

@@ -1,0 +1,40 @@
+#!/bin/bash
+# The Mac has pbcopy and pbpaste, and we can use them to simulate
+# the unix 'xclip' command.
+
+# Args: 
+#    -i:  Input to clipboard
+#    -o:  Output from clipboard
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+which pbcopy &>/dev/null || errExit "pbcopy not found on PATH"
+
+inputMode=true
+
+while [[ ! -z $1 ]]; do
+    case $1 in
+        -i|-in)
+            inputMode=true
+            ;;
+        -o|-out)
+            inputMode=false
+            ;;
+        -se|-selection)
+            # ignore
+            ;;
+        *)
+            errExit "Unknown arg to xclip: $1"
+            ;;
+    esac
+    shift
+done
+
+if $inputMode; then
+    pbcopy 
+else
+    pbpaste
+fi

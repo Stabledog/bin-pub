@@ -1,4 +1,5 @@
-# ~/.tmux.conf
+# ~/.tmux.conf.other
+# WARNING: this is NOT for the Mac. See [ ~/bin/tmux.conf.macos ]
 
 # General tips:
 # -------------

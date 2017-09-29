@@ -1,0 +1,16 @@
+#!/bin/bash
+# tmux-attach
+#
+
+source ~/bin/tmux-common
+
+if ! isTmuxRunning; then
+    echo "There's no session running. Use tmux-main instead."
+    exit 1
+fi
+
+# Capture the current DISPLAY value and overwrite the X fixup 
+# script in ~/tmp/set_DISPLAY
+makeSet_DISPLAY 
+
+tmux -2 attach

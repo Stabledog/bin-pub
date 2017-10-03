@@ -1,0 +1,34 @@
+#!/bin/bash
+
+dirlist=".git bin riddle"
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+function gitstatus {
+    git status &>/dev/null
+}
+
+function commitLocals {
+    if gitstatus; then
+        
+    fi
+}
+
+for dir in $dirlist; do
+    if [[ -d ~/$dir ]]; then 
+        cd ~/$dir
+        echo "Sync: ~/$dir"
+        git pull || errExit "Pull failed on $dir"
+        commitLocals 
+        git push || errExit "Push failed on $dir"
+
+    else
+        echo "gitsync: ~/$dir not found, skipping."
+    fi
+    echo "gitsync done"
+done
+
+

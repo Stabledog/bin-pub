@@ -8,27 +8,39 @@ function errExit {
 }
 
 function gitstatus {
-    git status &>/dev/null
+    local quiet=false
+    [[ $1 == "-q" ]] && quiet=true
+    local files=$(git status -s 2>/dev/null | cut -c 3-)
+    if [[ -z $files ]]; then
+        true  # return true if nothing dirty
+        return
+    fi
+    if ! $quiet ; then
+        echo "$files"
+    fi
+    false
 }
 
 function commitLocals {
     if gitstatus; then
-        
+        echo ""
     fi
 }
 
-for dir in $dirlist; do
-    if [[ -d ~/$dir ]]; then 
-        cd ~/$dir
-        echo "Sync: ~/$dir"
-        git pull || errExit "Pull failed on $dir"
-        commitLocals 
-        git push || errExit "Push failed on $dir"
+if [[ -z $sourceMe ]]; then
+    for dir in $dirlist; do
+        if [[ -d ~/$dir ]]; then 
+            cd ~/$dir
+            echo "Sync: ~/$dir"
+            git pull || errExit "Pull failed on $dir"
+            commitLocals 
+            git push || errExit "Push failed on $dir"
 
-    else
-        echo "gitsync: ~/$dir not found, skipping."
-    fi
-    echo "gitsync done"
-done
+        else
+            echo "gitsync: ~/$dir not found, skipping."
+        fi
+        echo "gitsync done"
+    done
+fi
 
 

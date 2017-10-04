@@ -28,7 +28,7 @@ function commitLocals {
         git add .
         git commit -m "Commit by gitsync" || errExit "Auto-commit failed in $PWD"
         
-        git status -q || errExit "Still dirty in $PWD after auto- commit!" 
+        gitstatus -q || errExit "Still dirty in $PWD after auto- commit!" 
     fi
 }
 

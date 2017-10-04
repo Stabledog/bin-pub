@@ -1,34 +1,56 @@
 #!/bin/bash
 # tmux-main: starting tmux with a canned window set
 #
+#   Reminders:
+#
+#     help:   <prefix> ?
+#
+source ~/bin/tmux-common
 
-if /opt/bb/bin/tmux ls &>/dev/null; then
-    echo "There's already a tmux session running, use 'tmux attach'."
-    read -n1
-    exit 1
+do_force=false
+session_name=A
+
+while [[ ! -z $1 ]]; do
+    case $1 in
+        --force|-f)
+            do_force=true
+            ;;
+        *)
+            echo "ERROR: unknown arg $1" >&2 ; 
+            exit 1; 
+            ;;
+    esac
+    shift
+done
+
+if isTmuxRunning; then
+    if ! $do_force; then
+        echo "There's already a tmux session running, use 'tmux attach' or 'tmux-main --force|-f'"
+        read -n1 -p "Hit ENTER to exit."
+        exit 1
+    fi
+    session_name=B
+    echo "Warning: FORCE-ing a new tmux session as ($session_name)" >&2
 fi
 
-# Create the session, but don't attach:
-tmux new-session -d -s A -n main
+makeSet_DISPLAY
 
-# Split the main window:
+# Create the session, but don't attach:
+tmux new-session -d -s $session_name -n _wolf
+
+# Split the _wolf window:
 tmux split-window -h
 
-# Split it again:
-# tmux split-window -v 
-# tmux split-window -h 
+# Create a 2nd _scratch window:
+tmux new-window -n _scratch  
 
-# Capture the window layout.  Once you're in a tmux terminal, you can run
-#
-#     $ tmux-restore-layout 
-#
-# ...to bring back the original window config:
-# export tmx_orig_layout=$(tmux display-message -p "#{window_layout}")
+# Switch to the _wolf window:
+tmux last-window
 
-# Create another window:
-#tmux new-window 'mutt'
+
 
 # Now attach the current terminal to the session.
-# The -d dumps any other terminals on that session.
-tmux -2 attach-session -d
-
+#
+#    -d dumps any other terminals on that session.
+#    -2 means "assume 256 colors"
+tmux -2 attach-session -t $session_name -d 

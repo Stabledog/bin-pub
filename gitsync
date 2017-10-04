@@ -22,8 +22,12 @@ function gitstatus {
 }
 
 function commitLocals {
-    if gitstatus; then
-        echo ""
+    if gitstatus ; then
+        echo "Dirty in $PWD. Auto-committing..."
+        git add .
+        git commit -m "Commit by gitsync" || errExit "Auto-commit failed in $PWD"
+        
+        git status -q || errExit "Still dirty in $PWD after auto- commit!" 
     fi
 }
 

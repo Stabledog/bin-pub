@@ -31,6 +31,10 @@
 #
 #  Make vertical panes same size:
 #       Ctrl-a Alt-1
+#
+#  Renumbering windows:
+#       :move-window -t 1 -s 9   # Move window 1 to 9th position
+#       :move-window -r  # Renumber all the windows (eliminate gaps)
 #  
 
 # Here's how we rebind the prefix key to Ctrl+a:

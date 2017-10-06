@@ -159,6 +159,13 @@ function title {
     printf '\033]2;%s\033\\' "$*"
 }
 
+# See tmux-attach for set_DISPLAY:
+function setDisplay {
+    [[ -f ~/tmp/set_DISPLAY ]] || { echo "ERROR: no ~/tmp/set_DISPLAY script found." ; false; return; }
+    source ~/tmp/set_DISPLAY
+    echo "DISPLAY=$DISPLAY"
+}
+
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
 if $CYGWIN; then

@@ -67,7 +67,9 @@ set -g pane-base-index 1
 set -g display-panes-time 15000 # of milliseconds to leave pane numbers up
 
 set-window-option -g window-status-current-style fg=black,bg=white,bold  # Light up the active window in status bar
+set-window-option -g window-status-current-format '[> #W <]'
 
+set-window-option -g mode-keys vi  # Use vi mode for tmux command line
 
 set -g wrap-search off
 

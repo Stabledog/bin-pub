@@ -1,0 +1,24 @@
+#!/bin/bash
+# testshell
+#  
+#  Launch a shell in a test-oriented temporary HOME dir, for validating
+#  stuff in an empty new-user environment
+# 
+
+if [[ -z $sourceMe ]]; then
+    newHome=$(mktemp -d /tmp/tstsh_XXXXX)
+    echo "=================== TEST SHELL ================="
+    echo "Temp HOME is ${newHome}"
+    echo "================================================"
+    ( HOME=${newHome} bash -l )
+    read -p "Test shell exited.  Delete ${newHome}? (y/N)"
+    if [[ $REPLY =~ [yY] ]] ; then
+        if [[ ! -z ${newHome} ]]; then
+            rm -rf ${newHome}
+        fi
+    fi
+fi
+
+
+
+# vim: filetype=sh:

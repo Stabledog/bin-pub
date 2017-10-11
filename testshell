@@ -3,14 +3,53 @@
 #  
 #  Launch a shell in a test-oriented temporary HOME dir, for validating
 #  stuff in an empty new-user environment
+#  
+#    Options:
+#      -s: [path/to/startup/script]  # This gets appended to .bashrc  
+#      -- [args passed to shell ] # Everything after -- is passed to the shell
+#
 # 
+function print_profile {
+    echo "HOME=$PWD"
+    echo "export HOME"
+    echo "export TESTSHELL=1"
+    echo "source \$HOME/.bashrc" 
+}
+
+function print_bashrc {
+    echo "# .bashrc"
+    echo "PATH=/usr/bin:/bin"
+    echo "export PATH"
+}
 
 if [[ -z $sourceMe ]]; then
+    while [[ ! -z $1 ]]; do
+        case $1 in
+            -s|--start-script) 
+                startScript=$(readlink -f $2)
+                shift
+                ;;
+            --)
+                break;
+                ;;
+            *)
+                errExit "Unknown argument: $1"
+                ;;
+        esac
+        shift
+    done
     newHome=$(mktemp -d /tmp/tstsh_XXXXX)
     echo "=================== TEST SHELL ================="
     echo "Temp HOME is ${newHome}"
     echo "================================================"
-    ( HOME=${newHome} bash -l )
+    cd ${newHome} || errExit 0x102
+    print_profile > .profile
+    print_bashrc > .bashrc
+    if [[ -f "$startScript" ]]; then
+        echo "
+        source $startScript" >> .bashrc
+    fi
+    env -i PATH=/usr/bin:/bin HOME=${newHome} /opt/bb/bin/bash -l 
     read -p "Test shell exited.  Delete ${newHome}? (y/N)"
     if [[ $REPLY =~ [yY] ]] ; then
         if [[ ! -z ${newHome} ]]; then

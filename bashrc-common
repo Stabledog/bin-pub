@@ -287,10 +287,13 @@ fi
 
 function printPs1 {
     local dx
-    sx="${HOSTNAME/sundev/sd}"  # Abbreviate server names
+    local sx="${HOSTNAME/sundev/sd}"  # Abbreviate server names
     sx="${sx/linxdev/lx}"
+    sx="${sx/lxdev/lx}"
 
-    dx="${PWD/#$HOME/~}"   # Swap out home dir
+    if [[ -z $PS1_KEEP_HOME ]]; then
+        dx="${PWD/#$HOME/~}"   # Swap out home dir
+    fi
     echo "$sx:$shell_id $dx\$ "
 }
 

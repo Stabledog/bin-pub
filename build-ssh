@@ -7,7 +7,7 @@
 #    New command lines can be added there.
 #
 
-cd $HOME/bin
+cd $LmHome/bin
 
 
 # Get the allParamSets() function:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-alias pathadd=$HOME/bin/pathadd
+alias pathadd=$LmHome/bin/pathadd
 
 function isSunos {
     if [[ $(uname) == "SunOS" ]]; then
@@ -46,13 +46,13 @@ function fix_PATH {
     origPath=$PATH
     # These dirs are listed from most-general to most-specific. This wipes out any previous path, and  inserts
     # the most-specific dirs ahead of the least-specfic:
-    for xd in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /bb/bin /opt/swt/bin /opt/bb/bin  $HOME/mylibs/${lmPlatform}/bin $HOME/bin $HOME/binl  $HOME/bin/localsys $cygPathAdd; do
+    for xd in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /bb/bin /opt/swt/bin /opt/bb/bin  $LmHome/mylibs/${lmPlatform}/bin $LmHome/bin $LmHome/binl  $LmHome/bin/localsys $cygPathAdd; do
         if [[ -d $xd ]]; then
             PATH=$xd:$PATH
         fi
     done
 
-    PATH=$($HOME/bin/path_undupe $PATH:$origPath)
+    PATH=$($LmHome/bin/path_undupe $PATH:$origPath)
     unset origPath
 }
 
@@ -214,7 +214,7 @@ bind Space:magic-space
 
 if $CYGWIN; then
     export DISPLAY=:0
-    cygPathAdd=$HOME/bin/cyg
+    cygPathAdd=$LmHome/bin/cyg
 fi
 
 
@@ -259,7 +259,7 @@ function no-exit {
 	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
 }
 
-if [[ -f ~/bin/rbuzz_rcd ]]; then
+if [[ -f ${LmHome}/bin/rbuzz_rcd ]]; then
 	function tox {
 	    while [[ ! -z $1 ]]; do
             local arg1=$1
@@ -269,7 +269,7 @@ if [[ -f ~/bin/rbuzz_rcd ]]; then
                 shift
             fi
             #echo "stub0: [$arg1] [$offset]" >&2
-            local newDir="$($HOME/bin/rbuzz_rcd ${arg1} ${offset} )"
+            local newDir="$($LmHome/bin/rbuzz_rcd ${arg1} ${offset} )"
             if [[ "${newDir:0:1}" == "!" ]]; then
                 # rbuzz_rcd returned a command and we should run it:
                 eval "${newDir:1}"
@@ -280,7 +280,7 @@ if [[ -f ~/bin/rbuzz_rcd ]]; then
 	}
 else
 	function tox {
-		echo "This function only works if ~/bin/rbuzz_rcd is present."
+		echo "This function only works if ${LmHome}/bin/rbuzz_rcd is present."
 	}
 fi
 

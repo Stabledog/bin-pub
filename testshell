@@ -12,6 +12,7 @@
 function print_profile {
     echo "HOME=$PWD"
     echo "export HOME"
+    echo "export TERM=$TERM"
     echo "export TESTSHELL=1"
     echo "source \$HOME/.bashrc" 
 }

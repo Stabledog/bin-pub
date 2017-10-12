@@ -7,15 +7,15 @@ function do_vimgit {
     if [[ -f ./.vimgit ]]; then
         #stub xyz
         # Record the existence of this .vimgit file for administration:
-        mkdir -p $HOME/.taskrc/vimgit-files &>/dev/null
+        mkdir -p $LmHome/.taskrc/vimgit-files &>/dev/null
         local lo=$PWD/.vimgit
         local lx=$(echo ${PWD:1} | tr '/' '.')
-        ( cd $HOME/.taskrc/vimgit-files && ln -sf $lo "./$lx.vimgit" )
+        ( cd $LmHome/.taskrc/vimgit-files && ln -sf $lo "./$lx.vimgit" )
 
         $EDITOR $(source ./.vimgit $* ) 
     else
         # Fall-through behavior is provided by canonical:
-        $EDITOR $( $HOME/bin/vimgit-canonical $* )
+        $EDITOR $( $LmHome/bin/vimgit-canonical $* )
     fi
 }
 

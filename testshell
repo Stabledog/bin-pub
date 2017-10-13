@@ -5,7 +5,10 @@
 #  stuff in an empty new-user environment
 #  
 #    Options:
-#      -s: [path/to/startup/script]  # This gets appended to .bashrc  
+#      -s: [path/to/startup/script]  # This gets appended to .bashrc, so it runs
+#               when the test shell starts
+#      -i: [path/to/init/script]   # This gets invoked just before we start the
+#               test shell, so the filesystem can be customized.
 #      -- [args passed to shell ] # Everything after -- is passed to the shell
 #
 # 
@@ -14,6 +17,7 @@ function print_profile {
     echo "export HOME"
     echo "export TERM=$TERM"
     echo "export TESTSHELL=1"
+    echo "export SHELL=$SHELL"
     echo "source \$HOME/.bashrc" 
 }
 
@@ -23,11 +27,17 @@ function print_bashrc {
     echo "export PATH"
 }
 
+initScript=""
+
 if [[ -z $sourceMe ]]; then
     while [[ ! -z $1 ]]; do
         case $1 in
             -s|--start-script) 
                 startScript=$(readlink -f $2)
+                shift
+                ;;
+            -i|--init-script)
+                initScript=$(readlink -f $2)
                 shift
                 ;;
             --)
@@ -50,7 +60,15 @@ if [[ -z $sourceMe ]]; then
         echo "
         source $startScript" >> .bashrc
     fi
-    env -i PATH=/usr/bin:/bin HOME=${newHome} /opt/bb/bin/bash -l 
+    if [[ ! -z $initScript ]]; then
+        if [[ -x $initScript ]]; then
+            # The caller supplied an init script to run before the shell starts
+            $initScript
+        else
+            errExit "Can't find your initScript or it's not executable [ $initScript ]"
+        fi
+    fi
+    env -i PATH=/usr/bin:/bin HOME=${newHome} $SHELL -l 
     read -p "Test shell exited.  Delete ${newHome}? (y/N)"
     if [[ $REPLY =~ [yY] ]] ; then
         if [[ ! -z ${newHome} ]]; then

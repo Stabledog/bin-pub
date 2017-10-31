@@ -27,6 +27,11 @@ function print_bashrc {
     echo "export PATH"
 }
 
+function errExit { 
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
 initScript=""
 
 if [[ -z $sourceMe ]]; then

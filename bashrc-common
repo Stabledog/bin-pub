@@ -299,13 +299,27 @@ setFancyPs1
 
 
 function loadTaskrcs {
+	function load_rcs1 {
+	    local rootDir=$1
+        /bin/ls -1 ${rootDir}/.taskrc/* 2>/dev/null | egrep -v '\.vim$' | sort
+    }
+
 	# Load everything in $HOME/.taskrc, sorting alpha.  Most
 	# of these should be symlinks.
 	while read line; do
 		if [[ -f $line ]]; then 
             source $line
         fi
-	done < <(ls -1 $HOME/.taskrc/* 2>/dev/null | egrep -v '\.vim$' | sort)
+    done < <( load_rcs1 "$HOME" )
+
+	# Do it for any local .taskrc's in current dir also:
+	if [[ "$HOME" != "$PWD" ]]; then
+        while read line; do
+            if [[ -f $line ]]; then 
+                source $line
+            fi
+        done < <( load_rcs1 "$PWD" )
+    fi
 }
 
 function reset {

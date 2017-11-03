@@ -158,7 +158,6 @@ function initGitStuff {
 	alias gdt='git difftool'
 	alias gitg='git ls-files | grep'
 
-	# If git-completion is installed on the machine, we want it:
 	source ${LmHome}/bin/git-completion.bash
 
 }

@@ -36,13 +36,13 @@ fi
 makeSet_DISPLAY
 
 # Create the session, but don't attach:
-tmux new-session -d -s $session_name -n _wolf
+tmux new-session -d -s $session_name -n MAIN
 
 # Split the _wolf window:
 tmux split-window -h
 
 # Create a 2nd _scratch window:
-tmux new-window -n _scratch  
+tmux new-window -n SCRATCH  
 
 # Switch to the _wolf window:
 tmux last-window

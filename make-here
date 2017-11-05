@@ -1,0 +1,195 @@
+#!/bin/bash
+# make-here
+# vim: textwidth=75 filetype=sh formatoptions+=cor :
+#
+#  This script is the entry point for scripts that populate a .taskrc/
+#  directory in the current dir with "things that are helpful in the
+#  context implied by the current directory."
+#  
+#  The canonical example is editor initialization files: typically when I
+#  work on a coding project, I want to have vim commands and functions
+#  defined which are specific to that project, such as "HereLoad", which
+#  loads the most important files into my editor, or "HereBuild", which
+#  does the default "build this project" actions in the editor, etc.
+#
+#  So I can start vim in a project directory, and it comes up loaded with
+#  :Here* commands that do the right thing for that project.  Since each
+#  project is different, the "right thing" varies, and I don't want to
+#  have to remember how each project is set up.
+#
+#  When I start a new project, I want generic versions of these scripts
+#  created, and that's what make-here does.
+#
+#  Usage: 
+#      1.  make-here [template-name[, template-name ... ]]
+#                Install the templates specified into ./.taskrc
+#
+#      2.  make-here --list   
+#                List the templates available.  If a template contains a
+#                'desc' file, it will be printed in the listing.
+#
+#
+#   About templates:
+#   ---------------
+#       A template is a subdirectory.  The name of the subdirectory is the
+#       name of the template.  The contents of the template directory are
+#       copied to ./.taskrc.
+#
+#       If there's an 'init' command in the template, it will be executed
+#       after the template is copied. First, make-here will change into
+#       the .taskrc directory, and then invoke ./init.
+#
+#       A typical init script will look in the parent directory for
+#       information it needs to customize the 'here' content.
+#
+#   Template search:
+#   ----------------
+#       The template name is just a single directory.  In order to find
+#       templates, make-here searches sequentially in the $MAKEHERE_PATH
+#       sequence. If that shell variable is not defined, the default is
+#       used (see below).
+#
+#       The first directory matching the target template name will prevail.
+#
+#   Using multiple templates:
+#   -------------------------
+#       You can specify multiple templates.  They're installed in the order
+#       specified on the command line, allowing templates to be 'layered',
+#       such that more-specific templates can override more general
+#       templates by being listed first on the command line.
+#       
+#   Update logic:
+#   -------------
+#       make-here protects existing .taskrc/* files. If a file in the
+#       template has the same name, the existing file is preserved.  If
+#       there are new files in the template, they're added to the .taskrc/
+#       dir.
+#
+#
+
+doList=false
+templateList=
+
+# Each dir in MAKEHERE_PATH potentially contains a make-here.templates/
+# subdir:
+[[ -z $MAKEHERE_PATH ]] && MAKEHERE_PATH=.:$HOME/bin:$HOME:/etc
+
+function errExit {
+    echo "ERROR: $*"
+}
+
+function usage {
+    /bin/echo "Usage:  make-here template-name[, template-name ...]"
+    /bin/echo "        make-here --list"
+    /bin/echo ""
+    /bin/echo "  (Creates 'here' tools in ./.taskrc from templates)"
+}
+
+function parseArgs {
+    while [[ ! -z $1 ]]; do
+        case $1 in
+            -l|--list)
+                doList=true
+                break;
+                ;;
+
+            *)
+                templateList="$templateList $1"
+                break;
+                ;;
+        esac
+        shift
+    done
+}
+
+function findTemplate {
+    local templateName="$1"
+    for hostDir in $(/bin/echo $MAKEHERE_PATH | /usr/bin/tr ':' ' '); do
+        if [[ -d ${hostDir}/make-here.templates/${templateName} ]]; then
+            /bin/echo "$hostDir/make-here.templates"
+            return
+        fi
+    done
+    false
+}
+
+function listTemplates {
+    local orgDir=$PWD
+    local markBorders
+
+    for hostDir in $(/bin/echo $MAKEHERE_PATH | /usr/bin/tr ':' ' '); do
+        if [[ ! -d ${hostDir}/make-here.templates ]]; then
+            echo "No make-here.templates/ in: $hostDir"
+            continue
+        fi
+        cd ${hostDir}/make-here.templates
+        markBorders=true
+        for dir in $(ls -d *); do
+            if $markBorders; then
+                markBorders=false
+                echo ":: :: :: :: :: :: :: :: :: :: :: ::"
+                echo ":: Listing: $PWD"
+            fi
+            /bin/echo -n "   $dir -- "
+            if [[ -f ${dir}/desc ]]; then
+                cat ${dir}/desc
+            else
+                echo " (no 'desc' file for this template)"
+            fi
+        done
+
+    done
+    cd $orgDir
+    
+}
+
+
+function installTemplate {
+    local template=$1
+    local srcDir=$2
+    echo "Installing $template from ${srcDir}"
+
+    /bin/mkdir .taskrc &>/dev/null
+    cd .taskrc || errExit "Can't cd into $PWD/.taskrc"
+
+    /usr/bin/rsync -av --ignore-existing ${srcDir}/ ./ || errExit "Failed installing $template"
+
+    if [[ -f ./init ]]; then
+        (
+            echo "Running $PWD/init:"
+            chmod +x init
+            ./init $template || errExit "init failed [template $template,
+            dir=$PWD]"
+        ) || exit 1
+    fi
+
+    cd ..
+
+}
+
+if [[ -z $sourceMe ]]; then
+    parseArgs "$*"
+
+
+    if $doList; then
+        listTemplates
+        exit 0
+    fi
+
+    if [[ -z $templateList ]]; then
+        usage
+        exit 1
+    fi
+
+    for template in $templateList; do
+        /bin/echo "Processing template ${template}..."
+        srcDir=$(findTemplate $template)
+        if [[ -z $srcDir ]]; then
+             errExit "Can't find template $template in $MAKEHERE_PATH"
+        fi
+        installTemplate $template $srcDir/$template
+    done
+fi
+
+
+

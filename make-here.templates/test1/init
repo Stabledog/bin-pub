@@ -1,0 +1,3 @@
+echo "this is init for template test1, running in $PWD"
+
+exit 1

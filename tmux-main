@@ -42,7 +42,7 @@ tmux new-session -d -s $session_name -n MAIN
 tmux split-window -h
 
 # Create a 2nd _scratch window:
-tmux new-window -n SCRATCH  
+tmux new-window -n _scratch_  
 
 # Switch to the _wolf window:
 tmux last-window

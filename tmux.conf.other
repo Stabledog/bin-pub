@@ -57,6 +57,8 @@ set-option -s set-clipboard off
 # The scroll buffer is too handy to make small:
 set-option -g history-limit 50000
 
+set-option -g renumber-windows on
+
 # Ctrl+P will copy the X clipboard into the tmux paste buffer, and then paste it:
 bind C-p run-shell -b "xclip -o -selection primary | tmux load-buffer -; tmux paste-buffer"
 

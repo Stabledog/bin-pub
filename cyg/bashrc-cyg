@@ -1,0 +1,10 @@
+# cygwin .bashrc for this machine
+
+source $HOME/bin/bashrc-common
+
+
+if ! xset -q &>/dev/null ; then
+    run xwin -multiwindow -noclipboard
+    echo "X server started on $DISPLAY"
+fi
+

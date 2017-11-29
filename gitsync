@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dirlist=".vim bin riddle"
+dirlist=".vim journal bin riddle riddle-bin"
 
 function errExit {
     echo "ERROR: $*" >&2

@@ -13,4 +13,4 @@ fi
 # script in ~/tmp/set_DISPLAY
 makeSet_DISPLAY 
 
-tmux -2 attach
+tmux -2 attach -d

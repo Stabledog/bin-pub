@@ -5,10 +5,14 @@
 #  stuff in an empty new-user environment
 #  
 #    Options:
-#      -s: [path/to/startup/script]  # This gets appended to .bashrc, so it runs
+#      -s: [path/to/startup/script]  # This gets appended to .bashrc or .kshrc, so it runs
 #               when the test shell starts
+#
 #      -i: [path/to/init/script]   # This gets invoked just before we start the
 #               test shell, so the filesystem can be customized.
+#
+#      -k:  Use ksh instead of bash
+#
 #      -- [args passed to shell ] # Everything after -- is passed to the shell
 #
 # 
@@ -18,11 +22,10 @@ function print_profile {
     echo "export TERM=$TERM"
     echo "export TESTSHELL=1"
     echo "export SHELL=$SHELL"
-    echo "source \$HOME/.bashrc" 
+    echo "source \$HOME/${rcfile}" 
 }
 
-function print_bashrc {
-    echo "# .bashrc"
+function print_shrc {
     echo "PATH=/usr/bin:/bin"
     echo "export PATH"
 }
@@ -33,6 +36,9 @@ function errExit {
 }
 
 initScript=""
+useKshell=false
+rcfile=".bashrc"
+SHELL="/bin/bash"
 
 if [[ -z $sourceMe ]]; then
     while [[ ! -z $1 ]]; do
@@ -44,6 +50,12 @@ if [[ -z $sourceMe ]]; then
             -i|--init-script)
                 initScript=$(readlink -f $2)
                 shift
+                ;;
+            -k|--ksh)
+                newShell=/bin/ksh
+                useKshell=true
+                rcfile=".kshrc"
+                SHELL=/bin/ksh
                 ;;
             --)
                 break;
@@ -60,10 +72,10 @@ if [[ -z $sourceMe ]]; then
     echo "================================================"
     cd ${newHome} || errExit 0x102
     print_profile > .profile
-    print_bashrc > .bashrc
+    print_shrc > ${rcfile}
     if [[ -f "$startScript" ]]; then
         echo "
-        source $startScript" >> .bashrc
+        source $startScript" >> ${rcfile}
     fi
     if [[ ! -z $initScript ]]; then
         if [[ -x $initScript ]]; then

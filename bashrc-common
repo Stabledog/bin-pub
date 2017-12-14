@@ -299,6 +299,7 @@ setFancyPs1
 
 #setPs1
 
+shopt -s direxpand
 
 function loadTaskrcs {
 	function load_rcs1 {

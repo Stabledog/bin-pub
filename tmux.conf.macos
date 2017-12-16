@@ -39,7 +39,9 @@ set -g prefix C-a
 unbind-key C-b
 bind-key C-a send-prefix
 
-
+# Macos has this reattach problem:
+set-option -g default-command "reattach-to-user-namespace -l /usr/local/bin/bash"
+#set-option -g default-shell /usr/local/bin/bash
 
 # The mouse can be used to select active pane and resize panes with grab/drag.  It will
 # also copy text to the X clipboard and tmux paste buffer simultaneously.

@@ -148,7 +148,7 @@ shopt -s checkwinsize
 
 function initGitStuff {
 
-	alias gs='git status --porcelain'
+	alias gs='git status '
 	alias gc='git commit'
 	alias ga='git add'
 	alias gp='git push'

@@ -245,30 +245,6 @@ function no-exit {
 	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
 }
 
-if [[ -f ${LmHome}/bin/rbuzz_rcd ]]; then
-	function tox {
-	    while [[ ! -z $1 ]]; do
-            local arg1=$1
-            shift
-            if [[ $1 =~ ^[0-9]+$ ]]; then
-                local offset=${1} # If we match a number, interpret it as an offset in a list of matching dirs
-                shift
-            fi
-            #echo "stub0: [$arg1] [$offset]" >&2
-            local newDir="$($LmHome/bin/rbuzz_rcd ${arg1} ${offset} )"
-            if [[ "${newDir:0:1}" == "!" ]]; then
-                # rbuzz_rcd returned a command and we should run it:
-                eval "${newDir:1}"
-            elif [[ ! -z "$newDir" ]]; then
-                pushd $newDir >/dev/null
-            fi
-        done
-	}
-else
-	function tox {
-		echo "This function only works if ${LmHome}/bin/rbuzz_rcd is present."
-	}
-fi
 
 
 function printPs1 {

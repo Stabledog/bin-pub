@@ -70,17 +70,17 @@ function indexInfo {
     [[ -z $gotoRoot ]] && { echo "ERROR: No .tox-index found from $PWD" >&2; return; }
     (
         orgDir=$(pwd)
-        echo "PWD: [$orgDir]" >&2
+        echo "PWD: $orgDir" >&2
         orgDir=$(echo "$orgDir" | sed -r "s^${gotoRoot}/?^^") # Trim out the root to get relative path
         cd $gotoRoot
-        echo "Index: [${gotoRoot}]" >&2
+        echo "Index: ${gotoRoot}/.tox-index" >&2
         echo "# of dirs in index: $(grep -v '^#protect' .tox-index | wc -l)" >&2
         if [[ -z "$orgDir" ]]; then
             echo "PWD == index root" >&2
         elif grep -q "^${orgDir}\$" .tox-index; then
-            echo "Index contains PWD"  >&2
+            echo "# Index contains PWD"  >&2
         else
-            echo "Index does NOT contain PWD" >&2
+            echo "# Index does NOT contain PWD" >&2
         fi
     )
 }

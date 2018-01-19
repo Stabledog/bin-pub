@@ -155,6 +155,8 @@ shopt -s checkwinsize
 function initGitStuff {
 
 	alias gs='git status '
+	# Script-worthy git-status: check the branch, parseable output, etc.
+    # See-also: git-dirty
 	alias gc='git commit'
 	alias ga='git add'
 	alias gp='git push'

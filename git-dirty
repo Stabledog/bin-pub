@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Return 0 if repo is 'dirty' in any way: new files, uncommitted changes, or differs from upstream 
+
+function git_status_dirty {
+    local kx=$(git status --porcelain=2 --branch 2>&1)
+    if echo "$kx" | egrep -q 'Not a git repository'; then
+        return $(errExit "Not a git repository")
+    fi
+    local cnt=$(echo "$kx" | egrep -v '^#' | wc -l) # Number of dirty lines
+    if [[ $cnt != 0 ]]; then
+        # there's dirty lines
+        return 0
+    fi
+
+    if ! echo "$kx" | egrep -q 'ab \+0 -0'; then
+        # some file differs from upstream
+        return 0
+    fi
+
+    return 1 # no difference
+}
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+if [[ -z $sourceMe ]]; then
+    xdir=$1
+    if [[ ! -z $xdir ]]; then
+        cd $xdir || errExit "Can't cd to $xdir"
+    fi
+    git_status_dirty $xdir
+fi

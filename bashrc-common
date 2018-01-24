@@ -52,7 +52,7 @@ shell_identify
 
 function fix_PATH {
     origPath=$PATH
-    echo "fix_PATH invoked" >&2
+    #echo "fix_PATH invoked" >&2
     # These dirs are listed from most-general to most-specific. This wipes out any previous path, and  inserts
     # the most-specific dirs ahead of the least-specfic:
     for xd in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /bb/bin /opt/swt/bin /opt/bb/bin  $LmHome/mylibs/${lmPlatform}/bin $LmHome/bin $LmHome/binl  $LmHome/bin/localsys $cygPathAdd; do

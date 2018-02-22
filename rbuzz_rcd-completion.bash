@@ -17,7 +17,13 @@ if [[ -f ${LmHome}/bin/rbuzz_rcd ]]; then
                 if [[ "${newDir:0:1}" != "!" ]]; then
                     pushd $newDir >/dev/null
                 else
-                    echo "${newDir:1}"
+                    if [[ "${newDir:0:2}" == "!!" ]]; then
+                        # A double !! means "run this"
+                        eval "${newDir:2}"
+                    else
+                        # A single bang means "print this"
+                        echo "${newDir:1}"
+                    fi
                 fi
             fi
         }

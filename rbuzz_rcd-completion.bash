@@ -4,6 +4,7 @@
 # Recommended: source this from .bashrc 
 
 # bash completion support for tox / rbuzz_rcd
+# TODO: remove obsolete rbuzz_rcd
 [[ -z $LmHome ]] && export LmHome=$HOME
 
 export use_tox_core=true

@@ -6,25 +6,41 @@
 # bash completion support for tox / rbuzz_rcd
 [[ -z $LmHome ]] && export LmHome=$HOME
 
+export use_tox_core=true
+
 if [[ -f ${LmHome}/bin/rbuzz_rcd ]]; then
-	function tox {
-	    while [[ ! -z $1 ]]; do
-            local arg1=$1
-            shift
-            if [[ $1 =~ ^[0-9]+$ ]]; then
-                local offset=${1} # If we match a number, interpret it as an offset in a list of matching dirs
+    if $use_tox_core; then
+        # New tox_core is written in python, replaces rbuzz_rcd:
+        function tox {
+            local newDir=$( $LmHome/bin/tox_core $* )
+            if [[ ! -z $newDir ]]; then
+                if [[ "${newDir:0:1}" != "!" ]]; then
+                    pushd $newDir >/dev/null
+                else
+                    echo "${newDir:1}"
+                fi
+            fi
+        }
+    else
+        function tox {
+            while [[ ! -z $1 ]]; do
+                local arg1=$1
                 shift
-            fi
-            #echo "stub0: [$arg1] [$offset]" >&2
-            local newDir="$($LmHome/bin/rbuzz_rcd ${arg1} ${offset} )"
-            if [[ "${newDir:0:1}" == "!" ]]; then
-                # rbuzz_rcd returned a command and we should run it:
-                eval "${newDir:1}"
-            elif [[ ! -z "$newDir" ]]; then
-                pushd $newDir >/dev/null
-            fi
-        done
-	}
+                if [[ $1 =~ ^[0-9]+$ ]]; then
+                    local offset=${1} # If we match a number, interpret it as an offset in a list of matching dirs
+                    shift
+                fi
+                #echo "stub0: [$arg1] [$offset]" >&2
+                local newDir="$($LmHome/bin/rbuzz_rcd ${arg1} ${offset} )"
+                if [[ "${newDir:0:1}" == "!" ]]; then
+                    # rbuzz_rcd returned a command and we should run it:
+                    eval "${newDir:1}"
+                elif [[ ! -z "$newDir" ]]; then
+                    pushd $newDir >/dev/null
+                fi
+            done
+        }
+    fi
 else
 	function tox {
 		echo "This function only works if ${LmHome}/bin/rbuzz_rcd is present."

@@ -66,7 +66,8 @@ if [[ -z $sourceMe ]]; then
         esac
         shift
     done
-    newHome=$(mktemp -d /tmp/tstsh_XXXXX)
+    export oldHome=$HOME
+    export newHome=$(mktemp -d /tmp/tstsh_XXXXX)
     echo "=================== TEST SHELL ================="
     echo "Temp HOME is ${newHome}"
     echo "================================================"
@@ -80,6 +81,7 @@ if [[ -z $sourceMe ]]; then
     if [[ ! -z $initScript ]]; then
         if [[ -x $initScript ]]; then
             # The caller supplied an init script to run before the shell starts
+            echo "Running initScript: $initScript"
             $initScript
         else
             errExit "Can't find your initScript or it's not executable [ $initScript ]"

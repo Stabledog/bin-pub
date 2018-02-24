@@ -11,10 +11,10 @@ use_tox_core=true
 if [[ -d ${LmHome}/bin/tox-py ]]; then
     # tox_core is a python script:
     function tox {
-        local newDir=$( $LmHome/bin/tox_core $* )
+        local newDir=$( $LmHome/bin/tox-py/tox_core.py $* )
         if [[ ! -z $newDir ]]; then
             if [[ "${newDir:0:1}" != "!" ]]; then
-                pushd $newDir >/dev/null
+                pushd "$newDir" >/dev/null
             else
                 if [[ "${newDir:0:2}" == "!!" ]]; then
                     # A double !! means "run this"
@@ -39,7 +39,7 @@ _tox()  # Here's our readline completion handler
     #echo "cur=[$cur]" >&2  Stub
     local toxfile=$(tox -q 2>&1 | egrep -m 1 '^Index' | awk '{print $2'})
 
-    local opts="$(cat ${toxfile})"
+    local opts="$(cat ${toxfile} | egrep -v '^#protect' )"
 
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )        
     return 0

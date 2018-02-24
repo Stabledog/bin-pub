@@ -13,6 +13,12 @@ from subprocess import call
 
 indexFileBase=".tox-index"
 
+def pwd():
+    """ Return the $PWD value, which is nicer inside
+    trees of symlinks, but fallback to getcwd if it's not
+    set """
+    return os.environ.get('PWD',os.getcwd())
+
 def prompt(msg,defValue):
     sys.stderr.write("%s" % msg)
     res=getpass("[%s]:" % defValue,sys.stderr)
@@ -25,6 +31,7 @@ class IndexContent(list):
     def __init__(self,path):
         self.path=path
         self.protect=False
+        self.outer=None  # If we are chaining indices
 
         with open(self.path,'r') as f:
             all=f.read().split('\n')
@@ -123,7 +130,7 @@ def getParent(dir):
 def findIndex(xdir=None):
     """ Find the index containing current dir, or None """
     if not xdir:
-        xdir=os.environ.get('PWD',os.getcwd())
+        xdir=pwd()
     global indexFileBase
     if testFile(xdir,indexFileBase):
         return '/'.join([xdir,indexFileBase])
@@ -134,19 +141,29 @@ def findIndex(xdir=None):
     
     
 
-def loadIndex(xdir=None):
-    """ Load the index for current dir """
+def loadIndex(xdir=None,deep=False,inner=None):
+    """ Load the index for current xdir.  If deep is specified,
+    also search up the tree for additional indices """
+    if xdir and not os.path.isdir(xdir):
+        raise RuntimeException("non-dir %s passed to loadIndex()" % xdir)
+
     ix=findIndex(xdir)
     if not ix:
         return None
 
     ic=IndexContent(ix)
-    return ic
+    if not inner is None:
+        inner.outer=ic
+    if deep:
+        ix=findIndex(getParent(xdir))
+        if ix:
+           loadIndex(os.path.dirname(ix),True,ic)
+    return inner if not inner is None else ic
 
 def resolvePatternToDir( pattern, N ):
     """ Match pattern to index, choose Nth result or prompt user, return dirname to caller """
 
-    ix=loadIndex( os.environ.get('PWD',os.getcwd() ))
+    ix=loadIndex( pwd())
     # If the pattern is a literal match for something in the index, then fine:
     if pattern in ix:
         return ix.absPath(pattern)
@@ -188,7 +205,7 @@ def resolvePatternToDir( pattern, N ):
 
 def addCwdToIndex():
     """ Add current dir to active index """
-    cwd=os.environ.get('PWD',os.getcwd())
+    cwd=pwd()
 
     ix=loadIndex()
 
@@ -200,7 +217,7 @@ def addCwdToIndex():
 
 def delCwdFromIndex():
     """ Delete current dir from active index """
-    cwd=os.environ.get('PWD',os.getcwd())
+    cwd=pwd()
 
     ix=loadIndex()
 
@@ -215,16 +232,20 @@ def editIndex():
     print ("!!$EDITOR %s" % ipath)
 
 
-def printIndexInfo():
-    ix=loadIndex()
-    print("!PWD: %s" % os.environ.get('PWD'))
+def printIndexInfo(ixpath):
+    ix=loadIndex(os.path.dirname(ixpath) if ixpath else ixpath,True)
+    print("!PWD: %s" % (pwd() if not ixpath else os.path.dirname(ixpath)))
     print("Index: %s" % ix.path)
     print("# of dirs in index: %d" % len(ix))
     if os.environ['PWD']==ix.indexRoot():
         print("PWD == index root")
 
+    if not ix.outer is None:
+        print("   ===  Outer: === ")
+        printIndexInfo( ix.outer.path )
+
 def createEmptyIndex():
-    sys.stderr.write("First-time initialization: creating ~/.tox-index\n")
+    sys.stderr.write("First-time initialization: creating ~/%s\n" % indexFileBase )
     home=os.environ.get('HOME','/tmp')
     path='/'.join([home,indexFileBase])
     if os.path.isfile(path):
@@ -232,6 +253,13 @@ def createEmptyIndex():
     with open( path,'w') as f:
         f.write('#protect\n')
 
+def createIndexHere():
+    if os.path.isfile('./' + indexFileBase):
+        sys.stderr.write("An index already exists in %s" % os.environ.get('PWD',os.getcwd()))
+        return False
+    with open(indexFileBase,'w') as f:
+        f.write('#protect\n')
+        sys.stderr.write("Index has been created in %s" % pwd())
 
 def cleanIndex():
     ix=loadIndex()
@@ -246,6 +274,7 @@ def cleanIndex():
 if __name__=="__main__":
     p=argparse.ArgumentParser('tox - quick directory-changer.')
 
+    p.add_argument("-x",action='store_true',dest='create_ix_here',help="Create index in current dir")
     p.add_argument("-a",action='store_true',dest='add_to_index',help="Add current dir to index")
     p.add_argument("-d",action='store_true',dest='del_from_index',help="Delete current dir from index")
     p.add_argument("-c",action='store_true',dest='cleanindex',help='Cleanup index')
@@ -267,6 +296,10 @@ if __name__=="__main__":
         createEmptyIndex()
         empty=False
 
+    if args.create_ix_here:
+        createIndexHere()
+        empty=False
+
     if args.add_to_index:
         addCwdToIndex()
         empty=False
@@ -275,7 +308,7 @@ if __name__=="__main__":
         empty=False
 
     if args.indexinfo:
-        printIndexInfo()
+        printIndexInfo(findIndex())
         empty=False
 
     if args.editindex:

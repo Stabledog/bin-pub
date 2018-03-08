@@ -4,11 +4,15 @@
 #   Reminders:
 #
 #     help:   <prefix> ?
+#     logging: Use -vvvv for very very verbose logging.  Logs are written to current dir starting tmux as 
+#               tmux-client[timestamp].log
 #
 source ~/bin/tmux-common
 
 do_force=false
 session_name=A
+
+
 
 while [[ ! -z $1 ]]; do
     case $1 in
@@ -36,7 +40,7 @@ fi
 makeSet_DISPLAY
 
 # Create the session, but don't attach:
-tmux new-session -d -s $session_name -n MAIN
+tmux new-session -vvv -d -s $session_name -n MAIN
 
 # Split the _wolf window:
 tmux split-window -h

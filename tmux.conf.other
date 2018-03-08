@@ -9,6 +9,9 @@
 #       Ctrl-a [ --> Enter copy mode, use [space] to start selection and [enter] to copy to buffer
 #                    (Mouse can also be used to select+copy text)
 #       Ctrl-a ] --> Paste to destination pane
+#       
+#       Shift+mouse-select: If you hold down the shift key while selecting by mouse, text is copied to the X clipboard
+#       Shift+mouse-middle: Paste with mouse into tmux window
 #
 #   Startup with preset window layout:
 #       See ~lmatheson4/bin/tmux-main for an example startup script
@@ -64,6 +67,9 @@ bind C-p run-shell -b "xclip -o -selection primary | tmux load-buffer -; tmux pa
 
 # Ctrl+Y will copy the tmux buffer into the x clipboard
 bind C-y run-shell -b "tmux save-buffer - | xclip -i -selection primary >/dev/null"
+
+# When the mouse selects, copy that to X clipboard:
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -in -selection clipboard"
 
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
 set -g base-index 1

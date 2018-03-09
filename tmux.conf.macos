@@ -10,6 +10,9 @@
 #       Ctrl-a [ --> Enter copy mode, use [space] to start selection and [enter] to copy to buffer
 #                    (Mouse can also be used to select+copy text)
 #       Ctrl-a ] --> Paste to destination pane
+#       
+#       Shift+mouse-select: If you hold down the shift key while selecting by mouse, text is copied to the X clipboard
+#       Shift+mouse-middle: Paste with mouse into tmux window
 #
 #   Startup with preset window layout:
 #       See ~lmatheson4/bin/tmux-main for an example startup script
@@ -32,6 +35,10 @@
 #
 #  Make vertical panes same size:
 #       Ctrl-a Alt-1
+#
+#  Renumbering windows:
+#       :move-window -t 1 -s 9   # Move window 1 to 9th position
+#       :move-window -r  # Renumber all the windows (eliminate gaps)
 #  
 
 # Here's how we rebind the prefix key to Ctrl+a:
@@ -55,6 +62,8 @@ set-option -s set-clipboard on
 
 # The scroll buffer is too handy to make small:
 set-option -g history-limit 50000
+
+set-option -g renumber-windows on
 
 # Ctrl+P will copy the X clipboard into the tmux paste buffer, and then paste it:
 # Doesn't work on Mac: bind C-p run-shell -b "xclip -o -selection primary | tmux load-buffer -; tmux paste-buffer"

@@ -39,7 +39,7 @@ function zapMakefile {
 }
 
 if [[ -z $sourceMe ]]; then
-    if [[ -z $1 ]]; then return usage; fi 
+    if [[ -z $1 ]]; then usage; exit 1; fi 
 
     while [[ ! -z $1 ]]; do
         [[ -f $1 ]] || errExit "Can't find makefile $1"

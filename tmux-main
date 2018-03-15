@@ -40,7 +40,8 @@ fi
 makeSet_DISPLAY
 
 # Create the session, but don't attach:
-tmux new-session -vvv -d -s $session_name -n MAIN
+#tmux -vvv new-session -d -s $session_name -n MAIN  # The very-very-verbose version of this command
+tmux -vvv new-session -d -s $session_name -n MAIN  # The ordinary version of this command
 
 # Split the _wolf window:
 tmux split-window -h

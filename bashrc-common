@@ -231,8 +231,16 @@ if $CYGWIN; then
     cygPathAdd=$LmHome/bin/cyg
 fi
 
+function cdmods {
+    alias .1='cd ../'
+    alias .2='cd ../../'
+    alias .3='cd ../../../'
+    alias .4='cd ../../../../'
+    alias .5='cd ../../../../../'
+    alias .6='cd ../../../../../../'
+}
 
-
+cdmods
 
 # Restart network to fix wifi on Kubuntu roaming:
 function wifi-restart {

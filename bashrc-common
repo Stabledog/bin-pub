@@ -232,12 +232,18 @@ if $CYGWIN; then
 fi
 
 function cdmods {
+    # Quick directory up-changes
     alias .1='cd ../'
     alias .2='cd ../../'
     alias .3='cd ../../../'
     alias .4='cd ../../../../'
     alias .5='cd ../../../../../'
     alias .6='cd ../../../../../../'
+
+    # And also, return-to-prev dir:
+    alias .-='cd -'
+    # Let's not forget popdir:
+    alias .p='popd'
 }
 
 cdmods

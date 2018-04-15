@@ -1,6 +1,9 @@
 # ~/.tmux.conf.macos
 #
-# WARNING: this is Mac-specific flavor of tmux.conf.  There's also tmux.conf.other for linux/cygwin, etc
+# WARNING: this is Mac-specific flavor of tmux.conf.  There's also tmux.conf.other for linux/cygwin, etc.
+#
+# SETUP: You need to brew install reattach-to-user-namespace
+# See https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 
 # General tips:
 # -------------

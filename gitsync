@@ -10,7 +10,7 @@ function gitstatus {
     # Return 0 if nothing dirty
     local quiet=false
     [[ $1 == "-q" ]] && quiet=true
-    local files=$(git status -s 2>/dev/null | cut -c 3-)
+    local files=$($GIT status -s 2>/dev/null | cut -c 3-)
     if [[ -z $files ]]; then
         true  # return true if nothing dirty
         return
@@ -24,27 +24,35 @@ function gitstatus {
 function commitLocals {
     if ! gitstatus ; then
         echo "Dirty in $PWD. Auto-committing..."
-        git add .
-        git commit -m "Commit by gitsync" || errExit "Auto-commit failed in $PWD"
+        $GIT add .
+        $GIT commit -m "Commit by gitsync" || errExit "Auto-commit failed in $PWD"
         
         gitstatus -q || errExit "Still dirty in $PWD after auto- commit!" 
     fi
 }
 
 if [[ -z $sourceMe ]]; then
-    for dir in $dirlist; do
-        if [[ -d ~/$dir ]]; then 
-            cd ~/$dir
-            echo "Sync: ~/$dir"
-            git pull || errExit "Pull failed on $dir"
+    [[ -f ~/.gitsync-config ]] || errExit "Can't find ~/.gitsync-config"
+
+    while read dir options; do
+        eval "dir=$dir"
+        if [[ -d $dir ]]; then 
+            cd $dir
+            if [[ $options == unsafe ]]; then
+                GIT="git -c http.sslVerify=false "
+            else
+                GIT="git"
+            fi
+            echo "Sync: $dir"
+            $GIT pull || errExit "Pull failed on $dir"
             commitLocals 
-            git push || errExit "Push failed on $dir"
+            $GIT push || errExit "Push failed on $dir"
 
         else
-            echo "gitsync: ~/$dir not found, skipping."
+            echo "gitsync: [$dir] not found, skipping."
         fi
         echo "gitsync done"
-    done
+    done < <(source ~/.gitsync-config)
 fi
 
 

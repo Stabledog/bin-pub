@@ -16,5 +16,5 @@ function print_config {
 }
 
 # Remove blanks:
-print_config | sed 's/^ *//' | egrep -v '^$'
+print_config | sed 's/^ *//' | egrep -v '^$' | sort -u
 

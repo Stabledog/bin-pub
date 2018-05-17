@@ -190,12 +190,20 @@ function title {
     printf '\033]2;%s\033\\' "$*"
 }
 
-# See tmux-attach for set_DISPLAY:
 function setDisplay {
-    [[ -f ~/tmp/set_DISPLAY ]] || { echo "ERROR: no ~/tmp/set_DISPLAY script found." ; false; return; }
+    # If the $DISPLAY variable is unset or set wrong, this function attempts
+    # to update it by sourcing ~/tmp/set_DISPLAY.  That script is generated
+    # by makeSet_DISPLAY
+    if xset -q &>/dev/null; then
+        echo "$DISPLAY is already the correct value of DISPLAY"
+        return
+    fi
+    [[ -f ~/tmp/set_DISPLAY ]] || { echo "ERROR: no ~/tmp/set_DISPLAY script found. Run makeSet_DISPLAY in a shell that has a working X11 connection first." ; false; return; }
     source ~/tmp/set_DISPLAY
     echo "DISPLAY=$DISPLAY"
 }
+
+alias setdisp='setDisplay'
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 

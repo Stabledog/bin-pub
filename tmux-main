@@ -37,7 +37,7 @@ if isTmuxRunning; then
     echo "Warning: FORCE-ing a new tmux session as ($session_name)" >&2
 fi
 
-makeSet_DISPLAY
+makeSet_DISPLAY >/dev/null
 
 # Create the session, but don't attach:
 #tmux -vvv new-session -d -s $session_name -n MAIN  # The very-very-verbose version of this command

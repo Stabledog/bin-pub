@@ -194,9 +194,11 @@ function setDisplay {
     # If the $DISPLAY variable is unset or set wrong, this function attempts
     # to update it by sourcing ~/tmp/set_DISPLAY.  That script is generated
     # by makeSet_DISPLAY
-    if xset -q &>/dev/null; then
-        echo "$DISPLAY is already the correct value of DISPLAY"
-        return
+    if [[ $1 != "-f" ]]; then
+        if xset -q &>/dev/null; then
+            echo "$DISPLAY is already the correct value of DISPLAY. Use -f to force."
+            return
+        fi
     fi
     [[ -f ~/tmp/set_DISPLAY ]] || { echo "ERROR: no ~/tmp/set_DISPLAY script found. Run makeSet_DISPLAY in a shell that has a working X11 connection first." ; false; return; }
     source ~/tmp/set_DISPLAY

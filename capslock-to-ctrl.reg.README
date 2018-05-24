@@ -1,0 +1,8 @@
+Instead of using the old registry hack, get 'uncap.exe' from https://github.com/susam/uncap#readme, and use the following:
+
+Start:  c:\Users\{me}\uncap.exe 0x14:0xa2
+Stop:   c:\Users\{me}\uncap.exe -k
+
+- Create a couple of shortcuts to add the arguments
+- Put the startup cmd into HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run to get autostart
+

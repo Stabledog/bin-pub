@@ -1,13 +1,13 @@
-# ~/.gitsync-config-unix
+# ~/.gitsync-config-cygwin
 # vim: filetype=sh :
 # We're sourced by gitsync, and our job is to print
 # a table of [dirname] [options]
 
 function print_config {
     echo "
-    ~/.vim unsafe
-    ~/bin unsafe
-    ~/bin/tox-py unsafe
+    ~/.vim 
+    ~/bin 
+    ~/bin/tox-py 
     ~/journal
     ~/.taskrc
     ~/my-home

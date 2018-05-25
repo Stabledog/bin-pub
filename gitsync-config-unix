@@ -9,7 +9,6 @@ function print_config {
     ~/bin unsafe
     ~/bin/tox-py unsafe
     ~/journal
-    ~/.taskrc
     ~/my-home
     "
 

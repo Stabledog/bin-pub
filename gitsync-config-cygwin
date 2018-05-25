@@ -9,8 +9,9 @@ function print_config {
     ~/bin 
     ~/bin/tox-py 
     ~/journal
-    ~/.taskrc
     ~/my-home
+    ~/riddle-bin
+    ~/riddle
     "
 
     [[ -f ~/.taskrc/gitsync/gitsync-local ]] && source ~/.taskrc/gitsync/gitsync-local

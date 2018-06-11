@@ -10,6 +10,7 @@ function print_config {
     ~/bin/tox-py 
     ~/journal
     ~/my-home
+    ~/trainsane
     ~/riddle-bin
     ~/riddle
     "

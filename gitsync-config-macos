@@ -1,4 +1,4 @@
-# ~/.gitsync-config-cygwin
+# ~/.gitsync-config-macos
 # vim: filetype=sh :
 # We're sourced by gitsync, and our job is to print
 # a table of [dirname] [options]

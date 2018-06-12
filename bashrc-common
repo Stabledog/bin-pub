@@ -4,6 +4,10 @@
 
 alias pathadd=$LmHome/bin/pathadd
 
+#echo "\$0=$0"
+isBash=false
+[[ $0 =~ bash ]] && isBash=true
+
 function isSunos {
     if [[ $(uname) == "SunOS" ]]; then
         true
@@ -48,6 +52,7 @@ function shell_identify {
 		return
 	fi
 }
+
 
 shell_identify
 

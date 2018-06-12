@@ -1,12 +1,19 @@
-#!/bin/bash
+# vim: filetype=sh :
+
+# Outer code can define notBash=true to disable non-posix bashisms:
+if [[ ! -z $notBash ]] && $notBash; then
+    notBash=true; isBash=false
+    xlocal=""  # ksh doesn't allow 'local'
+else
+    notBash=false; isBash=true
+    xlocal=local
+fi
+
 
 [[ -z $LmHome ]] && export LmHome=$HOME
 
 alias pathadd=$LmHome/bin/pathadd
 
-#echo "\$0=$0"
-isBash=false
-[[ $0 =~ bash ]] && isBash=true
 
 function isSunos {
     if [[ $(uname) == "SunOS" ]]; then
@@ -29,14 +36,11 @@ function errExit {
 function shell_identify {
 	export CYGWIN=false
 	export MACOSX=false
-	if [[ -n "$ZSH_VERSION" ]]; then
-		inZsh=true
+	if $notBash; then
 		eval "function shopt {
-			local doNothing
-			# turn shopt into nothingness in zsh
+			 doNothing=true
+			# turn shopt into nothingness if not bash
 		}"
-	else
-		inZsh=false
 	fi
 
 	[[ -f /Cygwin.bat ]] && CYGWIN=true
@@ -89,7 +93,7 @@ function ptop {
     #     $  ptop my_busy_proc
     #
 
-    local cmd=$1
+    eval "$xlocal cmd $1"
     top -p $(pgrep ${cmd} | head -n 19 | tr '\n' ',')0
 }
 
@@ -102,8 +106,10 @@ function histrc {
 
 
 	# append to the history file, don't overwrite it
-	shopt -s histappend
-	shopt -s histverify # Load history events for editing rather than immediate execution
+	if $isBash; then
+        shopt -s histappend
+        shopt -s histverify # Load history events for editing rather than immediate execution
+    fi
 	# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 	HISTSIZE=10000
 	HISTFILESIZE=20000
@@ -155,7 +161,9 @@ initLsStuff
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
-shopt -s checkwinsize
+if $isBash; then
+    shopt -s checkwinsize
+fi
 
 
 
@@ -174,19 +182,14 @@ function initGitStuff {
 	alias gdt='git difftool'
 	alias gitg='git ls-files | grep'
 
-	source ${LmHome}/bin/git-completion.bash
+	if $isBash; then
+        source ${LmHome}/bin/git-completion.bash
+    fi
 
 }
 
 initGitStuff
 
-function rdp_connect {
-	# Base code for connecting to an RDP server with rdesktop
-	local xhost=$1
-	local xuser=$2
-	local xpwd=$3
-	rdesktop -u $xuser -p "$xpwd" -g 1366x768 -K -x lan $xhost &
-}
 
 # Set the terminal title (tmux only)
 function title {
@@ -202,7 +205,7 @@ function setDisplay {
     if [[ $1 != "-f" ]]; then
         local tgt=$(cat ~/tmp/set_DISPLAY | egrep '^DISPLAY=.*$')
         tgt=${tgt##DISPLAY=}  # Trim the prefix to leave the value
-        if xset -q &>/dev/null && [[ $tgt == $DISPLAY ]]; then
+        if xset -q 2>&1 1>/dev/null && [[ $tgt == $DISPLAY ]]; then
             echo "$DISPLAY is already the correct value of DISPLAY. Use -f to force."
             return
         fi
@@ -221,7 +224,7 @@ if $CYGWIN; then
 	alias sudo="$@"
 fi
 
-if ! $inZsh; then
+if $isBash; then
 	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 		. /etc/bash_completion
 	fi
@@ -229,7 +232,7 @@ fi
 
 
 export EDITOR=$(which vim)
-if ! which gvim &>/dev/null; then
+if ! which gvim 2>&1 1>/dev/null; then
     alias gvim=vim
 fi
 export XEDITOR=$EDITOR
@@ -241,7 +244,9 @@ stty -ixon -ixoff
 
 # Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
 # {cmd-frag}!<space> to expand the last command that started with that frag.
-bind Space:magic-space
+if $isBash; then
+    bind Space:magic-space
+fi    
 
 
 if $CYGWIN; then
@@ -266,24 +271,14 @@ function cdmods {
 
 cdmods
 
-# Restart network to fix wifi on Kubuntu roaming:
-function wifi-restart {
-	echo "Restarting wpa_supplicant and network-manager:"
-	sudo killall wpa_supplicant
-	sudo rfkill unblock all
-	sudo service network-manager restart
-	while !  ping 8.8.8.8 -c 1; do
-		sleep 1
-	done
-}
 
 # Show ip address of given NIC
-function ip-show {
+function ip_show {
 	ip addr show dev $1
 }
 
 # If we want a shell to not quit, here's how:
-function no-exit {
+function no_exit {
 	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
 }
 
@@ -317,11 +312,13 @@ setFancyPs1
 
 #setPs1
 
-shopt -s direxpand
+if $isBash; then
+    shopt -s direxpand
+fi
 
 function loadTaskrcs {
 	function load_rcs1 {
-	    local rootDir=$1
+	    eval "$xlocal rootDir=$1"
         /bin/ls -1 ${rootDir}/.taskrc/* 2>/dev/null | egrep -v '\.vim$' | sort
     }
 
@@ -350,7 +347,9 @@ function reset {
 }
 
 # The 'tox' command:
-source ${LmHome}/bin/tox-py/tox-completion.bash
+if $isBash; then
+    source ${LmHome}/bin/tox-py/tox-completion.bash
+fi
 
 # shell-commenter helps when creating typescripts (see "man script")
 alias com='shell-commenter'
@@ -371,7 +370,7 @@ alias tmux-detach='tmux detach'
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.
-if [[ -d $HOME/.taskrc ]]; then
+if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 

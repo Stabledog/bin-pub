@@ -3,19 +3,14 @@
 # We're sourced by gitsync, and our job is to print
 # a table of [dirname] [options]
 
-function print_config {
-    echo "
-    ~/.vim unsafe
-    ~/bin unsafe
-    ~/bin/tox-py unsafe
-    ~/journal
-    ~/my-home
-    "
+source ~/bin/gitsync-config-base
 
-    [[ -f ~/.taskrc/gitsync/gitsync-local ]] && source ~/.taskrc/gitsync/gitsync-local
+echo "
+~/.vim unsafe
+~/bin unsafe
+~/bin/tox-py unsafe
+~/journal
+~/my-home
+" | print_config
 
-}
-
-# Remove blanks:
-print_config | sed 's/^ *//' | egrep -v '^$' | sort -u
 

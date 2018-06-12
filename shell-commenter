@@ -1,9 +1,0 @@
-#!/bin/bash
-# shell-commenter prompts the user for a comment (on stderr) and prints it with a banner to stdout.  Useful when creating typescripts (see man script) to document activity on the shell.
-
-echo "-------->  Comment: ------->" && \
-    \
-cat >/dev/null && \
-\
-echo ":::::::::::<  >:::::::::::::"
-

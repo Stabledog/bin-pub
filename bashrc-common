@@ -200,7 +200,9 @@ function setDisplay {
     # to update it by sourcing ~/tmp/set_DISPLAY.  That script is generated
     # by makeSet_DISPLAY
     if [[ $1 != "-f" ]]; then
-        if xset -q &>/dev/null; then
+        local tgt=$(cat ~/tmp/set_DISPLAY | egrep '^DISPLAY=.*$')
+        tgt=${tgt##DISPLAY=}  # Trim the prefix to leave the value
+        if xset -q &>/dev/null && [[ $tgt == $DISPLAY ]]; then
             echo "$DISPLAY is already the correct value of DISPLAY. Use -f to force."
             return
         fi
@@ -349,6 +351,9 @@ function reset {
 
 # The 'tox' command:
 source ${LmHome}/bin/tox-py/tox-completion.bash
+
+# shell-commenter helps when creating typescripts (see "man script")
+alias com='shell-commenter'
 
 unalias rm 2>/dev/null # If someone aliased my rm, cut it out.
 

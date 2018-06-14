@@ -1,0 +1,3 @@
+#!/bin/ksh
+
+/bin/ls $@ | /bin/cat -n | /usr/bin/less

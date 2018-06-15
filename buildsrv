@@ -32,6 +32,7 @@ fi
 
 if [[ -z $sourceMe ]]; then
 
+    set -ue
     export inpipe=~/tmp/buildsrv-in
     export outpipe=~/tmp/buildsrv-out
 

@@ -36,6 +36,7 @@ function main {
 }
 
 if [[ -z $sourceMe ]]; then
+	set -ue
 	main "$@"
 fi
 

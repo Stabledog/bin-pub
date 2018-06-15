@@ -4,6 +4,8 @@
 #
 #  Using the same logic as vimgit, but the output gets merged into to ./.filelist
 #
+set -ue
+
 EDITOR=echo
 sourceMe=1 source ~/bin/vimgit 
 do_vimgit $* | tr ' ' '\n' > ./.filelist-cur

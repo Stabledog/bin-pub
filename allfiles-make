@@ -16,6 +16,7 @@ function getRoot {
 }
 
 if [[ -z $sourceMe ]]; then
+    set -ue
     origDir=$PWD
 
     xroot=$(getRoot)

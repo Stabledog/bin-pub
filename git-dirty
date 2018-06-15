@@ -27,6 +27,7 @@ function errExit {
 }
 
 if [[ -z $sourceMe ]]; then
+    set -ue
     xdir=$1
     if [[ ! -z $xdir ]]; then
         cd $xdir || errExit "Can't cd to $xdir"

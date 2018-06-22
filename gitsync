@@ -32,7 +32,8 @@ function commitLocals {
 }
 
 if [[ -z $sourceMe ]]; then
-    set -ue
+    set +u
+    set -e
     [[ -f ~/.gitsync-config ]] || errExit "Can't find ~/.gitsync-config"
 
     while read dir options; do

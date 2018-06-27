@@ -1,8 +1,0 @@
-"%%Trailer\n"
-"\n"
-"% $Id$\n"
-"% Trailer for DDD PostScript Box output\n"
-"\n"
-"grestore\n"
-"showpage\n"
-"end		% of ddddict \n"

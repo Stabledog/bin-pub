@@ -1,0 +1,30 @@
+#!/bin/bash
+# find-recent-files
+#
+#   Scan files by modified time, e.g.:
+#
+#     $ find-recent-files -t 3 dir{1,2}   
+#         # Scan dir1, dir2 for files modified <= 3 days ago (default is 1 day)
+#
+#   Automatically suppresses files in dirs named '.git'
+
+
+xnames=""
+while [[ ! -z $1 ]]; do
+    case $1 in
+        -t)
+            days_back=$2
+            shift
+            ;;
+        *)
+            xnames="${xnames} $1"
+            ;;
+
+    esac
+    shift
+done
+
+xnames=${xnames:-'*'}
+
+find ${xnames}  -type f -newermt "${days_back:-1} day ago" -not -iwholename '*.git*'
+

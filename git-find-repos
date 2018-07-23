@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# git-find-repos
+
+#  Print all dirs containing ".git" dir as immediate child.  Does not recurse into such dirs.
+
+
+function findRepos {
+    find . -maxdepth 1 -type d ! -name .git | \ 
+        while read ; do
+        done
+    
+}
+
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# pysh: run an interactive python session with some handy built-ins
+
+PYVER=${PYVER:-2}
+
+python${PYVER} -i ~/bin/pysh_core.py 
+

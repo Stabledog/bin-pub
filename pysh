@@ -4,5 +4,5 @@
 
 PYVER=${PYVER:-2}
 
-python${PYVER} -i ~/bin/pysh_core.py 
+rlwrap python${PYVER} -i ~/bin/pysh_core.py 
 

@@ -177,6 +177,13 @@ function initGitStuff {
         fi
      }
 
+    function git_remote_show {
+        local allremotes="$(git remote show)"
+        local remotes="$@"
+        remotes=${remotes:-${allremotes}}  # Get all remotes if caller doesn't specify
+        git remote show ${remotes}
+    }
+
 
 	alias gs='git status '
 	# Script-worthy git-status: check the branch, parseable output, etc.
@@ -186,6 +193,7 @@ function initGitStuff {
 	alias gp='git push'
 	alias gl='git log'
 	alias gpull='git pull'
+	alias grs=git_remote_show
 	alias gd='git diff'
 	alias gdt='git difftool'
 	alias gitg='git ls-files | grep'

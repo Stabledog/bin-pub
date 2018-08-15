@@ -32,11 +32,11 @@ def phelp():
     v='\n'.join(['pysh Help -'] + [ ':'.join( [d.__name__,d.__doc__ ]) for d in [cat,ls,cd] ])
     print(v)
 
+if __name__ == "__main__":
 
-
-
-print('''You're in pysh (~/bin/pysh_core.py)
-phelp() can help.''')
+    
+    print('''You're in pysh (~/bin/pysh_core.py)
+    phelp() can help.''')
 
 
 

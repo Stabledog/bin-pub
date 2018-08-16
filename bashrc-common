@@ -182,6 +182,8 @@ function initGitStuff {
         local remotes="$@"
         remotes=${remotes:-${allremotes}}  # Get all remotes if caller doesn't specify
         git remote show ${remotes}
+        printf " ------------\nRepo root is:\n$(git-find-root)"
+
     }
 
 

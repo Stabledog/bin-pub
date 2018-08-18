@@ -139,11 +139,11 @@ function initLsStuff {
 	# some more ls aliases
 	alias ll='ls -alF'
 	alias la='ls -A'
-	alias lra='ls -lirta'
+	alias lra='ls -lrta'
 	alias l='ls -CF'
 	alias l1='ls -1'
-	alias lr='ls -lirt'
-	alias lg='ls -lirta | egrep '
+	alias lr='ls -lrt'
+	alias lg='ls -lrta | egrep '
 	if $MACOSX; then   # Mac doesn't have dircolors
 		CLICOLOR=YES
 		alias ls='ls -G'

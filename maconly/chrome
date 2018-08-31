@@ -1,1 +1,4 @@
-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+#!/bin/bash
+cd "/Applications/Google Chrome.app/Contents/MacOS"
+./Google\ Chrome "$@" &>/dev/null &
+

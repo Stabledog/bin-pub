@@ -1,6 +1,10 @@
 # My inputrc.  Symlink to ~/.inputrc enables this.
 #
 set editing-mode vi
+set bell-style none
+set expand-tilde on
+Space: magic-space
+
 # Remap ESC to use my 'jk' keypress to toggle insert or command mode
 $if mode=vi
     set keymap vi-command

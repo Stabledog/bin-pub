@@ -87,7 +87,7 @@ if [[ -z $sourceMe ]]; then
             errExit "Can't find your initScript or it's not executable [ $initScript ]"
         fi
     fi
-    env -i PATH=/usr/bin:/bin HOME=${newHome} $SHELL -l 
+    env -i PATH=/usr/bin:/bin oldHome=${HOME} HOME=${newHome} $SHELL -l 
     read -p "Test shell exited.  Delete ${newHome}? (y/N)"
     if [[ $REPLY =~ [yY] ]] ; then
         if [[ ! -z ${newHome} ]]; then

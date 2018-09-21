@@ -139,18 +139,11 @@ function initLsStuff {
 	# some more ls aliases
 	alias ll='ls -alF'
 	alias la='ls -A'
+	alias lra='ls -lrta'
 	alias l='ls -CF'
 	alias l1='ls -1'
-	if !  $CYGWIN; then
-        alias lra='ls -lirta'
-        alias lr='ls -lirt'
-        alias lg='ls -lirta | egrep '
-    else
-        # The inodes on cygwin are too long:
-        alias lra='ls -lrta'
-        alias lr='ls -lrt'
-        alias lg='ls -lrta | egrep '
-    fi
+	alias lr='ls -lrt'
+	alias lg='ls -lrta | egrep '
 	if $MACOSX; then   # Mac doesn't have dircolors
 		CLICOLOR=YES
 		alias ls='ls -G'

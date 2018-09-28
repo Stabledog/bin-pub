@@ -1,0 +1,2 @@
+
+PATH=$PATH:$HOME/program-files/nodejs:$HOME/appdata/Local/Microsoft/WindowsApps:$HOME/appdata/Roaming/npm

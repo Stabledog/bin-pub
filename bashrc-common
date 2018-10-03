@@ -183,6 +183,7 @@ function initGitStuff {
         remotes=${remotes:-${allremotes}}  # Get all remotes if caller doesn't specify
         git remote show ${remotes}
         printf " ------------\nRepo root is:\n$(git-find-root)"
+        git branch -vv
 
     }
 
@@ -192,6 +193,7 @@ function initGitStuff {
     # See-also: git-dirty
 	alias gc='git commit'
 	alias ga='git add'
+	alias gb='git branch -vv'
 	alias gp='git push'
 	alias gl='git log'
 	alias gpull='git pull'

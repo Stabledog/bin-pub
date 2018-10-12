@@ -2,6 +2,7 @@
 #	default = simple
 [user]
 	email = les.matheson@gmail.com
+    name = Les Matheson
 
 [diff]
     tool = vimdiff

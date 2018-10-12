@@ -195,6 +195,7 @@ function initGitStuff {
 	alias ga='git add'
 	alias gb='git branch -vv'
 	alias gp='git push'
+	alias gpa='git commit -am sync; git push'
 	alias gl='git log'
 	alias gpull='git pull'
 	alias grs=git_remote_show

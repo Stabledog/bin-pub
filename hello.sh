@@ -5,4 +5,4 @@
 
 # Hello again
 
-This is the real file don't be fooled!!
+echo "This is the real file don't be fooled!!"

@@ -10,10 +10,12 @@ cmd="Usage: loop_cmd [command] {arg1 arg2 ...}"
 cmd=$1
 shift
 [[ -z $cmd ]] && { echo "$usage"; echo "Error: no command specified." >&2; exit 1; }
+nloop=1
 while true; do
    $cmd $*
    res=$?
-   read -p "$cmd returned $res.  Press any key to loop again, Ctrl+C to quit."
+   read -p "[${nloop}] $cmd returned $res.  Press any key to loop again, Ctrl+C to quit."
+   (( nloop = $nloop + 1 ))
 done
 
 exit $res

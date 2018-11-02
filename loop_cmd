@@ -5,16 +5,50 @@
 #   e.g.:
 #
 #   $  loop_cmd cmd arg1 arg2 arg3   # Run cmd with its args over and over, prompting for restart each time.
+#
+#  or...
+#
+#  $ loop_cmd <<< "echo \$(date)"
 
-cmd="Usage: loop_cmd [command] {arg1 arg2 ...}"
-cmd=$1
-shift
-[[ -z $cmd ]] && { echo "$usage"; echo "Error: no command specified." >&2; exit 1; }
-while true; do
-   $cmd $*
-   res=$?
-   read -p "$cmd returned $res.  Press any key to loop again, Ctrl+C to quit."
-done
 
-exit $res
+function loop_cmd {
+    cmd=$1
+    shift
+    if [[ -z $cmd ]]; then
+        cmd=$(cat) 
+        echo "cmd is $cmd" >&2
+    fi
+    nloop=1
+    while true; do
+        $cmd $*
+        res=$?
+        echo -e "<<-- loop_cmd[${nloop}], program returned $res.  Command was: "  
+        echo -e " -->> $cmd $*"  
+
+        while true; do
+            read -n 1 -p "Hit 'c' to loop again, 'q' to quit: " </dev/tty
+            case $REPLY in
+                q|Q) 
+                    return $?;
+                    ;;
+                c|C)
+                    unset REPLY
+                    break;
+                    ;;
+                *)
+                    echo "loop_cmd doesn't understand: $REPLY"
+                    unset REPLY
+                    sleep 1
+                    break
+                    ;;
+            esac
+        done
+
+    (( nloop = $nloop + 1 ))
+    done
+}
+
+if [[ -z $sourceMe ]]; then
+    loop_cmd "$@"
+fi
 

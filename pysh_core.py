@@ -7,30 +7,44 @@ from glob import glob
 from sys import argv
 from subprocess import check_output
 
-cin = sys.stdin
-cout = sys.stdout.write
 
-def xpudb(xtty):
-    '''Launch pudb.remote on given tty'''
-    from pudb.remote import set_trace
-    set_trace()
+class PyshCommands(object):
+    '''Pysh provides unix-like shell helpers for the python interpreter, to be used in interactive mode.'''
 
-def cat(args):
-    """ Print file(s) to screen """
+    cin = sys.stdin
+    cout = sys.stdout.write
 
-def ls(args="."):
-    """ List files in dir """
-    res=check_output(["ls"]+args.split())
-    print res
+    @property
+    def xpudb(self, xtty=None):
+        '''Launch pudb.remote on given tty'''
+        from pudb.remote import set_trace
+        set_trace()
 
-def cd(args=env['HOME']):
-    """ Change current dir """
-    os.chdir(args)
-    print(getcwd())
+    @property
+    def cat(self,args):
+        ''' Print file(s) to screen '''
 
-def phelp():
-    v='\n'.join(['pysh Help -'] + [ ':'.join( [d.__name__,d.__doc__ ]) for d in [cat,ls,cd] ])
-    print(v)
+    @property
+    def ls(self, args="."):
+        ''' List files in dir '''
+        res=check_output(["ls"]+args.split())
+        print( res)
+
+    @property
+    def cd(aprgs=env['HOME']):
+        ''' Change current dir '''
+        os.chdir(args)
+        print(getcwd())
+
+    @property
+    def help(self):
+        '''Print pysh help.'''
+        eval('help(pysh)')
+        # v='\n'.join(['pysh Help -'] + [ ':'.join( [d.__name__,d.__doc__ ]) for d in [cat,ls,cd] ])
+        print(v)
+
+pysh = PyshCommands()
+
 
 if __name__ == "__main__":
 

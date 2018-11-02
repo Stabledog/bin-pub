@@ -1,5 +1,6 @@
 #!/bin/bash
 # loop_cmd
+#
 #    Given a shell command, put it in a loop with a prompt at the end.
 #
 #   e.g.:
@@ -9,6 +10,11 @@
 #  or...
 #
 #  $ loop_cmd <<< "echo \$(date)"
+# 
+# If you'd like to have this as a function in your login shell (so you can use it with internal
+# shell commands too), add this to ~/.bashrc:
+# sourceMe=1 source /path/to/loop_cmd/script
+#
 
 
 function loop_cmd {
@@ -16,7 +22,6 @@ function loop_cmd {
     shift
     if [[ -z $cmd ]]; then
         cmd=$(cat) 
-        echo "cmd is $cmd" >&2
     fi
     nloop=1
     while true; do
@@ -26,17 +31,18 @@ function loop_cmd {
         echo -e " -->> $cmd $*"  
 
         while true; do
-            read -n 1 -p "Hit 'c' to loop again, 'q' to quit: " </dev/tty
+            read -n 1 -p " -->> Hit 'c' to loop again, 'q' to quit: " </dev/tty
             case $REPLY in
                 q|Q) 
                     return $?;
                     ;;
                 c|C)
                     unset REPLY
+                    echo ""
                     break;
                     ;;
                 *)
-                    echo "loop_cmd doesn't understand: $REPLY"
+                    echo " -->> loop_cmd doesn't understand: $REPLY"
                     unset REPLY
                     sleep 1
                     break

@@ -10,7 +10,7 @@
 source ~/bin/tmux-common
 
 do_force=false
-session_name=A
+session_name=Main
 
 
 
@@ -33,7 +33,7 @@ if isTmuxRunning; then
         read -n1 -p "Hit ENTER to exit."
         exit 1
     fi
-    session_name=B
+    session_name=Podium
     echo "Warning: FORCE-ing a new tmux session as ($session_name)" >&2
 fi
 

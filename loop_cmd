@@ -31,9 +31,9 @@ function loop_cmd {
         echo -e " -->> $cmd $*"  
 
         while true; do
-            read -n 1 -p " -->> Hit 'c' to loop again, 'q' to quit: " </dev/tty
+            read -n 1 -p " -->> Hit 'c' to continue (loop again), 'x' to quit: " </dev/tty
             case $REPLY in
-                q|Q) 
+                x|X) 
                     return $?;
                     ;;
                 c|C)

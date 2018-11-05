@@ -44,7 +44,6 @@ function loop_cmd {
                 *)
                     echo " -->> loop_cmd doesn't understand: $REPLY"
                     unset REPLY
-                    sleep 1
                     ;;
             esac
         done

@@ -11,6 +11,7 @@ source ~/bin/tmux-common
 
 do_force=false
 session_name=Main
+window_name=M1
 
 
 
@@ -34,20 +35,21 @@ if isTmuxRunning; then
         exit 1
     fi
     session_name=Podium
+    window_name=P1
     echo "Warning: FORCE-ing a new tmux session as ($session_name)" >&2
 fi
 
 makeSet_DISPLAY >/dev/null
 
 # Create the session, but don't attach:
-#tmux -vvv new-session -d -s $session_name -n MAIN  # The very-very-verbose version of this command.  Warning: logs get big!
-tmux  new-session -d -s $session_name -n MAIN  # The ordinary version of this command
+echo "tmux  new-session -d -s $session_name -n $window_name"  # The ordinary version of this command
+tmux  new-session -d -s $session_name -n $window_name  # The ordinary version of this command
 
-# Split the _wolf window:
+# Split the window:
 tmux split-window -h
 
 # Create a 2nd _scratch window:
-tmux new-window -n _scratch_  
+tmux new-window 
 
 # Switch to the _wolf window:
 tmux last-window

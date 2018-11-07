@@ -9,51 +9,36 @@
 #
 source ~/bin/tmux-common
 
-do_force=false
-session_name=Main
-window_name=M1
-
-
-
-while [[ ! -z $1 ]]; do
-    case $1 in
-        --force|-f)
-            do_force=true
-            ;;
-        *)
-            echo "ERROR: unknown arg $1" >&2 ; 
-            exit 1; 
-            ;;
-    esac
-    shift
-done
+session_name=${session_name:-Main}
+window_name=${window_name:-M1}
 
 if isTmuxRunning; then
-    if ! $do_force; then
-        echo "There's already a tmux session running, use 'tmux attach' or 'tmux-main --force|-f'"
-        read -n1 -p "Hit ENTER to exit."
+    if  [[ ${session_name} == Main ]] ; then
+        echo "ERROR: There's already a tmux session running" >&2
         exit 1
     fi
-    session_name=Podium
-    window_name=P1
-    echo "Warning: FORCE-ing a new tmux session as ($session_name)" >&2
+    echo "Starting secondary session $session:$window_name:"
 fi
 
 makeSet_DISPLAY >/dev/null
 
 # Create the session, but don't attach:
-echo "tmux  new-session -d -s $session_name -n $window_name"  # The ordinary version of this command
+echo "tmux  new-session -d -s $session_name -n $window_name" 
 tmux  new-session -d -s $session_name -n $window_name  # The ordinary version of this command
+
+if [[ ${session_name} != Main ]]; then
+    tmux -2 attach-session -t $session_name 
+    exit 0
+fi
 
 # Split the window:
 tmux split-window -h
 
-# Create a 2nd _scratch window:
-tmux new-window 
+# Create a 2nd window:
+tmux new-window  -n M3
 
-# Switch to the _wolf window:
+# Switch to the first window:
 tmux last-window
-
 
 
 # Now attach the current terminal to the session.
@@ -61,3 +46,4 @@ tmux last-window
 #    -d dumps any other terminals on that session.
 #    -2 means "assume 256 colors"
 tmux -2 attach-session -t $session_name -d 
+

@@ -3,7 +3,7 @@
 # :vim set filetype=sh:
 
 function isTmuxRunning {
-    /opt/bb/bin/tmux ls &>/dev/null
+    tmux ls &>/dev/null
 }
 
 

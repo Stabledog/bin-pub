@@ -35,7 +35,7 @@ fi
 tmux split-window -h
 
 # Create a 2nd window:
-tmux new-window  -n M3
+tmux new-window  -n M2
 
 # Switch to the first window:
 tmux last-window

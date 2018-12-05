@@ -1,1 +1,3 @@
 HTTPS_PROXY=proxy.bloomberg.com:81
+ export http_proxy="http://lmatheson4@proxy.bloomberg.com:81"
+ export https_proxy="https://lmatheson4@proxy.bloomberg.com:81"

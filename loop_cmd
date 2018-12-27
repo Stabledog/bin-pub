@@ -21,6 +21,7 @@ function loop_cmd {
     cmd=$1
     shift
     if [[ -z $cmd ]]; then
+        echo -n "Enter command to loop, then Ctrl+D: "
         cmd=$(cat) 
     fi
     nloop=1

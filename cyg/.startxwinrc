@@ -1,0 +1,5 @@
+# In cygwin/X, you have to have a full-time client running or the server
+# just shuts down after launch:
+# (# In cygwin/X, you have to have a full-time client running or the server
+# just shuts down after launch: https://x.cygwin.com/docs/faq/cygwin-x-faq.html#q-startxwinrc-exit)
+exec sleep infinity

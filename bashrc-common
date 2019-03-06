@@ -26,6 +26,7 @@ function errExit {
 }
 
 
+
 #----------------------------------------------------------------
 #  Shell identification
 #
@@ -333,6 +334,25 @@ t_setFancyPs1
 if $isBash; then
     shopt -s direxpand
 fi
+
+function taskrc {
+    local rcdir=${1:-$PWD}  # Optional: pass in the dir containing the taskrc.  We will wrap it in a cd command to preserve paths.
+    local helponly=false
+    if [[ "$2" == "-h" ]]; then
+        helponly=true
+    fi
+    [[ -r ${rcdir}/taskrc ]] || return $(errExit "ERROR: no taskrc file in ${rcdir}")
+    pushd ${rcdir} &>/dev/null || return $(errExit "Can't cd to ${rcdir}")
+    if $helponly; then
+        egrep -v '^$' ./taskrc
+        echo " >> done help: [${rcdir}/taskrc]"
+    else
+        echo "In [$PWD], loading taskrc into current shell:" 
+        source ./taskrc
+        echo " >> done, $(cat taskrc | wc -l ) lines sourced."
+    fi
+    popd >/dev/null
+}
 
 function loadTaskrcs {
 	function load_rcs1 {

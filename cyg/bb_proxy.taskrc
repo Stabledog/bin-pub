@@ -1,3 +1,26 @@
-HTTPS_PROXY=proxy.bloomberg.com:81
- export http_proxy="http://lmatheson4@proxy.bloomberg.com:81"
- export https_proxy="https://lmatheson4@proxy.bloomberg.com:81"
+# For the public github:
+export http_proxy_gh="http://lmatheson4@proxy.bloomberg.com:81"
+
+# For the bloomberg bbgithub:
+export http_proxy_bbgh="http://bproxy.tdmz1.bloomberg.com:80"
+
+# To get diagnostics from git for proxies, enable this:
+function enable_git_verbose_net {
+    export GIT_CURL_VERBOSE=1
+    echo "Done. GIT_CURL_VERBOSE=1"
+}
+
+
+GIT=$(which git)
+
+function git {
+    http_proxy="$http_proxy_bbgh" $GIT "$@"
+}
+
+alias gitb=git
+
+function gitp {
+    http_proxy="$http_proxy_gh" $GIT "$@"
+}
+
+

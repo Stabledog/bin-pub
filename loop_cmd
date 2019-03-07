@@ -1,7 +1,7 @@
 #!/bin/bash
 # loop_cmd
 #
-#    Given a shell command, put it in a loop with a prompt at the end.
+#    Given a shell command, this puts it into an endless loop with a continuation prompt at the end of each iteration.
 #
 #   e.g.:
 #
@@ -11,9 +11,10 @@
 #
 #  $ loop_cmd <<< "echo \$(date)"
 # 
-# If you'd like to have this as a function in your login shell (so you can use it with internal
+# Advanced:  If you'd like to have this as a function in your login shell (so you can use it with internal
 # shell commands too), add this to ~/.bashrc:
-# sourceMe=1 source /path/to/loop_cmd/script
+# 
+#     sourceMe=1 source /path/to/loop_cmd/script
 #
 
 

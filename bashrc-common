@@ -201,6 +201,7 @@ function initGitStuff {
 	alias gl='git log'
 	alias gpull='git pull'
 	alias grs=git_remote_show
+	alias grv='git remote -v'
 	alias gd='git diff'
 	alias gdt='git difftool'
 	alias gitg='git ls-files | grep'

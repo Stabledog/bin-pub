@@ -13,6 +13,7 @@ echo "
 ~/my-home
 ~/riddle-bin
 ~/riddle
+~/journal.personal
 " | print_config
 
 

@@ -13,6 +13,7 @@ echo "
 ~/my-home
 ~/riddle-bin
 ~/riddle
+~/proto-media/camera_raw
 " | print_config
 
 

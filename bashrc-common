@@ -347,11 +347,12 @@ fi
 function taskrc {
     # Loader for directory-specific taskrc files.  A taskrc is "shell definitions that are focused on 
     # a particular project or task".  Often the taskrc file is saved with a project source code base.
-    local rcdir=${1:-$PWD}  # Optional: pass in the dir containing the taskrc.  We will wrap it in a cd command to preserve paths.
     local helponly=false
-    if [[ "$2" == "-h" ]]; then
+    if [[ "$1" == "-h" ]]; then
         helponly=true
+        shift
     fi
+    local rcdir=${1:-$PWD}  # Optional: pass in the dir containing the taskrc.  We will wrap it in a cd command to preserve paths.
     [[ -r ${rcdir}/taskrc ]] || return $(errExit "no taskrc file in ${rcdir}")
     pushd ${rcdir} &>/dev/null || return $(errExit "Can't cd to ${rcdir}")
     if $helponly; then

@@ -204,6 +204,7 @@ function initGitStuff {
 	alias gd='git diff'
 	alias gdt='git difftool'
 	alias gitg='git ls-files | grep'
+	alias grv='git remote -v'
 
 	if $isBash; then
         source ${LmHome}/bin/git-completion.bash

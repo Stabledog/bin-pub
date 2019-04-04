@@ -1,0 +1,22 @@
+#!/bin/bash
+
+PandocPath=${PandocPath:-${HOME}/program-files/Pandoc/pandoc.exe}
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+function st_md2docx 
+{ 
+    local infile=$1;
+    [[ -f $infile ]] || return $(errExit "Can't find $infile");
+    local base=${infile//.md};
+    $PandocPath -s -o ${base}.docx ${infile} && echo "Done: ${infile} -> ${base}.docx"
+}
+
+
+if [[ -z $sourceMe ]]; then
+    st_md2docx "$@"    
+fi
+

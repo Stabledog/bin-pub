@@ -1,0 +1,98 @@
+# taskrc_loader
+#
+#  This should be sourced in the shell, it has no value as an external command.
+#
+# vim: filetype=sh :
+#
+#   taskrc is a shell helper for directory-specific 'taskrc' files.  A taskrc file is "your favoritee shell definitions 
+# that are focused on a particular project or task".  
+#
+# Often the taskrc file is saved with a project source code base.
+#
+# TODO:
+#    * smarter help: exploit #Help markup in files
+#    * built-in refresh (-r)
+#    * --info (-i) to print path of most-recent taskrc
+#    * cd_t{askrc} to cd to most-recent
+#    * --dump (-d) to dump contents of most-recent
+#    * --search-up (-s) to find/load nearest taskrc ../../ etc
+
+#set -x
+
+declare taskrc_dir  # Directory of the most-recently-loaded taskrc file
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+function taskrc_v2 {
+    echo taskrc_v2 > /dev/null  # TODO Remove after migration
+    local help=false       # -h, --help : print help for this function, then help for most recent taskrc
+    local search_up=false  # -s, --search-up : find taskrc by searching parent dirs of .
+    local refresh=false    # -r, --refresh : reload most recent taskrc (i.e. to pick up changes)
+    local dump=false       # -d, --dump: print contents of most recent taskrc to stdout
+    local info=false       # -i, --info: print information about most recent taskrc (path)
+    while [[ ! -z $1 ]]; do
+        case $1 in 
+            -h|--help)
+                help=true
+                ;;
+            -s|--search-up)
+                search_up=true
+                ;;
+            -i|--info)
+                info=true
+                ;;
+            -r|--refresh)
+                refresh=true
+                ;;
+            -d|--dump)
+                dump=true
+                ;;
+            -i|--info)
+                info=true
+                ;;
+            *)
+                return $(errExit "Unknown argument to taskrc: [$1]")
+                ;;
+        esac
+        shift
+    done
+    if $help; then
+        taskrc_dir=$taskrc_dir taskrc_help
+        return
+    elif $dump; then
+        [[ -r $taskrc_dir/taskrc ]] || return $(errExit "No current taskrc to dump")
+        cat $taskrc_dir/taskrc
+        echo "[dump OK for $taskrc_dir/taskrc]"  >&2
+        return
+    elif $info; then
+        echo "$taskrc_dir/taskrc"
+        return
+    elif $refresh; then
+        [[ -r $taskrc_dir/taskrc ]] || return $(errExit "No current taskrc to refresh")
+        pushd $taskrc_dir >/dev/null
+        echo -n "Refreshing $PWD/taskrc:"
+        source taskrc
+        echo "  OK  @$(date)"
+        popd >/dev/null
+        return
+    fi
+    
+
+    [[ -r ${rcdir}/taskrc ]] || return $(errExit "no taskrc file in ${rcdir}")
+    pushd ${rcdir} &>/dev/null || return $(errExit "Can't cd to ${rcdir}")
+    if $helponly; then
+        egrep -v '^$' ./taskrc
+        echo " >> done help: [${rcdir}/taskrc]"
+    else
+        echo "In [$PWD], loading taskrc into current shell:" 
+        source ./taskrc
+        echo " >> done, $(cat taskrc | wc -l ) lines sourced."
+    fi
+    popd >/dev/null
+}
+
+alias taskrc2='taskrc_v2'  # Todo: replace the old taskrc with this sort of alias
+

@@ -366,7 +366,9 @@ function taskrc_v1 {
     fi
     popd >/dev/null
 }
-alias taskrc='~/bin/taskrc_loader'
+
+source ${LmHome}/bin/taskrc_loader
+alias taskrc=taskrc_v2
 
 function loadTaskrcs {
 	function load_rcs1 {

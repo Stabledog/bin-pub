@@ -344,7 +344,8 @@ if $isBash; then
     shopt -s direxpand
 fi
 
-function taskrc {
+function taskrc_v1 {
+    # DEPRECATED for bin/taskrc_loader
     # Loader for directory-specific taskrc files.  A taskrc is "shell definitions that are focused on 
     # a particular project or task".  Often the taskrc file is saved with a project source code base.
     local helponly=false
@@ -365,6 +366,7 @@ function taskrc {
     fi
     popd >/dev/null
 }
+alias taskrc='~/bin/taskrc_loader'
 
 function loadTaskrcs {
 	function load_rcs1 {

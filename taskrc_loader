@@ -10,29 +10,74 @@
 # Often the taskrc file is saved with a project source code base.
 #
 # TODO:
-#    * smarter help: exploit #Help markup in files
-#    * built-in refresh (-r)
-#    * --info (-i) to print path of most-recent taskrc
-#    * cd_t{askrc} to cd to most-recent
-#    * --dump (-d) to dump contents of most-recent
-#    * --search-up (-s) to find/load nearest taskrc ../../ etc
+#     Add -x options to maintain index of all taskrc's
+#
 
 #set -x
 
 declare taskrc_dir  # Directory of the most-recently-loaded taskrc file
+declare taskrc_load_time=0 # epoch timestamp (from ctime) for MRL taskrc, used for dirty detection
 
 function errExit {
     echo "ERROR: $*" >&2
     exit 1
 }
 
+function taskrc_is_dirty {
+    local print=false
+    local detail=false
+    [[ $1 == "-pd" ]] && { print=true; detail=true; }
+    [[ $1 == "-p" ]] && print=true
+    local cur=$(ctime ${taskrc_dir}/taskrc)
+    if (( $cur > $taskrc_load_time )); then
+        if $print; then
+            echo -n "dirty"
+            if $detail; then
+                echo -n ": $cur > $taskrc_load_time"
+            fi
+        fi
+        echo ""
+        true
+        return
+    fi
+    if $print; then
+        echo -n "unchanged"
+        if $detail; then
+            echo -n ": $taskrc_load_time"
+        fi
+        echo ""
+    fi
+    false
+}
+
+function taskrc_dir_find {
+    local xd="$1"  # start search here
+    local search_up=$2 # search parent?
+    
+    if [[ -r ${xd}/taskrc ]]; then
+        echo ${xd}
+        true
+        return
+    fi
+    if $search_up; then
+        if [[ $(dirname $xd) != '/' ]]; then
+            taskrc_dir_find $(dirname $xd) $search_up  # Recurse
+            return
+        fi
+    fi
+    false
+}
+
 function taskrc_v2 {
-    echo taskrc_v2 > /dev/null  # TODO Remove after migration
     local help=false       # -h, --help : print help for this function, then help for most recent taskrc
     local search_up=false  # -s, --search-up : find taskrc by searching parent dirs of .
     local refresh=false    # -r, --refresh : reload most recent taskrc (i.e. to pick up changes)
     local dump=false       # -d, --dump: print contents of most recent taskrc to stdout
     local info=false       # -i, --info: print information about most recent taskrc (path)
+    local load=true        # Our default behavior is to find/load the taskrc
+    local force=false       # -f, --force: do the thing anyway
+    local new=false        # -n, --new: create a new taskrc here .
+    local edit=false       # -e, --edit: edit current taskrc, then reload
     while [[ ! -z $1 ]]; do
         case $1 in 
             -h|--help)
@@ -47,11 +92,20 @@ function taskrc_v2 {
             -r|--refresh)
                 refresh=true
                 ;;
+            -f|--force)
+                force=true
+                ;;
             -d|--dump)
                 dump=true
                 ;;
             -i|--info)
                 info=true
+                ;;
+            -e|--edit)
+                edit=true
+                ;;
+            -n|--new)
+                new=true
                 ;;
             *)
                 return $(errExit "Unknown argument to taskrc: [$1]")
@@ -61,38 +115,84 @@ function taskrc_v2 {
     done
     if $help; then
         taskrc_dir=$taskrc_dir taskrc_help
-        return
-    elif $dump; then
+        load=false
+    fi
+    if $dump; then
         [[ -r $taskrc_dir/taskrc ]] || return $(errExit "No current taskrc to dump")
         cat $taskrc_dir/taskrc
-        echo "[dump OK for $taskrc_dir/taskrc]"  >&2
-        return
-    elif $info; then
+        echo "[dump OK for $taskrc_dir/taskrc (file is $(taskrc_is_dirty -p) ) ]"  >&2
+        load=false
+    fi
+    if $info; then
         echo "$taskrc_dir/taskrc"
-        return
-    elif $refresh; then
+        echo "File is $(taskrc_is_dirty -pd)" 2>/dev/null
+        load=false
+    fi
+    if $new; then
+        [[ -e ./taskrc && ! $force ]] && return $(errExit "Can't do --new, there's already a taskrc in $PWD")
+        if ! taskrc_dir=$PWD taskrc_new; then
+            return 
+        fi
+        taskrc_dir=$PWD
+        edit=true
+    fi
+    if $edit; then
+        [[ -r $taskrc_dir/taskrc ]] || return $(errExit "No current taskrc to edit")
+        (
+            cd $taskrc_dir || errExit "Can't cd to $taskrc_dir"
+            $EDITOR $taskrc_dir/taskrc
+        )
+        refresh=true
+    fi
+    if $refresh; then
         [[ -r $taskrc_dir/taskrc ]] || return $(errExit "No current taskrc to refresh")
+        if ! taskrc_is_dirty ; then
+            if ! $force; then
+                return $(errExit "[ no refresh, $taskrc_dir/taskrc is unchanged. -f to force. ]")
+            fi
+        fi
         pushd $taskrc_dir >/dev/null
-        echo -n "Refreshing $PWD/taskrc:"
+        echo -n "Refreshing $PWD/taskrc: ["
         source taskrc
-        echo "  OK  @$(date)"
+        taskrc_load_time=$(ctime taskrc)
+        echo "]  OK  @$(date)"
         popd >/dev/null
-        return
+        load=false
     fi
-    
 
-    [[ -r ${rcdir}/taskrc ]] || return $(errExit "no taskrc file in ${rcdir}")
-    pushd ${rcdir} &>/dev/null || return $(errExit "Can't cd to ${rcdir}")
-    if $helponly; then
-        egrep -v '^$' ./taskrc
-        echo " >> done help: [${rcdir}/taskrc]"
-    else
-        echo "In [$PWD], loading taskrc into current shell:" 
-        source ./taskrc
-        echo " >> done, $(cat taskrc | wc -l ) lines sourced."
+    if $load; then
+
+        # Now it's time to establish $taskrc_dir, having dispensed with other options:
+        taskrc_dir=$(taskrc_dir_find $PWD $search_up)
+
+        #[[ -z $taskrc_dir ]] && return $(errExit "taskrc_dir not resolved")
+        if [[ ! -r ${taskrc_dir}/taskrc ]]; then
+            local pp=""
+            if $search_up; then
+                pp=" or its parents, sorry."
+            else
+                pp=", try -s to search parent dirs."
+            fi
+            return $(errExit "no taskrc file in ${PWD}${pp}")
+        fi
+        pushd ${taskrc_dir} &>/dev/null || return $(errExit "Can't cd to ${taskrc_dir}")
+        if $help; then
+            egrep -v '^$' ./taskrc
+            echo " >> done help: [${taskrc_dir}/taskrc]"
+        fi
+        if $load; then
+            echo "In [$PWD], loading taskrc into current shell:" 
+            source ./taskrc
+            taskrc_load_time=$(ctime taskrc)
+            echo " >> done, $(cat taskrc | wc -l ) lines sourced."
+        fi
+        popd >/dev/null
     fi
-    popd >/dev/null
 }
 
 alias taskrc2='taskrc_v2'  # Todo: replace the old taskrc with this sort of alias
+#alias tkr='source ~/bin/taskrc_loader' # Todo: get rid of this after v2 works
+
+alias cd_taskrc='cd $taskrc_dir'
+alias cd_t='cd $taskrc_dir'
 

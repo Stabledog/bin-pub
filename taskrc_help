@@ -6,14 +6,17 @@
 
 function print_builtin_help {
     (
-        echo "taskrc built-in help:"
+        echo "Built-in options:"
         echo "  -s, --search-up:  find taskrc by searching parent dir chain"
         echo "  -r, --refresh:    reload most recent taskrc"
         echo "  -d, --dump:       dump most recent taskrc"
         echo "  -i, --info:       print path of most recent taskrc"
+        echo "  -n, --new:        create new taskrc in current dir"
+        echo "  -e, --edit:       edit, then reload current taskrc"
         echo ""
-        echo "Also:"
+        echo "Other built-ins:"
         echo "  cd_t{askrc}:  cd to most recent taskrc dir"
+        echo "  \$taskrc_dir: directory of most recent taskrc"
         echo "  #Help:  Use #Help tokens in your taskrc files to customize --help contents."
         echo ""
     )  
@@ -32,8 +35,9 @@ function print_ext_help {
     if $has_helptags; then
         # We extract all lines marked #Help, plus one line immediately prior to such blocks.  We swap
         # out the #Help tag with a plain hash (#)
-        echo -n ""
-        egrep -B 1 '#Help' ${xp} | sed 's/#Help/#/'
+        echo "Help (from ${xp}):"
+        echo "-----------------"
+        egrep -B 1 '#Help' ${xp} | sed 's/#Help/#/' | sed 's/^/  /'
     else
         egrep -v '^$' ${xp}
         echo " >> done generic help: [${xp}]"
@@ -43,6 +47,7 @@ function print_ext_help {
 print_builtin_help
 
 if [[ -r ${taskrc_dir}/taskrc ]]; then
+
     print_ext_help ${taskrc_dir}/taskrc
 else
     echo "[There's no active taskrc to print help for.]"

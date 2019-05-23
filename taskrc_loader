@@ -23,6 +23,10 @@ function errExit {
     exit 1
 }
 
+function ctime {
+    date +%s
+}
+
 function taskrc_is_dirty {
     local print=false
     local detail=false

@@ -27,10 +27,10 @@ function loop_cmd {
     fi
     nloop=1
     while true; do
-        $cmd $*
+        $cmd "$@"
         res=$?
         echo -e "<<-- loop_cmd[${nloop}], program returned $res.  Command was: "  
-        echo -e " -->> $cmd $*"  
+        echo -e " -->> $cmd $@"  
 
         while true; do
             read -n 1 -p " -->> Hit 'c' to continue (loop again), 'x' to quit: " </dev/tty

@@ -58,7 +58,7 @@ set-option -g mouse on  # As of tmux 2.1, there's only one mouse option.
 set-option -s set-clipboard off
 
 # The scroll buffer is too handy to make small:
-set-option -g history-limit 50000
+set-option -g history-limit 100000
 
 set-option -g renumber-windows on
 

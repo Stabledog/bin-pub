@@ -149,8 +149,16 @@ function taskrc_v2 {
         refresh=true
     fi
     if $refresh; then
-        [[ -r $taskrc_dir/taskrc ]] || return $(errExit "No current taskrc to refresh")
+        if [[ ! -r $taskrc_dir/taskrc ]]; then
+            read -p "No current taskrc to refresh. Try to load ./taskrc instead? [Y/n]: "
+            if [[ $REPLY =~ [yY] ]] || [[ -z $REPLY ]]; then
+                taskrc_v2
+                return
+            fi
+            return $(echo "Quit selected.")
+        fi
         if ! taskrc_is_dirty ; then
+
             if ! $force; then
                 return $(errExit "[ no refresh, $taskrc_dir/taskrc is unchanged. -f to force. ]")
             fi

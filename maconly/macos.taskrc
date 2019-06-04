@@ -3,3 +3,4 @@
 
 alias readlink=greadlink
 
+alias tkr=taskrc

@@ -1,0 +1,52 @@
+#!/bin/bash
+# pudb-tty-other
+#  Simplify running pudb with its UI on a different terminal.
+#  
+# 1. First argument should be the debug tty, e.g. /dev/pts/49
+# 2. If invoked as 'pudb3-tty-other', we'll run pudb3, otherwise pudb2
+
+function errExit {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+PUDB=$(which pudb)
+
+if [[ $(basename $0) == pudb3-tty-other ]]; then
+    PUDB=$(which pudb3)
+fi
+
+if [[ -z $PUDB ]]; then
+    errExit "Can't locate $PUDB on the PATH"
+fi
+
+xtty=$1
+
+if [[  ! $xtty =~ /dev/.* ]]; then
+    errExit "First arg must be a tty path, e.g. /dev/pts/49"
+fi
+if [[ ! -e $xtty ]]; then
+    errExit "tty $xtty doesn't exist."
+fi
+
+function verify_supports_tty {
+    # Verify that we have the PUDB_TTY feature available at least:
+    local initpath=$(python3.7 -c '
+import pudb
+print(pudb.__path__[0] +"/__init__.py")
+    ')
+    grep -q 'PUDB_TTY' ${initpath} 2>/dev/null
+    # the result code from grep is all we care about here.  In older versions of pudb, this
+    # feature doesn't exist.
+}
+
+
+if ! verify_supports_tty; then
+    errExit "The version of pudb installed doesn't support alternate tty.  Try 'pip3 install pudb --upgrade --user'"
+    # (The 2019.1 version has this feature, but 2018.1 does not)
+fi
+
+shift 
+echo "TTY is $xtty, running: ${PUDB} $@"
+PUDB_TTY=${xtty} $PUDB $@
+

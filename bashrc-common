@@ -205,7 +205,7 @@ function initGitStuff {
 	alias grv='git remote -v'
 	alias gd='git diff'
 	alias gdt='git difftool'
-	alias gitg='git ls-files | grep'
+	alias gitg='git ls-files | egrep'
 	alias grv='git remote -v'
 
 	if $isBash; then

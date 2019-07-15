@@ -203,7 +203,7 @@ function taskrc_v2 {
 }
 
 alias taskrc2='taskrc_v2'  # Todo: replace the old taskrc with this sort of alias
-#alias tkr='source ~/bin/taskrc_loader' # Todo: get rid of this after v2 works
+
 
 alias cd_taskrc='cd $taskrc_dir'
 alias cd_t='cd $taskrc_dir'

@@ -291,6 +291,8 @@ function cdmods {
 
     # And also, return-to-prev dir:
     alias .-='cd -'
+    # Print previous dir:
+    alias xcd='(cd -)'
     # Let's not forget popdir:
     alias .p='popd'
 }

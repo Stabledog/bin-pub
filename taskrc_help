@@ -17,6 +17,7 @@ function print_builtin_help {
         echo "Other built-ins:"
         echo "  cd_t{askrc}:  cd to most recent taskrc dir"
         echo "  \$taskrc_dir: directory of most recent taskrc"
+        echo "  taskrc.sh [func-name] [...args]: invoke your functions from shell script."
         echo "  #Help:  Use #Help tokens in your taskrc files to customize --help contents."
         echo ""
     )  

@@ -1,6 +1,7 @@
 # taskrc_loader
 #
-#  This should be sourced in the shell, it has no value as an external command.
+#  This should be sourced in the shell, it has no value as an external command.  Run 'taskrc.sh' if you want
+# a scriptable thing.
 #
 # vim: filetype=sh :
 #
@@ -15,7 +16,7 @@
 
 #set -x
 
-declare taskrc_dir  # Directory of the most-recently-loaded taskrc file
+declare -x taskrc_dir  # Directory of the most-recently-loaded taskrc file
 declare taskrc_load_time=0 # epoch timestamp (from ctime) for MRL taskrc, used for dirty detection
 
 function errExit {
@@ -52,6 +53,32 @@ function taskrc_is_dirty {
         echo ""
     fi
     false
+}
+
+function external_taskrc_call {
+    # If user calls taskrc [args], and [args] are not recognized, then we
+    # try to evaluate them as a possible call on a function defined in the current
+    # taskrc script.
+    #
+    # This allows (for example) invocation of taskrc-defined functions from within an editor or python app, etc.
+    # To avoid chaos, there are limitations that matter:
+    #   1. $taskrc_dir must be defined in the calling environment, we don't attempt to find it
+    #   2. $taskrc_dir/taskrc must exist
+    #
+    # To make this work, we create a subshell, source taskrc, verify that a function exists matching $1, 
+    # and then eval the full command in that subshell.
+    [[ -z $taskrc_dir ]] && return $(errExit "Unknown arguments(0): $@ [no taskrc_dir]" )
+    [[ -f $taskrc_dir/taskrc ]] || return $(errExit "Unknown arguments(1): $@ [no taskrc]")
+    (
+        source $taskrc_dir/taskrc
+        # stub echo "inner subshell, args $@" >&2
+        funcname=$1
+        [[ -z $funcname ]] && errExit "Unknown arguments(2): $@ [taskrc_dir=$taskrc_dir]"
+        [[ $(type -t $funcname) == function ]] || errExit "$funcname is not a function"
+        shift
+        cmd="${funcname} $@"
+        eval "$cmd"
+    )
 }
 
 function taskrc_dir_find {
@@ -112,7 +139,8 @@ function taskrc_v2 {
                 new=true
                 ;;
             *)
-                return $(errExit "Unknown argument to taskrc: [$1]")
+                external_taskrc_call $@
+                return
                 ;;
         esac
         shift

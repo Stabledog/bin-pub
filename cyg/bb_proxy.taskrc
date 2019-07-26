@@ -13,10 +13,10 @@ function enable_git_verbose_net {
 
 GIT=$(which git)
 
-function git {
-    http_proxy="$http_proxy_bbgh" $GIT "$@"
-}
-
+# function git {
+    # http_proxy="$http_proxy_bbgh" $GIT "$@"
+# }
+# 
 alias gitb=git
 
 function gitp {

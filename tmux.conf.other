@@ -96,16 +96,16 @@ bind-key -r     h select-pane -L
 bind-key -r     l select-pane -R
 bind-key -r     j select-pane -D
 bind-key -r     k select-pane -U
-# <prefix>@ is sort-of the opposite of break-pane ( <prefix>! ),
-# allowing us to join the current pane to another window, and
-# using choose-window to navigate to the destination.
-bind-key @ choose-window 'join-pane -t "%%"'
 
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'tmux-plugins/tmux-yank'
 
 
+bind-key      @ choose-window 'join-pane -t "%%"'
+# <prefix>@ is sort-of the opposite of break-pane ( <prefix>! ),
+# allowing us to join the current pane to another window, and
+# using choose-window to navigate to the destination.
 
 
 

@@ -1,0 +1,19 @@
+# bashrc-git-bash-windows tries to bring some order to the git bash env
+
+
+alias lr='ls -lirt'
+alias ll='ls -la'
+
+alias gc='git commit'
+alias ga='git add'
+
+export CygHome=/c/cygwin/home/lmatheson4
+
+set -o vi
+
+function vim {
+    command vim --cmd 'set runtimepath-=~/.vim' --cmd 'set runtimepath-=~/.vim/after' -u $CygHome/.vim/vimsane.vim $@
+}
+
+PATH=$PATH:/c/cygwin/home/lmatheson4/bin:/c/Users/lmatheson4/AppData/Local/npm
+

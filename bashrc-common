@@ -271,6 +271,7 @@ stty -ixon -ixoff
 # Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
 # {cmd-frag}!<space> to expand the last command that started with that frag.
 if $isBash; then
+    set -o vi
     bind Space:magic-space
 fi    
 

@@ -16,9 +16,10 @@ alias ga='git add'
 alias gs='git status'
 
 function gpa {
-   git commit -am sync || return $(errExit "Fail")
+   git commit -am sync
    git push || return 1;
 }
+
 
 export CygHome=/c/cygwin/home/lmatheson4
 export RdeHome="/c/blp/Rde Projects/BBGitHub"

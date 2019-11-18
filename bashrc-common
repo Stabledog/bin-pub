@@ -411,6 +411,7 @@ fi
 
 # loop_cmd is very handy:
 [[ -r ${LmHome}/bin/loop_cmd ]] && sourceMe=1 source ${LmHome}/bin/loop_cmd
+alias loop=loop_cmd
 
 # shell-commenter helps when creating typescripts (see "man script")
 alias com='shell-commenter'

@@ -264,7 +264,6 @@ if ! which gvim 2>&1 1>/dev/null; then
 fi
 export XEDITOR=$EDITOR
 
-alias vimgit='vim $(git ls-files) '
 
 # disable flow control for terminal:
 stty -ixon -ixoff

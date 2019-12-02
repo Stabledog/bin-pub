@@ -3,11 +3,20 @@
 #
 # gopen
 #
+#
 
-echo "gopen $1"
+function errExit {
+    echo "ERROR: $@" >&2
+    exit 1
+}
 
 if $CYGWIN; then
-    cygstart "$@"
+    cygstart $@
+elif [[ -x /usr/bin/xdg-open ]]; then
+    /usr/bin/xdg-open $@
+elif [[ -x /usr/bin/open ]]; then
+    /usr/bin/open $@
 else
-    /usr/bin/xdg-open "$@"
+    errExit "Unable to resolve open/gopen"
 fi
+

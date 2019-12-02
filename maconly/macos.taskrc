@@ -5,4 +5,5 @@ alias readlink=greadlink
 
 alias tkr=taskrc
 
+PATH=$PATH:$HOME/bin/maconly
 

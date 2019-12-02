@@ -1,3 +1,4 @@
 #!/bin/bash
 # xterm-vanilla
+
 /usr/bin/X11/xterm -ls -sb -sl 3000 -aw -rw -fn -adobe-courier-*-r-*-*-16-*-*-*-*-*-*-* -bg Black -fg White -cr Red -T $(hostname) -n $(hostname) -display $DISPLAY &

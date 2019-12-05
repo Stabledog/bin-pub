@@ -199,11 +199,11 @@ function taskrc_v2 {
                 return $(errExit "[ no refresh, $taskrc_dir/taskrc is unchanged. -f to force. ]")
             fi
         fi
-        pushd $taskrc_dir >/dev/null
-        echo -n "Refreshing $PWD/taskrc: ["
-        source taskrc
-        taskrc_load_time=$(ctime taskrc)
-        echo "]  OK  $BASHPID@$(date)"
+        pushd "$taskrc_dir" >/dev/null
+        echo -n "Refreshing $PWD/taskrc: ${BASHPID}["
+        source "${taskrc_dir}/taskrc"
+        taskrc_load_time=$(ctime "${taskrc_dir}/taskrc" )
+        echo "]  OK  @$(date)"
         popd >/dev/null
         load=false
     fi

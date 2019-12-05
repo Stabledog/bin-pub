@@ -203,7 +203,7 @@ function taskrc_v2 {
         echo -n "Refreshing $PWD/taskrc: ["
         source taskrc
         taskrc_load_time=$(ctime taskrc)
-        echo "]  OK  @$(date)"
+        echo "]  OK  $BASHPID@$(date)"
         popd >/dev/null
         load=false
     fi

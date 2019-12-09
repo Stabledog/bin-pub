@@ -3,7 +3,7 @@
 .svn
 .tox-index
 bbonly
-bbwin-only
+bbwin
 bin-bbwin-only
 comdb2_table_loader
 dddbash

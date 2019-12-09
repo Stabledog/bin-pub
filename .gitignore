@@ -39,3 +39,12 @@ visio
 winword
 scss
 .nfs*
+AzureDevOps.Authentication.dll
+Bitbucket.Authentication.dll
+git-askpass.exe
+git-askpass.html
+git-credential-manager.exe
+git-credential-manager.html
+GitHub.Authentication.exe
+Microsoft.Alm.Authentication.dll
+Microsoft.IdentityModel.Clients.ActiveDirectory.dll

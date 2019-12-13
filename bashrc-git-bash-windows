@@ -40,7 +40,7 @@ function to {
     fi
 }
 
-PATH=$($HOME/bin/pathdelete '*WindowsApps*')
-
 PATH=$PATH:~/bin:$HOME/bin:$HOME/AppData/Local/npm
+PATH=$(~/bin/pathdelete $HOME/AppData/Local/Microsoft/WindowsApps")
+
 

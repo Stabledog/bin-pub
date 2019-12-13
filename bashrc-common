@@ -191,6 +191,14 @@ function initGitStuff {
 
     }
 
+    function git_attributes_init {
+        [[ -d .git ]] || return $(errExit No .git/ here)
+        [[ -f .gitattributes ]] && return $(errExit Already has a .gitattributes here)
+        cp ${LmHome}/bin/gitattributes-template .gitattributes || return $(errExit failed to create .gitattributes)
+        echo ".gitattributes added to $PWD"
+    }
+
+
 
 	alias gs='git status '
 	# Script-worthy git-status: check the branch, parseable output, etc.
@@ -376,16 +384,24 @@ source ${LmHome}/bin/taskrc_loader
 alias taskrc=taskrc_v2
 
 function loadTaskrcs {
+    local logfile9=$HOME/.loadtaskrcs.log
+    echo "$(date): loadTaskrcs: trainload initialization of ~/.taskrc" > $logfile9
+
+    function xlog_rc {
+        echo "+++ $@" >> $logfile9
+    }
 	function load_rcs1 {
 	    eval "$xlocal rootDir=$1"
         /bin/ls -1 ${rootDir}/.taskrc/* 2>/dev/null | egrep -v '\.vim$' | sort
     }
 
+
 	# Load everything in $HOME/.taskrc, sorting alpha.  Most
 	# of these should be symlinks.
 	while read line; do
 		if [[ -f $line ]]; then 
-            source $line
+		    xlog_rc "$line"
+            source $line 
         fi
     done < <( load_rcs1 "$HOME" )
 
@@ -393,7 +409,8 @@ function loadTaskrcs {
 	if [[ "$HOME" != "$PWD" ]]; then
         while read line; do
             if [[ -f $line ]]; then 
-                source $line
+                xlog_rc "$line"
+                source $line 
             fi
         done < <( load_rcs1 "$PWD" )
     fi

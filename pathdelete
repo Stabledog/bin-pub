@@ -1,0 +1,19 @@
+#!/bin/bash
+# Remove dir(s) from PATH (prints resulting path)
+#
+#  Usage:  PATH=$(pathdelete bad/path/here another/bad/path)
+#
+while read xd; do
+    discard=false
+    for pat in $@; do
+        if [[ "$xd" == "$pat" ]]; then
+            discard=true
+            break
+        fi
+    done
+    if $discard; then
+        continue
+    fi
+    echo -n "${xd}:"
+done <<< "$(echo $PATH | /bin/tr ':' '\n')"
+

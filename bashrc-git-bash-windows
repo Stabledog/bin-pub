@@ -39,13 +39,8 @@ function to {
         cd ${CygHome}/bin
     fi
 }
-function strip_dir {
-    for arg in $@; do
-       echo 
-    done
-}
 
-#PATH=$(strip_dir '*WindowsApps*')
+PATH=$($HOME/bin/pathdelete '*WindowsApps*')
 
 PATH=$PATH:~/bin:$HOME/bin:$HOME/AppData/Local/npm
 

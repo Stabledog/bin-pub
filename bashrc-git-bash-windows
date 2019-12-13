@@ -41,6 +41,6 @@ function to {
 }
 
 PATH=$PATH:~/bin:$HOME/bin:$HOME/AppData/Local/npm
-PATH=$(~/bin/pathdelete $HOME/AppData/Local/Microsoft/WindowsApps")
+PATH=$(~/bin/pathdelete $HOME/AppData/Local/Microsoft/WindowsApps)
 
 

@@ -24,7 +24,7 @@ function st_md2docx
     egrep -v '^%.*' $infile | sed -e 's/``/"/g' -e "$tgx" >$filtered
     rm ${base}.docx 2>/dev/null
     $PandocPath -s -o ${base}.docx "$(cygpath -w ${filtered})" && echo "Done: ${infile} -> ${base}.docx"
-    #rm $filtered
+    rm $filtered
 }
 
 

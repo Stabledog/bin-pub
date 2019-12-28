@@ -1,6 +1,13 @@
 #!/bin/bash
+# Converting Markdown to MS Word
 
-PandocPath=${PandocPath:-${HOME}/program-files/Pandoc/pandoc.exe}
+# We support comments: a line beginning with % is filtered out.
+# We also xlat '' and `` to double quotes "
+#
+# Setup: We expect Chocolatey to have installed pandoc, and the environment to include 
+# c:\ProgramData\chocolatey\bin, where it maintains packages.
+#
+PandocPath=`which pandoc`
 
 function errExit {
     echo "ERROR: $*" >&2
@@ -12,7 +19,12 @@ function st_md2docx
     local infile=$1;
     [[ -f $infile ]] || return $(errExit "Can't find $infile");
     local base=${infile//.md};
-    $PandocPath -s -o ${base}.docx ${infile} && echo "Done: ${infile} -> ${base}.docx"
+    local filtered=$(mktemp -t pdx-XXXXXX.md)
+    local tgx="s/''/\"/g"
+    egrep -v '^%.*' $infile | sed -e 's/``/"/g' -e "$tgx" >$filtered
+    rm ${base}.docx 2>/dev/null
+    $PandocPath -s -o ${base}.docx "$(cygpath -w ${filtered})" && echo "Done: ${infile} -> ${base}.docx"
+    #rm $filtered
 }
 
 

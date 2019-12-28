@@ -21,7 +21,6 @@ function gpa {
 }
 
 
-export CygHome=/c/cygwin/home/lmatheson4
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 
 
@@ -34,16 +33,14 @@ function to {
     # Very limited version of 'to' command
     if [[ $1 == "cyg" ]]; then
         cd $CygHome
-    elif [[ $1 == "rde" ]]; then
+    elif [[ $2 == "rde" ]]; then
         cd "$RdeHome"
     elif [[ $1 == "bin" ]]; then
         cd ${CygHome}/bin
     fi
 }
 
-function vim {
-    command vim --cmd 'set runtimepath-=~/.vim' --cmd 'set runtimepath-=~/.vim/after' -u $CygHome/.vim/vimsane.vim $@
-}
+PATH=$PATH:~/bin:$HOME/bin:$HOME/AppData/Local/npm
+PATH=$(~/bin/pathdelete $HOME/AppData/Local/Microsoft/WindowsApps)
 
-PATH=$PATH:~/bin:/c/cygwin/home/lmatheson4/bin:/c/Users/lmatheson4/AppData/Local/npm
 

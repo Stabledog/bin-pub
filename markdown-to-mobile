@@ -1,7 +1,13 @@
 #!/bin/bash
-# Converting Markdown to mobile
-
+# markdown-to-mobile
 #
+#   Filter markdown+tex hybrid, so it can be rendered by github and read 
+#   decently in portrait or landscape mode on a mobile device.
+#
+#   - Strips out comment-lines starting with %
+#   - Replace `` and '' with double-quotes "
+#
+#   - Output file is named like {base}-mobile.md
 
 
 function errExit {
@@ -9,17 +15,22 @@ function errExit {
     exit 1
 }
 
-function xlat
+function do_xlat
 { 
     local infile=$1;
     [[ -f $infile ]] || return $(errExit "Can't find $infile");
     local base=${infile//.md};
+    local filtered=$(mktemp -t pdx-XXXXXX.md)
     local tgx="s/''/\"/g"
-    egrep -v '^%.*' $infile | sed -e 's/``/"/g' -e "$tgx" >${base}-mobile.md
+    egrep -v '^%.*' $infile | sed -e 's/``/"/g' -e "$tgx" >$filtered || return $(errExit filter failure)
+    mv $filtered ${base}-mobile.md
+    echo "Done: ${infile} -> ${base}-mobile.md"
 }
 
 
 if [[ -z $sourceMe ]]; then
-    xlat "$@"    
+    do_xlat "$@"    
 fi
+
+
 

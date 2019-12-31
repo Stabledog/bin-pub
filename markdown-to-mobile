@@ -1,0 +1,25 @@
+#!/bin/bash
+# Converting Markdown to mobile
+
+#
+
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+function xlat
+{ 
+    local infile=$1;
+    [[ -f $infile ]] || return $(errExit "Can't find $infile");
+    local base=${infile//.md};
+    local tgx="s/''/\"/g"
+    egrep -v '^%.*' $infile | sed -e 's/``/"/g' -e "$tgx" >${base}-mobile.md
+}
+
+
+if [[ -z $sourceMe ]]; then
+    xlat "$@"    
+fi
+

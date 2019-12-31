@@ -24,7 +24,8 @@ function do_xlat
     local tgx="s/''/\"/g"
     egrep -v '^%.*' $infile | sed -e 's/``/"/g' -e "$tgx" >$filtered || return $(errExit filter failure)
     mv $filtered ${base}-mobile.md
-    echo "Done: ${infile} -> ${base}-mobile.md"
+    pandoc -f markdown -t html ${base}-mobile.md > ${base}.html || return $(errExit pandoc failed)
+    echo "Done: ${infile} -> ${base}-mobile.md and ${base}.html"
 }
 
 

@@ -228,9 +228,8 @@ initGitStuff
 
 # Set the terminal title (tmux only)
 function title {
-#	echo -ne "\033]0;${1}\007" 
 
-    printf '\033]2;%s\033\\' "$*"
+    printf '\E]2;%s\E\\' "$*"
 }
 
 function setDisplay {

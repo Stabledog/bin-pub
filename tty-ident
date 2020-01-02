@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function identify_ttys {
+    for ttx in $(ls -n /dev/pts/* | grep $UID | awk '{print $10}'); do 
+        echo -e "You are \E[41m$ttx \E[0m" > $ttx; 
+    done
+}
+
+[[ -z $sourceMe ]] && identify_ttys $@
+

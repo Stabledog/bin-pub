@@ -110,12 +110,16 @@ function histrc {
 	# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 	HISTSIZE=10000
 	HISTFILESIZE=20000
-	PROMPT_COMMAND='history -n'
 
 	alias hist='history '
 	alias hn='histNote '
 	alias hl='histNote -l'
 	alias hisg='history | grep '
+
+	# PROMPT_COMMAND is a command that bash executes each time it prepares to
+	# issue the user prompt. It's used to customize the prompt in various ways,
+	# or to perform shell maintenance activities.  In this case, we're using
+	# it to update the stored command history:
 	export PROMPT_COMMAND="history -a"
 	
 	# Write a note to the bash history.  -l means 'list histNotes'.
@@ -226,7 +230,7 @@ function initGitStuff {
 initGitStuff
 
 
-# Set the terminal title (tmux only)
+# Set the terminal title:
 function title {
 
     printf '\E]2;%s\E\\' "$*"

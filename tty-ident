@@ -1,9 +1,15 @@
 #!/bin/bash
 
 function identify_ttys {
-    for ttx in $(ls -n /dev/pts/* | grep $UID | awk '{print $10}'); do 
-        echo -e "You are \E[41m$ttx \E[0m" > $ttx; 
-    done
+    if [[ -d /dev/pts ]]; then
+        for ttx in $(ls -n /dev/pts/* | grep $UID | awk '{print $10}'); do 
+            ( echo -e "You are \E[41m$ttx \E[0m" > $ttx ) 2>/dev/null
+        done
+    elif [[ -c /dev/pty2 ]]; then
+        for ttx in $(ls -n /dev/pty* | grep $UID | awk '{print $10}'); do 
+            ( echo -e "You are \E[41m$ttx \E[0m" > $ttx ) 2>/dev/null
+        done
+    fi
 }
 
 [[ -z $sourceMe ]] && identify_ttys $@

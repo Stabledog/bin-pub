@@ -7,6 +7,12 @@ function set_bashdebug_mode {
     #   --off: turn it off 
     #   --tty [device]: send output to specified pty (e.g. -tty /dev/pts/112)
     #       (--tty implies --on as well, you don't have to add the latter)
+    function print_bad_bxdb {
+        echo -e "\E[1;31mBad or no arg[$1]: try --on|--off|--tty /dev/pts/???\E[0m" >&2
+        false
+    }
+    [[ ${#@} == 0 ]] &&  { print_bad_bxdb $1 ; return; }
+
     while [[ ! -z $1 ]]; do
         case $1 in
             --on|-o)
@@ -26,8 +32,7 @@ function set_bashdebug_mode {
                set_bashdebug_mode --on
                ;;
            *)
-               echo -e "\E[1;31mBad arg[$1]: try --on|--off|--tty [/path/to/pty]\E[0m" >&2
-               return
+               print_bad_bxdb $1; return; 
                ;;
         esac
         shift

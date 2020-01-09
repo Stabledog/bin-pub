@@ -1,5 +1,39 @@
 # vim: filetype=sh :
 
+function set_bashdebug_mode {
+    # Enables smarter bash tracing (print file/line info with -x output)
+    # Options:
+    #   --on:  turn it on 
+    #   --off: turn it off 
+    #   --tty [device]: send output to specified pty (e.g. -tty /dev/pts/112)
+    #       (--tty implies --on as well, you don't have to add the latter)
+    while [[ ! -z $1 ]]; do
+        case $1 in
+            --on|-o)
+                PS4='\033[0;33m+(${BASH_SOURCE}:${LINENO}):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+                set -x
+               ;;
+           --off|-f)
+               PS4=':'
+               set +x
+               exec 13>&-
+               unset BASH_XTRACEFD
+               ;;
+           --tty|-t)
+               exec 13>${2}
+               BASH_XTRACEFD=13
+               shift
+               set_bashdebug_mode --on
+               ;;
+           *)
+               echo -e "\E[1;31mBad arg[$1]: try --on|--off|--tty [/path/to/pty]\E[0m" >&2
+               return
+               ;;
+        esac
+        shift
+    done
+}
+
 # Outer code can define notBash=true to disable non-posix bashisms:
 if [[ ! -z $notBash ]] && $notBash; then
     notBash=true; isBash=false

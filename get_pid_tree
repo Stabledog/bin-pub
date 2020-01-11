@@ -1,0 +1,20 @@
+#!/bin/bash
+# get_pid_tree [parent [parent...]] 
+# : prints all the child pids spawned from each parent, by recursive walking with "pgrep -P [pid]"
+# The resulting list is a "topological sort" -- i.e. ordered such that children come before parents, so "kill -9 $(get_pid_tree $$)" would
+# kill all child processes of the current shell, and then try to kill the shell itself.
+#
+#
+
+function get_pid_tree {
+    local parent_pid=
+    for parent_pid in $@; do
+        local children=$(pgrep -P ${parent_pid})
+        if [[ ! -z ${children} ]]; then
+            get_pid_tree ${children}
+        fi
+        echo "${parent_pid} "
+    done
+}
+[[ -z $sourceMe ]] && get_pid_tree $@
+

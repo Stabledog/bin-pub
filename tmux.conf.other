@@ -86,6 +86,10 @@ set-window-option -g mode-keys vi  # Use vi mode for tmux command line
 
 set -g pane-border-status top
 set -g wrap-search off
+set -g pane-border-bg colour235
+set -g pane-border-fg colour238
+set -g pane-active-border-bg colour236
+set -g pane-active-border-fg colour51
 
 # hjkl => change windows like vi
 unbind-key h

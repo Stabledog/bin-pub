@@ -66,6 +66,7 @@ set-option -s set-clipboard on
 # The scroll buffer is too handy to make small:
 set-option -g history-limit 50000
 
+# renumber-windows means that when you delete a window, tmux re-assigns window numbers to compensate.
 set-option -g renumber-windows on
 
 # Ctrl+P will copy the X clipboard into the tmux paste buffer, and then paste it:
@@ -88,6 +89,10 @@ set-window-option -g mode-keys vi  # Use vi mode for tmux command line
 
 set -g pane-border-status top
 set -g wrap-search off
+set -g pane-border-bg colour235
+set -g pane-border-fg colour238
+set -g pane-active-border-bg colour236
+set -g pane-active-border-fg colour51
 
 # hjkl => change windows like vi
 unbind-key h

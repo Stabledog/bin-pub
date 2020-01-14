@@ -92,12 +92,12 @@ set -g wrap-search off
 # first syntax, and the later versions use the second syntax.
 set -g pane-border-bg colour235
 set -g pane-border-fg colour238
-set -g pane-active-border-bg colour236
-set -g pane-active-border-fg colour51
+set -g pane-active-border-bg colour5
+set -g pane-active-border-fg colour4
 set -g pane-border-style bg=colour235
 set -g pane-border-style fg=colour238
-set -g pane-active-border-style bg=colour236
-set -g pane-active-border-style fg=colour51
+set -g pane-active-border-style bg=colour2
+set -g pane-active-border-style fg=colour4,bg=colour5
 
 
 # hjkl => change windows like vi

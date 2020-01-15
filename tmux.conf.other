@@ -91,11 +91,11 @@ set -g wrap-search off
 # the same thing twice, because tmux versions < 2.9 used the
 # first syntax, and the later versions use the second syntax.
 set -g pane-border-bg colour235
-set -g pane-border-fg colour238
+set -g pane-border-fg colour247
 set -g pane-active-border-bg colour5
 set -g pane-active-border-fg colour4
 set -g pane-border-style bg=colour235
-set -g pane-border-style fg=colour238
+set -g pane-border-style fg=colour247
 set -g pane-active-border-style bg=colour2
 set -g pane-active-border-style fg=colour4,bg=colour5
 

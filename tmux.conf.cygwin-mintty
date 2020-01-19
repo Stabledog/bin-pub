@@ -1,0 +1,8 @@
+# tmux.conf.cygwin-mintty
+# Specialize clipboard handling absent X windows
+# vim: filetype=tmux :
+
+source ~/bin/tmux.conf.other
+
+bind C-y run "tmux save-buffer - | /cygdrive/c/Windows/System32/clip.exe" \; display-message "Clipboard copied"
+

@@ -55,6 +55,18 @@ function taskrc_is_dirty {
     false
 }
 
+function register_taskrc {
+    local file="$1"
+    [[ -z $file ]] && return $(errExit "No file $file")
+    [[ -f $file ]] || return $(errExit "No file(2) $file")
+    local xhash=$(readlink -f $file | md5sum | cut -d ' ' -f 1)
+    [[ -f $HOME/.taskrc_reg/$xhash ]] && return
+    mkdir -p $HOME/.taskrc_reg 
+    cd $HOME/.taskrc_reg
+    ln -sf "$file" ./${xhash}
+    cd - &>/dev/null
+}
+
 function external_taskrc_call {
     # If user calls taskrc [args], and [args] are not recognized, then we
     # try to evaluate them as a possible call on a function defined in the current
@@ -201,6 +213,7 @@ function taskrc_v2 {
         fi
         pushd "$taskrc_dir" >/dev/null
         echo -n "Refreshing $PWD/taskrc: ${BASHPID}["
+        register_taskrc "${taskrc_dir}/taskrc"
         source "${taskrc_dir}/taskrc"
         taskrc_load_time=$(ctime "${taskrc_dir}/taskrc" )
         echo "]  OK  @$(date)"

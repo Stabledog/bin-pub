@@ -1,0 +1,33 @@
+# cx: menu-driven change directory.  
+# vim: filetype=sh :
+#
+# As you work, bash maintains a stack of directories visited.  The cx
+# command lists those directories and allows you to change back to
+# any of them by entering a number.
+#
+# If you know the number in advance, you can enter "cx N" to go there
+# without prompting.
+
+function cx {
+    local quik_num=$1
+    cx_Limit=${cx_Limit:-20}
+
+    local cxfile_g=$TMPDIR/cx.$UID
+    local cxfile=${TMPDIR}.$UID.$$
+    cat ${cxfile} <(dirs -p) 2>/dev/null | sort -u > ${cxfile}.vv
+    mv ${cxfile}.vv ${cxfile} &>/dev/null
+    
+    if [[ ! -z $quik_num ]]; then
+        local xpr="${quik_num}q;d"
+        local xdr=$(sed "${xpr}" ${cxfile})
+        xdr="cd $xdr"
+        eval $xdr
+        return
+    fi
+    
+    select xd in $( cat ${cxfile} ); do
+        eval "cd ${xd}"
+        break
+    done
+}
+

@@ -21,7 +21,7 @@ function chdir_x {
         if [[ ${quik_pik} =~ [0-9]+ ]]; then
             xdr=$(cat ${cxfile} <(echo $PWD) | head -${quik_pik} | tail -1 )
         else
-            xdr=$(grep "${quik_pik}" ${cxfile} 2>/dev/null)
+            xdr=$(grep "${quik_pik}" ${cxfile} 2>/dev/null | tail -1)
         fi
         [[ -z $xdr ]] && return
         xdr="cd $xdr"

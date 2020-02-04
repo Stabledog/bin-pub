@@ -10,24 +10,23 @@
 
 function cx {
     local quik_num=$1
-    cx_Limit=${cx_Limit:-20}
-
-    local cxfile_g=$TMPDIR/cx.$UID
-    local cxfile=${TMPDIR}.$UID.$$
+    [[ $quik_num =~ -.+ ]] && { echo "Unknown option: $quik_num"; return; }
+    cxfile=${TMPDIR}/cx.$UID.$$
     cat ${cxfile} <(dirs -p) 2>/dev/null | sort -u > ${cxfile}.vv
     mv ${cxfile}.vv ${cxfile} &>/dev/null
     
-    if [[ ! -z $quik_num ]]; then
-        local xpr="${quik_num}q;d"
-        local xdr=$(sed "${xpr}" ${cxfile})
+    if [[ ${quik_num} =~ [0-9]+ ]]; then
+        local xdr=$(cat ${cxfile} <(echo $PWD) | head -${quik_num} | tail -1 )
+        [[ -z $xdr ]] && return
         xdr="cd $xdr"
         eval $xdr
         return
     fi
     
-    select xd in $( cat ${cxfile} ); do
+    select xd in $( cat ${cxfile} <(echo '<<No-change>>') ); do
+        [[ $xd == '<<No-change>>' ]] && return
         eval "cd ${xd}"
-        break
+        return
     done
 }
 

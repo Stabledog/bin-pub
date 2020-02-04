@@ -1,14 +1,14 @@
 # cx: menu-driven change directory.  
 # vim: filetype=sh :
 #
-# As you work, bash maintains a stack of directories visited.  The cx
-# command lists those directories and allows you to change back to
-# any of them by entering a number.
+# As you work, bash maintains a stack of directories visited.  The chdir_x() 
+# function (aliased as 'cx') lists those directories and allows you to change 
+# back to any of them by entering a number.
 #
 # If you know the number in advance, you can enter "cx N" to go there
 # without prompting.
 
-function cx {
+function chdir_x {
     local quik_num=$1
     [[ $quik_num =~ -.+ ]] && { echo "Unknown option: $quik_num"; return; }
     cxfile=${TMPDIR}/cx.$UID.$$
@@ -29,4 +29,6 @@ function cx {
         return
     done
 }
+
+alias cx=chdir_x
 

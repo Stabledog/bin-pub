@@ -11,7 +11,8 @@
 function chdir_x {
     local quik_pik=$1
     [[ $quik_pik =~ -.+ ]] && { echo "Unknown option: $quik_pik"; return; }
-    cxfile=${TMPDIR}/cx.$UID.$$
+    local tmpDir=${TMPDIR:-/tmp}
+    cxfile=${tmpDir}/cx.$UID.$$
     cat ${cxfile} <(dirs -p) 2>/dev/null | sort -u > ${cxfile}.vv
     mv ${cxfile}.vv ${cxfile} &>/dev/null
 

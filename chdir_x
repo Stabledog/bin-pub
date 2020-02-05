@@ -30,8 +30,9 @@ function chdir_x {
         return
     fi
     
-    select xd in $( cat ${cxfile} <(echo '<<No-change>>') ); do
-        [[ $xd == '<<No-change>>' ]] && return
+    PS3="Enter destination by number (0 or ^D to quit): "
+    select xd in $( cat ${cxfile}) ; do
+        [[ -z $REPLY ]] && return
         eval "cd ${xd}"
         return
     done

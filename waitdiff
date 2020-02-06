@@ -1,6 +1,8 @@
 #!/bin/bash
-# waitdiff [cmd]
-#    Run command every 2 seconds.  When the output changes, exit.
+#
+# waitdiff [-n seconds] command to test
+#    Run command every -n seconds ( default=2.0 ).  When the output changes, exit.
+#    Returns: 0 on diff detection, non-zero on error
 #
 
 function calcSum {
@@ -9,13 +11,25 @@ function calcSum {
 }
 
 function main {
+    local sleep_interval_secs=2
+    while [[ -n $1 ]]; do
+        case $1 in
+            -n)
+                sleep_interval_secs=${2:-${sleep_interval_secs}}
+                shift 2
+                ;;
+            *)
+                break;
+                ;;
+        esac
+    done
     local cmd="$@"
     local origsum=$(calcSum "$cmd")
 
     [[ -n $origsum ]] || { false; return; }
 
     while true; do
-        sleep 2
+        sleep $sleep_interval_secs 
         [[ $origsum == $(calcSum "$cmd") ]] || { true; break; }
     done
 }

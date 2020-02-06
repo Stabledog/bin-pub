@@ -59,11 +59,12 @@ function register_taskrc {
     local file="$1"
     [[ -z $file ]] && return $(errExit "No file $file")
     [[ -f $file ]] || return $(errExit "No file(2) $file")
-    local xhash=$(readlink -f $file | md5sum | cut -d ' ' -f 1)
-    [[ -f $HOME/.taskrc_reg/$xhash ]] && return
+    local xpath=$(readlink -f $file)
+    local xhash=$(echo "$xpath" | md5sum | cut -d ' ' -f 1)
+    [[ -L $HOME/.taskrc_reg/$xhash ]] && return
     mkdir -p $HOME/.taskrc_reg 
     cd $HOME/.taskrc_reg
-    ln -sf "$file" ./${xhash}
+    ln -sf "${xpath}" ./${xhash}
     cd - &>/dev/null
 }
 

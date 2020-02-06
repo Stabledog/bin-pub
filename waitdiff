@@ -1,0 +1,24 @@
+#!/bin/bash
+# waitdiff [cmd]
+#    Run command every 2 seconds.  When the output changes, exit.
+#
+
+function calcSum {
+    local cmd="$@"
+    sha1sum <(sh -c "$cmd") | cut -d ' ' -f 1
+}
+
+function main {
+    local cmd="$@"
+    local origsum=$(calcSum "$cmd")
+
+    [[ -n $origsum ]] || { false; return; }
+
+    while true; do
+        sleep 2
+        [[ $origsum == $(calcSum "$cmd") ]] || { true; break; }
+    done
+}
+
+[[ -z $sourceMe ]] && main $@
+

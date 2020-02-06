@@ -16,6 +16,7 @@ function main {
     (
         cd ${topDir} || return $(errExit cant find topDir $topDir)
         find -type f -name taskrc | ( while read; do echo "$REPLY" ; register_taskrc $REPLY; done ; )
+
     )
 }
 

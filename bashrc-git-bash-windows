@@ -24,6 +24,11 @@ function gpa {
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 
 
+title () 
+{ 
+    printf '\E]2;%s\E\\' "$*"
+}
+
 set -o vi
 
 alias python='winpty python'
@@ -70,6 +75,8 @@ function loadTaskrcs {
         done < <( load_rcs1 "$PWD" )
     fi
 }
+
+title "Git-Bash $HOST"
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.

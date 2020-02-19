@@ -13,11 +13,16 @@ set expand-tilde on
 
 $if mode=vi
     # set keymap vi-command # command-mode mappings go here:
+	set keymap vi-command
+	# Don't try to save here:
+	"s": nop
 
     set keymap vi-insert
     "jk": vi-movement-mode
 
 	# Alt+. pulls in last argument:
 	"\e.": yank-last-arg
+
+
 $endif
 

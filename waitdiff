@@ -24,6 +24,7 @@ function main {
         esac
     done
     local cmd="$@"
+    [[ -n $cmd ]] || { echo "ERROR: no command specified" >&2; return; }
     local origsum=$(calcSum "$cmd")
 
     [[ -n $origsum ]] || { false; return; }

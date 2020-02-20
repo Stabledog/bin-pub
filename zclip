@@ -1,1 +1,3 @@
-/home/lmatheson4/.zclip/sync.sh
+#!/bin/bash
+
+$HOME/.zclip/sync.sh $@

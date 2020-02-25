@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Initialize ~/cyghome and ~/cyghome/.cyg-wsl-environ so that the cygwin() function will work from wsl.
+
+function errExit {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+cbash=/c/cygwin/bin/bash.exe
+if [[ ! -x $cbash ]]; then
+    errExit "Can't find cygwin bash ($cbash)"
+fi
+
+# Find cygwin's HOME dir:
+exec 2>/dev/null
+cyghome_dir="/c/cygwin/$( $cbash -lc 'echo $HOME' )"
+exec 2>&1
+
+echo >~/cyghome/.cyg-wsl-environ
+for xv in SHELL PATH HOME; do
+    exec 2>/dev/null
+    tval=$($cbash -lc "printenv $xv")
+    exec 2>&1
+    echo $xv="\"$tval\"" >> ~/cyghome/.cyg-wsl-environ
+done
+cat ~/cyghome/.cyg-wsl-environ
+
+
+[[ -d $cyghome_dir ]] || errExit "Can't find $cyghome_dir"
+
+ln -sf "$cyghome_dir" ~/cyghome
+
+

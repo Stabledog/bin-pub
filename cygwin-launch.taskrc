@@ -1,0 +1,21 @@
+# vim: filetype=sh :
+#
+function cygwin {
+    [[ $(uname) == Linux ]] || { echo "You cant run cygwin outside of wsl" >&2; return; }
+    if [[ ! -h ~/cyghome || ! -f ~/cyghome/.cyg-wsl-environ ]]; then
+        echo "ERROR: you need a ~/cyghome symlink and a ~/.cyg-wsl-environ file to run the cygwin command.  Use init-wsl-to-cygwin to solve that."
+        return
+    fi
+    orgDir=$PWD
+    if [[ $PWD == /home/lmatheson* ]] ; then
+        cd ~/cyghome
+    fi
+    if [[ $# == 0 ]]; then
+        ( /c/cygwin/bin/bash.exe -l )
+    else
+        local xcmd="source ~/.cyg-wsl-environ; $@"
+        /c/cygwin/bin/bash.exe -c "$xcmd"
+    fi
+    cd $orgDir
+}
+

@@ -1,1 +1,0 @@
-bbonly/mars-shtool-genl.sh

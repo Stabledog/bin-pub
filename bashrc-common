@@ -276,9 +276,6 @@ fi
 
 
 export EDITOR=$(which vim)
-if ! which gvim 2>&1 1>/dev/null; then
-    alias gvim=vim
-fi
 export XEDITOR=$EDITOR
 
 

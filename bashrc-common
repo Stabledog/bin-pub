@@ -363,8 +363,6 @@ if $isBash; then
     shopt -s direxpand
 fi
 
-source ${LmHome}/bin/taskrc_loader
-alias taskrc=taskrc_v2
 
 function loadTaskrcs {
     local logfile9=$HOME/.loadtaskrcs.log

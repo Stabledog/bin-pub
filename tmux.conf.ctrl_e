@@ -1,0 +1,129 @@
+# ~/.tmux.conf.other
+# WARNING: this is NOT for the Mac. See [ ~/bin/tmux.conf.macos ]
+
+# General tips:
+# -------------
+#
+#   Cut and paste: 
+#
+#       Ctrl-a [ --> Enter copy mode, use [space] to start selection and [enter] to copy to buffer
+#                    (Mouse can also be used to select+copy text)
+#       Ctrl-a ] --> Paste to destination pane
+#       
+#       Shift+mouse-select: If you hold down the shift key while selecting by mouse, text is copied to the X clipboard
+#       Shift+mouse-middle: Paste with mouse into tmux window
+#
+#   Startup with preset window layout:
+#       See ~lmatheson4/bin/tmux-main for an example startup script
+#
+#   Rotate current pane:
+#       Ctrl-a } --> Move this pane 'forward' in rotation
+#       Ctrl-a { --> Move this pane 'backward' in rotation
+#
+#   Use the normal X clipboard:
+#       Ctrl-a z  --> Toggle zoom on current pane
+#          Then, the usual X mouse-left and mouse-center buttons can be used for copy and paste.
+#
+#       Ctrl-a Ctrl-y --> Copy the tmux buffer to X clipboard
+#       Ctrl-a Ctrl-p --> Fetch the X clipboard and paste it
+#
+#  Editing notes:
+#     
+#     o Reloading ~/.tmux.conf:
+#           Ctrl+x :source ~/.tmux.conf
+#
+#  Make vertical panes same size:
+#       Ctrl-a Alt-1
+#
+#  Renumbering windows:
+#       :move-window -t 1 -s 9   # Move window 1 to 9th position
+#       :move-window -r  # Renumber all the windows (eliminate gaps)
+#  
+
+# Here's how we rebind the prefix key to Ctrl+E:
+set -g prefix C-e
+unbind-key C-b
+bind-key C-e send-prefix
+
+
+
+# The mouse can be used to select active pane and resize panes with grab/drag.  It will
+# also copy text to the X clipboard and tmux paste buffer simultaneously.
+set-option -g mouse on  # As of tmux 2.1, there's only one mouse option.
+#set -g mode-mouse on
+#set -g mouse-resize-pane on
+#set -g mouse-select-pane on
+
+# Don't print gibberish on the screen when we copy to buffer with Ctrl-X [
+set-option -s set-clipboard off
+
+# The scroll buffer is too handy to make small:
+set-option -g history-limit 100000
+
+# renumber-windows means that when you delete a window, tmux re-assigns window numbers to compensate.
+set-option -g renumber-windows on
+
+# Ctrl+P will copy the X clipboard into the tmux paste buffer, and then paste it:
+bind C-p run-shell -b "xclip -o -selection primary | tmux load-buffer -; tmux paste-buffer"
+
+# Ctrl+Y will copy the tmux buffer into the x clipboard
+bind C-y run-shell -b "tmux save-buffer - | xclip -i -selection primary >/dev/null"
+
+# When the mouse selects, copy that to X clipboard:
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -in -selection clipboard"
+
+# Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
+set -g base-index 1
+set -g pane-base-index 1
+
+set -g display-panes-time 15000 # of milliseconds to leave pane numbers up
+
+set-window-option -g window-status-current-style fg=black,bg=white,bold  # Light up the active window in status bar
+
+set-window-option -g window-status-current-format '[> #W <]'
+
+set-window-option -g mode-keys vi  # Use vi mode for tmux command line
+
+set -g pane-border-status top
+set -g wrap-search off
+
+# These values set the border colors for panes. We're saying
+# the same thing twice, because tmux versions < 2.9 used the
+# first syntax, and the later versions use the second syntax.
+set -g pane-border-bg colour235
+set -g pane-border-fg colour247
+set -g pane-active-border-bg colour5
+set -g pane-active-border-fg colour4
+set -g pane-border-style bg=colour235
+set -g pane-border-style fg=colour247
+set -g pane-active-border-style bg=colour2
+set -g pane-active-border-style fg=colour4,bg=colour5
+
+
+# hjkl => change windows like vi
+unbind-key h
+unbind-key j
+unbind-key k
+unbind-key l
+bind-key -r     h select-pane -L
+bind-key -r     l select-pane -R
+bind-key -r     j select-pane -D
+bind-key -r     k select-pane -U
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-yank'
+
+
+bind-key      @ choose-window 'join-pane -t "%%"'
+# <prefix>@ is sort-of the opposite of break-pane ( <prefix>! ),
+# allowing us to join the current pane to another window, and
+# using choose-window to navigate to the destination.
+
+
+
+
+
+# Keep this at the bottom of .tmux.conf:
+run '~/.tmux/plugins/tpm/tpm'
+

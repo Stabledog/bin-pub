@@ -93,10 +93,10 @@ function chdir_k {
     fi
 
     PS3="Enter destination by number (0 or ^D to quit): "
-    select xd in $( cat ${cachefile}) ; do
+    select xd in $( cat ${cachefile} | sed -e "s^${HOME}^\~^" ) ; do
         [[ -z $REPLY ]] && return
         chdir_k_add_to_cache "${cachefile}" "${xd}"
-        builtin cd "${xd}"
+        builtin cd "$(eval echo $xd)"
         return
     done
 }

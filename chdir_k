@@ -12,6 +12,7 @@
 
 export chdir_k_enable_stubs=false
 export chdir_k_cache_size=0
+chdir_k_args=
 
 function chdir_k_stub {
     if $chdir_k_enable_stubs; then
@@ -49,17 +50,37 @@ function chdir_k_add_to_cache {
     echo "$dir_to_add" >> ${cachefile}
 }
 
-function chdir_k {
+function chdir_k_parse_args {
     if [[ "${1:0:1}" == "-" ]]; then
-        if [[ "$1" == "-" ]]; then
-            builtin cd -
-            return
-        fi
-        # Todo: add option handling here
-        echo "Unknown option: $1" >&2;
-        return;
+        case $1 in
+            -)
+                builtin cd -
+                false
+                return
+                ;;
+            -e)
+                local cachefile=$(chdir_k_init_cachefile "$PWD")
+                $EDITOR $cachefile
+                chdir_k_cache_size=$(wc -l ${cachefile} | awk '{print $1}' )
+                shift
+                ;;
+            -c)
+                local cachefile=$(chdir_k_init_cachefile "$PWD")
+                echo "Cachefile reset: $cachefile"
+                echo > $cachefile
+                chdir_k_cache_size=0
+                shift
+                ;;
+        esac
     fi
-    local quik_pik="$@"
+    chdir_k_args="$@"
+}
+
+function chdir_k {
+    if ! chdir_k_parse_args "$@"; then
+        return
+    fi
+    local quik_pik="$chdir_k_args"
     local cachefile=$(chdir_k_init_cachefile "$PWD")
     chdir_k_cache_size=$(wc -l ${cachefile} | awk '{print $1}' )
     if [[ -d "${quik_pik}" ]]; then

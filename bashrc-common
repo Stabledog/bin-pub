@@ -383,6 +383,7 @@ function loadTaskrcs {
 		if [[ -f $line ]]; then
 		    xlog_rc "$line"
             source $line
+            [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9; return; }
         fi
     done < <( load_rcs1 "$HOME" )
 
@@ -392,6 +393,7 @@ function loadTaskrcs {
             if [[ -f $line ]]; then
                 xlog_rc "$line"
                 source $line
+                [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9; return; }
             fi
         done < <( load_rcs1 "$PWD" )
     fi

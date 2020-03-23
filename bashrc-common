@@ -364,16 +364,21 @@ if $isBash; then
 fi
 
 
+function load_rcs1 {
+    eval "$xlocal rootDir=$1"
+    while read path; do
+        [[ -z $path ]] && continue
+        [[ -f $path ]] || continue
+        echo "$path"
+    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort )
+}
+
 function loadTaskrcs {
     local logfile9=$HOME/.loadtaskrcs.log
     echo "$(date): loadTaskrcs: trainload initialization of ~/.taskrc" > $logfile9
 
     function xlog_rc {
         echo "+++ $@" >> $logfile9
-    }
-	function load_rcs1 {
-	    eval "$xlocal rootDir=$1"
-        /bin/ls -1 ${rootDir}/.taskrc/* 2>/dev/null | egrep -v '\.vim$' | sort
     }
 
 

@@ -388,15 +388,15 @@ function loadTaskrcs {
     done < <( load_rcs1 "$HOME" )
 
 	# Do it for any local .taskrc's in current dir also:
-	if [[ "$HOME" != "$PWD" ]]; then
-        while read line; do
-            if [[ -f $line ]]; then
-                xlog_rc "$line"
-                source $line
-                [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9; return; }
-            fi
-        done < <( load_rcs1 "$PWD" )
-    fi
+	# if [[ "$HOME" != "$PWD" ]]; then
+    #     while read line; do
+    #         if [[ -f $line ]]; then
+    #             xlog_rc "$line"
+    #             source $line
+    #             [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9; return; }
+    #         fi
+    #     done < <( load_rcs1 "$PWD" )
+    # fi
 }
 
 function reset {

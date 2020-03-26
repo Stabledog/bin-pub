@@ -1,0 +1,35 @@
+#!/bin/bash
+
+function errExit {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+gopen_f() {
+
+    local exp=`which explorer.exe 2>/dev/null`
+    if [[ -z $exp ]]; then
+        if [[ -x /c/Windows/explorer.exe ]]; then
+            exp=/c/Windows/explorer.exe
+        else return $(errExit "Can't find explorer.exe on PATH=[$PATH]")
+        fi
+    fi
+
+    if [[ -z $1 ]]; then
+        $exp
+        return
+    fi
+
+    while [[ ! -z $1 ]]; do
+        # get full unsymlinked filename
+        local dir=$(dirname "$1")
+        cd "$dir" || return $(errExit "Can't cd to $dir")
+        local base=$(basename "$1")
+        local file=$(readlink -e "$base")
+        # open item using default windows application
+        $exp "$base"
+        shift
+    done
+}
+
+gopen_f "$@"

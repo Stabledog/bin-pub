@@ -1,0 +1,126 @@
+#!/bin/bash
+# ck: menu-driven smart change directory.
+# vim: filetype=sh :
+#
+# As you work, ck caches directories visited.  The
+# function tries to evaluate argument as a directory name, but if
+# that fails it attempts a cache match on substring.  If no
+# match occurs, it displays a menu of numbered directories.
+#
+# If you know the cache number in advance, you can enter "ck N" to go there
+# without prompting.
+
+export chdir_k_enable_stubs=false
+export chdir_k_cache_size=0
+chdir_k_args=
+
+function chdir_k_stub {
+    if $chdir_k_enable_stubs; then
+        echo "chdir_k_stub[$@]" >&2
+    fi
+}
+
+function chdir_k_init_cachefile {
+    local tmpDir=${TMPDIR:-/tmp}
+    local cachefile=${tmpDir}/chdir_k.$UID
+    chdir_k_stub cachefile $cachefile
+    if [[ ! -f "$cachefile" ]]; then
+        mkdir -p $(dirname $cachefile)
+        touch $cachefile
+    fi
+    chdir_k_add_to_cache ${cachefile} "${1:-${PWD}}"
+    echo $cachefile
+}
+
+function chdir_k_add_to_cache {
+    local cachefile="$1"
+    local dir_to_add="$2"
+
+    if [[ -z "$dir_to_add" || ! -d "$dir_to_add" ]]; then
+        # Must be defined, must be a dir:
+        return
+    fi
+    if ! [[ ${dir_to_add:0:1} =~ [~/] ]]; then
+        # We don't want relative paths in the cache:
+        dir_to_add=$(readlink -f "$dir_to_add")
+    fi
+    if <${cachefile} egrep -q "^${dir_to_add}$"; then
+        return  # Already in the cache
+    fi
+    echo "$dir_to_add" >> ${cachefile}
+}
+
+function chdir_k_parse_args {
+    if [[ "${1:0:1}" == "-" ]]; then
+        case $1 in
+            -)
+                builtin cd -
+                false
+                return
+                ;;
+            -e)
+                local cachefile=$(chdir_k_init_cachefile "$PWD")
+                $EDITOR $cachefile
+                chdir_k_cache_size=$(wc -l ${cachefile} | awk '{print $1}' )
+                shift
+                ;;
+            -c)
+                local cachefile=$(chdir_k_init_cachefile "$PWD")
+                echo "Cachefile reset: $cachefile"
+                echo > $cachefile
+                chdir_k_cache_size=0
+                shift
+                ;;
+        esac
+    fi
+    chdir_k_args="$@"
+}
+
+function chdir_k {
+    if ! chdir_k_parse_args "$@"; then
+        return
+    fi
+    local quik_pik="$chdir_k_args"
+    local cachefile=$(chdir_k_init_cachefile "$PWD")
+    chdir_k_cache_size=$(wc -l ${cachefile} | awk '{print $1}' )
+    if [[ -d "${quik_pik}" ]]; then
+        # Arg 1 is a directory, go there now:
+        chdir_k_add_to_cache "${cachefile}" "${quik_pik}"
+        builtin cd "${quik_pik}"
+        return
+    fi
+
+    if [[ ! -z ${quik_pik} ]]; then
+        # The user is trying to provide us with some quick-pick guidance:
+        local xdir=
+        if [[ "${quik_pik}" =~ [0-9]+ ]]; then
+            # If this is a number, we'll guess that they're trying
+            # to quick-pick a row number from the cache:
+            if (( ${quik_pik} <= $chdir_k_cache_size )); then
+                xdir=$(cat ${cachefile} | head -${quik_pik} | tail -1 )
+            fi
+        else
+            # A non-numeric quik_pik suggests an attempt by the user
+            # to string-match an entry from the cache:
+            xdir=$( <${cachefile} egrep "${quik_pik}"  2>/dev/null | tail -1)
+        fi
+        if [[ -d "$xdir" ]]; then
+            chdir_k_add_to_cache "$cachefile" "$xdir"
+            builtin cd "$xdir"
+            return
+        else
+            echo "Sorry, no cache hit for \"$quik_pik\" or result is not a dir " >&2
+        fi
+    fi
+
+    PS3="Enter destination by number (0 or ^D to quit): "
+    select xd in $( cat ${cachefile} | sed -e "s^${HOME}^\~^" ) ; do
+        [[ -z $REPLY ]] && return
+        chdir_k_add_to_cache "${cachefile}" "${xd}"
+        builtin cd "$(eval echo $xd)"
+        return
+    done
+}
+
+alias ck=chdir_k
+

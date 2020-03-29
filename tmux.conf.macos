@@ -5,14 +5,12 @@
 # SETUP: You need to brew install reattach-to-user-namespace
 # See https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
 
-# General tips:
-# -------------
-#
+
 #   Cut and paste: 
 #
-#       Ctrl-a [ --> Enter copy mode, use [space] to start selection and [enter] to copy to buffer
+#       Ctrl-e [ --> Enter copy mode, use [space] to start selection and [enter] to copy to buffer
 #                    (Mouse can also be used to select+copy text)
-#       Ctrl-a ] --> Paste to destination pane
+#       Ctrl-e ] --> Paste to destination pane
 #       
 #       Shift+mouse-select: If you hold down the shift key while selecting by mouse, text is copied to the X clipboard
 #       Shift+mouse-middle: Paste with mouse into tmux window
@@ -21,15 +19,15 @@
 #       See ~lmatheson4/bin/tmux-main for an example startup script
 #
 #   Rotate current pane:
-#       Ctrl-a } --> Move this pane 'forward' in rotation
-#       Ctrl-a { --> Move this pane 'backward' in rotation
+#       Ctrl-e } --> Move this pane 'forward' in rotation
+#       Ctrl-e { --> Move this pane 'backward' in rotation
 #
 #   Use the normal X clipboard:
-#       Ctrl-a z  --> Toggle zoom on current pane
+#       Ctrl-e z  --> Toggle zoom on current pane
 #          Then, the usual X mouse-left and mouse-center buttons can be used for copy and paste.
 #
-#       Ctrl-a Ctrl-y --> Copy the tmux buffer to X clipboard
-#       Ctrl-a Ctrl-p --> Fetch the X clipboard and paste it
+#       Ctrl-e Ctrl-y --> Copy the tmux buffer to X clipboard
+#       Ctrl-e Ctrl-p --> Fetch the X clipboard and paste it
 #
 #  Editing notes:
 #     
@@ -37,14 +35,14 @@
 #           Ctrl+x :source ~/.tmux.conf
 #
 #  Make vertical panes same size:
-#       Ctrl-a Alt-1
+#       Ctrl-e Alt-1
 #
 #  Renumbering windows:
 #       :move-window -t 1 -s 9   # Move window 1 to 9th position
 #       :move-window -r  # Renumber all the windows (eliminate gaps)
 #  
 
-# Here's how we rebind the prefix key to Ctrl+a:
+# Here's how we rebind the prefix key to Ctrl+E:
 set -g prefix C-e
 unbind-key C-b
 bind-key C-e send-prefix

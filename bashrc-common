@@ -364,16 +364,21 @@ if $isBash; then
 fi
 
 
+function load_rcs1 {
+    eval "$xlocal rootDir=$1"
+    while read path; do
+        [[ -z $path ]] && continue
+        [[ -f $path ]] || continue
+        echo "$path"
+    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | sed -e "s%^%${rootDir}/.taskrc/%" )
+}
+
 function loadTaskrcs {
     local logfile9=$HOME/.loadtaskrcs.log
     echo "$(date): loadTaskrcs: trainload initialization of ~/.taskrc" > $logfile9
 
     function xlog_rc {
         echo "+++ $@" >> $logfile9
-    }
-	function load_rcs1 {
-	    eval "$xlocal rootDir=$1"
-        /bin/ls -1 ${rootDir}/.taskrc/* 2>/dev/null | egrep -v '\.vim$' | sort
     }
 
 
@@ -383,18 +388,10 @@ function loadTaskrcs {
 		if [[ -f $line ]]; then
 		    xlog_rc "$line"
             source $line
+            [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9;  }
         fi
     done < <( load_rcs1 "$HOME" )
 
-	# Do it for any local .taskrc's in current dir also:
-	if [[ "$HOME" != "$PWD" ]]; then
-        while read line; do
-            if [[ -f $line ]]; then
-                xlog_rc "$line"
-                source $line
-            fi
-        done < <( load_rcs1 "$PWD" )
-    fi
 }
 
 function reset {

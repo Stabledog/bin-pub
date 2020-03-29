@@ -45,9 +45,9 @@
 #  
 
 # Here's how we rebind the prefix key to Ctrl+a:
-set -g prefix C-a
+set -g prefix C-e
 unbind-key C-b
-bind-key C-a send-prefix
+bind-key C-e send-prefix
 
 # Macos has this reattach problem:
 set-option -g default-command "reattach-to-user-namespace -l /usr/local/bin/bash"

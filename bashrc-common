@@ -224,8 +224,14 @@ function initGitStuff {
 	alias grv='git remote -v'
 	alias gd='git diff'
 	alias gdt='git difftool'
-	alias gitg='git ls-files | egrep'
 	alias grv='git remote -v'
+
+    function gitgrep {
+        local pattern="${1:-.*}"
+        shift
+        git ls-files | egrep "${pattern}" "$@"
+    }
+	alias gitg='gitgrep'
 
 	if $isBash; then
         source ${LmHome}/bin/git-completion.bash

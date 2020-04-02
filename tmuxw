@@ -1,0 +1,13 @@
+#!/bin/bash
+
+function errExit {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+function select_session {
+    tmux ls
+}
+
+if [[ -z $sourceMe ]]; then
+fi

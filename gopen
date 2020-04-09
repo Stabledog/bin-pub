@@ -11,7 +11,8 @@ gopen_f() {
     if [[ -z $exp ]]; then
         if [[ -x /c/Windows/explorer.exe ]]; then
             exp=/c/Windows/explorer.exe
-        else return $(errExit "Can't find explorer.exe on PATH=[$PATH]")
+        else
+            return $(errExit "Can't find explorer.exe on PATH=[$PATH]")
         fi
     fi
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Add given dir to the PATH, print the result.  By default
 # we add the new dir to the start of the PATH, but if $2='after'
@@ -6,8 +6,6 @@
 
 
 # Is this dir already on the PATH?:
-
-
 if [[ ":$PATH:" == *":$1:"* ]]; then
     echo $PATH  # No change needed
 else

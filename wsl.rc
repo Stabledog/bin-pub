@@ -29,46 +29,49 @@ function itemstatus {
     fi
 }
 
+function do_wslrc {
+    # Help: this function can be re-run within a shell to refresh the initialization
+    print_divide
+    print_frame "do_wslrc() loading:"
 
-print_divide
-print_frame "~/.wsl.rc Loading:"
+    print_divide
 
-print_divide
+    if [[ -f ~/.bashrc ]]; then
+        source ~/.bashrc
+        echo -n "~/.bashrc: Load $(itemstatus $?)"
+    else
+        echo -n "~/.bashrc: " ; print_warn "None"
+    fi
+    print_divide
 
-if [[ -f ~/.bashrc ]]; then
-    source ~/.bashrc
-    echo -n "~/.bashrc: Load $(itemstatus $?)"
-else
-    echo -n "~/.bashrc: " ; print_warn "None"
-fi
-print_divide
+    if [[ -f $PWD/taskrc  || -f $PWD/taskrc.md ]]; then
+        taskrc_v3 >/dev/null
+        echo -n "taskrc: Load $(itemstatus $?)"
+    else
+        echo -n "taskrc: " ; print_warn "None"
+    fi
 
-if [[ -f $PWD/taskrc  || -f $PWD/taskrc.md ]]; then
-    taskrc_v3 >/dev/null
-    echo -n "taskrc: Load $(itemstatus $?)"
-else
-    echo -n "taskrc: " ; print_warn "None"
-fi
+    print_divide
 
-print_divide
+    if (which codesrv-connect) 2>&1  >/dev/null; then
+        codesrv-connect >/dev/null
+        echo -n "codesrv-connect: Update $(itemstatus $?)"
+    else
+        echo -n "codesrv-connect: " ; print_warn "Not found"
+    fi
 
-if (which codesrv-connect) 2>&1  >/dev/null; then
-    codesrv-connect >/dev/null
-    echo -n "codesrv-connect: Update $(itemstatus $?)"
-else
-    echo -n "codesrv-connect: " ; print_warn "Not found"
-fi
+    print_divide
 
-print_divide
+    # If there's a vscode_sh_init function defined (e.g. from taskrc),
+    # we invoke that too:
+    if type -p vscode_sh_init &>/dev/null; then
+        vscode_sh_init
+        echo -n "vscode_sh_init(): Load $(itemstatus $?)"
+    else
+        echo -n "vscode_sh_init(): " ; print_warn None
+    fi
 
-# If there's a vscode_sh_init function defined (e.g. from taskrc),
-# we invoke that too:
-if type -p vscode_sh_init &>/dev/null; then
-    vscode_sh_init
-    echo -n "vscode_sh_init(): Load $(itemstatus $?)"
-else
-    echo -n "vscode_sh_init(): " ; print_warn None
-fi
+    print_divide
+}
 
-print_divide
-
+do_wslrc

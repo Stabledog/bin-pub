@@ -81,17 +81,22 @@ function interactive {
                     read -n 1 -p "Which number? "
                     recnum=${REPLY}
                     echo
-                else
-                    echo launch_or_attach $( echo $matches | awk -F':' '{print $0}' )
+                elif [[ ! -z $matches ]]; then
+                    # Only one match
+                    launch_or_attach $( echo $matches | cut -f 1 -d ':' )
                     return
+                else
+                    # No matches:
+                    echo "Sorry, no matches for \"$REPLY\" "
+                    recnum=0
                 fi
                 ;;
         esac
         #set -x
-        if (( recnum > 0 )); then
+        if (( recnum > 0 )) 2>/dev/null; then
             tgt_session_name=$( tmux ls | awk "NR==${recnum} {print \$1}" | tr -d ':' )
             if [[ ! -z $tgt_session_name ]]; then
-                echo launch_or_attach "$tgt_session_name"
+                launch_or_attach "$tgt_session_name"
                 return
             else
                 echo

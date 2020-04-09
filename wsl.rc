@@ -9,8 +9,16 @@ function stub {
     echo "~/.wsl.rc stub[$@]" >&2
 }
 
+function print_frame  {
+    echo -en "\033[;35m$@\033[;0m"
+}
+
 function print_divide {
-    echo -en "\033[;35m <|>\033[;0m  "
+    print_frame " <|> "
+}
+
+function print_warn {
+    echo -en "\033[;33m$@\033[;0m"
 }
 
 function itemstatus {
@@ -23,7 +31,7 @@ function itemstatus {
 
 
 print_divide
-echo -n "~/.wsl.rc Loading"
+print_frame "~/.wsl.rc Loading:"
 
 print_divide
 
@@ -31,7 +39,7 @@ if [[ -f ~/.bashrc ]]; then
     source ~/.bashrc
     echo -n "~/.bashrc: Load $(itemstatus $?)"
 else
-    echo -n "~/.bashrc: None"
+    echo -n "~/.bashrc: " ; print_warn "None"
 fi
 print_divide
 
@@ -39,7 +47,7 @@ if [[ -f $PWD/taskrc  || -f $PWD/taskrc.md ]]; then
     taskrc_v3 >/dev/null
     echo -n "taskrc: Load $(itemstatus $?)"
 else
-    echo -n "taskrc: None"
+    echo -n "taskrc: " ; print_warn "None"
 fi
 
 print_divide
@@ -48,7 +56,7 @@ if (which codesrv-connect) 2>&1  >/dev/null; then
     codesrv-connect >/dev/null
     echo -n "codesrv-connect: Update $(itemstatus $?)"
 else
-    echo -n "codesrv-connect: Not found"
+    echo -n "codesrv-connect: " ; print_warn "Not found"
 fi
 
 print_divide
@@ -59,7 +67,7 @@ if type -p vscode_sh_init &>/dev/null; then
     vscode_sh_init
     echo -n "vscode_sh_init(): Load $(itemstatus $?)"
 else
-    echo -n "vscode_sh_init(): None"
+    echo -n "vscode_sh_init(): " ; print_warn None
 fi
 
 print_divide

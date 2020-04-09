@@ -9,24 +9,58 @@ function stub {
     echo "~/.wsl.rc stub[$@]" >&2
 }
 
-source ~/.bashrc
+function print_divide {
+    echo -en "\033[;35m <|>\033[;0m  "
+}
 
-#stub "loading:"
-echo "~/.wsl.rc..."
+function itemstatus {
+    if (( $1 == 0 )); then
+        echo -en "\033[;32mOK\033[;0m"
+    else
+        echo -en "\033[;31mERR\033[;0m"
+    fi
+}
+
+
+print_divide
+echo -n "~/.wsl.rc Loading"
+
+print_divide
+
+if [[ -f ~/.bashrc ]]; then
+    source ~/.bashrc
+    echo -n "~/.bashrc: Load $(itemstatus $?)"
+else
+    echo -n "~/.bashrc: None"
+fi
+print_divide
 
 if [[ -f $PWD/taskrc  || -f $PWD/taskrc.md ]]; then
     taskrc_v3 >/dev/null
-    echo "   taskrc: $?"
+    echo -n "taskrc: Load $(itemstatus $?)"
+else
+    echo -n "taskrc: None"
 fi
+
+print_divide
 
 if (which codesrv-connect) 2>&1  >/dev/null; then
     codesrv-connect >/dev/null
-    echo "   codesrv-connect: $?"
+    echo -n "codesrv-connect: Update $(itemstatus $?)"
+else
+    echo -n "codesrv-connect: Not found"
 fi
+
+print_divide
 
 # If there's a vscode_sh_init function defined (e.g. from taskrc),
 # we invoke that too:
 if type -p vscode_sh_init &>/dev/null; then
     vscode_sh_init
-    echo "   vscode_sh_init: $?"
+    echo -n "vscode_sh_init(): Load $(itemstatus $?)"
+else
+    echo -n "vscode_sh_init(): None"
 fi
+
+print_divide
+

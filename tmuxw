@@ -56,22 +56,52 @@ function dispatch_args {
 function match_session_name {
     # Match $1 against an existing session name, print the whole name.  Partial
     # matches may produce multiple candidates, so expect multiple lines or empty results.
+    while read; do
+        if [[ "${REPLY%%:*}" == *${1}* ]]; then
+            echo "$REPLY"
+        fi
+    done < <(tmux ls)
 }
 
 function interactive {
-
+    local tgt_session_name
+    local recnum
     while true; do
         tmux ls | cat -n
         read -p "Choose entry by number or session name match: "
         case "$REPLY" in
             +([0-9]) )
-                echo "match number $REPLY"
+                recnum=$REPLY
                 ;;
             *)
-                echo "match name $REPLY"
-                tgt_session_name=$(match_session_name "$REPLY")
+                local matches=$(match_session_name "$REPLY")
+                if [[ $matches == *$'\n'* ]]; then
+                    # More than one match:
+                    echo "$matches" | cat -n
+                    read -n 1 -p "Which number? "
+                    recnum=${REPLY}
+                    echo
+                elif [[ ! -z $matches ]]; then
+                    # Only one match
+                    launch_or_attach $( echo $matches | cut -f 1 -d ':' )
+                    return
+                else
+                    # No matches:
+                    echo "Sorry, no matches for \"$REPLY\" "
+                    recnum=0
+                fi
                 ;;
         esac
+        #set -x
+        if (( recnum > 0 )) 2>/dev/null; then
+            tgt_session_name=$( tmux ls | awk "NR==${recnum} {print \$1}" | tr -d ':' )
+            if [[ ! -z $tgt_session_name ]]; then
+                launch_or_attach "$tgt_session_name"
+                return
+            else
+                echo
+            fi
+        fi
     done
 }
 

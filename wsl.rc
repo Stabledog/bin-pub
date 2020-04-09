@@ -1,0 +1,32 @@
+# wsl.rc
+# vim: filetype=sh :
+#  This should be defined in VScode's settings.json like so:
+#
+# "terminal.integrated.shellArgs.linux": ["--rcfile","~/.wsl.rc"]
+#
+
+function stub {
+    echo "~/.wsl.rc stub[$@]" >&2
+}
+
+source ~/.bashrc
+
+#stub "loading:"
+echo "~/.wsl.rc..."
+
+if [[ -f $PWD/taskrc  || -f $PWD/taskrc.md ]]; then
+    taskrc_v3 >/dev/null
+    echo "   taskrc: $?"
+fi
+
+if (which codesrv-connect) 2>&1  >/dev/null; then
+    codesrv-connect >/dev/null
+    echo "   codesrv-connect: $?"
+fi
+
+# If there's a vscode_sh_init function defined (e.g. from taskrc),
+# we invoke that too:
+if type -p vscode_sh_init &>/dev/null; then
+    vscode_sh_init
+    echo "   vscode_sh_init: $?"
+fi

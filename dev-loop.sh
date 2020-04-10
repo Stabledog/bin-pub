@@ -81,8 +81,7 @@ function make_inner_shrc {
 #  You should add this to .gitignore
 echo ".devloop_inner_shrc($@) loading:"
 source ~/.bashrc
-#taskrc_v3
-./dev-loop.sh --inner $@
+dev-loop.sh --inner $@
 exit
 EOF
 }

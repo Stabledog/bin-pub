@@ -10,7 +10,7 @@ function stub {
 }
 
 function print_frame  {
-    echo -en "\033[;35m$@\033[;0m"
+    echo -en "\033[;36m$@\033[;0m"
 }
 
 function print_divide {

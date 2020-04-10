@@ -68,12 +68,21 @@ function interactive {
     local recnum
     while true; do
         tmux ls | cat -n
-        read -p "Choose entry by number or session name match: "
+        echo -en "  \033[;33m  [0-9]: choose by number [a-z]: match by name
+    [+a-z]: create new session => \033[;0m"
+        read
         case "$REPLY" in
             +([0-9]) )
+                # Pick by number
                 recnum=$REPLY
                 ;;
+            \+@([a-zA-Z0-9]*([a-zA-Z0-9_.@\-/^%])) )
+                # Add new session
+                launch_or_attach ${REPLY:1}
+                return
+                ;;
             *)
+                # Match substring by name:
                 local matches=$(match_session_name "$REPLY")
                 if [[ $matches == *$'\n'* ]]; then
                     # More than one match:

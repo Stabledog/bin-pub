@@ -82,6 +82,7 @@ function make_inner_shrc {
 echo ".devloop_inner_shrc($@) loading:"
 source ~/.bashrc
 dev-loop.sh --inner $@
+rm .devloop_inner_shrc
 exit
 EOF
 }

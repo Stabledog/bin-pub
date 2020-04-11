@@ -9,7 +9,7 @@
 #  Usage:
 #    1.  Open an integrated terminal in vscode, and run codesrv-connect
 #    2.  In the target shell, cd to the same directory and run
-#       ". .codesrv-connect", or follow the instruction printed by codesrv-connect.
+#       ". $PWD/codesrv-connect", or follow the instruction printed by codesrv-connect.
 #
 #  Setup:
 #    Put "codesrv-connect somewhere on your PATH (e.g. ~/bin)"

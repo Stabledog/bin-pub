@@ -1,0 +1,12 @@
+# codesrv-connect.rc
+# vim: filetype=sh :
+#  Shell helper for codesrv-connect:  include this in your shell initialization
+
+function codesrv {
+    if [[ ! -f ./.codesrv-connect ]]; then
+        echo "ERROR: no .codesrv-connect in this directory.  Run codesrv-connect first"
+        false
+        return
+    fi
+    source $PWD/.codesrv-connect
+}

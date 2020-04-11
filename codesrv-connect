@@ -6,17 +6,20 @@
 #     vscode integrated terminal's "code [args]" command to communicate with that instance of vscode
 #     from an unrelated shell.
 #
+#  Setup:
+#    1. codesrv-connect should be on the PATH, e.g. in ~/bin
+#    2. Add "source ~/bin/codesrv-connect.rc " to your shell initialization (e.g. ~/.bashrc)
+#
 #  Usage:
 #    1.  Open an integrated terminal in vscode, and run codesrv-connect
-#    2.  In the target shell, cd to the same directory and run
-#       ". $PWD/codesrv-connect", or follow the instruction printed by codesrv-connect.
-#
-#  Setup:
-#    Put "codesrv-connect somewhere on your PATH (e.g. ~/bin)"
+#    2.  In an unrelated terminal window (i.e. wsl.exe or tmux, etc.), cd to the vscode
+#        workspace dir and run 'codesrv'.
+#    3.  Now the unrelated terminal has a 'code' command which communicates with the vscode
+#        instance started in step #1
 #
 #  Cleanup:
 #    - Delete abandoned .codesrv-connect files when their vscode sessions die.
-#    - Do not add .codesrv-connect files to git repositories.
+#    - Add .codesrv-connect to .gitignore
 #
 #  Notes:
 #     The VSCODE_IPC_HOOK_CLI environment variable points to a socket which is rather volatile, while the long path for the 'code' alias is more stable: vscode doesn't change the latter even across a "code -r ." reload.  But the former is easily detached and so you need a fresh value if that happens.  This is what codesrv-connect does: it captures the value of these two and writes them to .codesrv-connect in the current dir.

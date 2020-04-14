@@ -1,34 +1,22 @@
-# ~/.tmux.conf.other
-# WARNING: this is NOT for the Mac. See [ ~/bin/tmux.conf.macos ]
+# ~/.tmux.conf.wsl
+# Specialize for wsl
+# vim: filetype=tmux :
+#  See also: https://www.youtube.com/watch?time_continue=246&v=_MgrjgQqDcE&feature=emb_logo
+
 
 # General tips:
 # -------------
 #
-#   Cut and paste: 
-#
-#       Ctrl-e [ --> Enter copy mode, use [space] to start selection and [enter] to copy to buffer
-#                    (Mouse can also be used to select+copy text)
-#       Ctrl-e ] --> Paste to destination pane
-#       
-#       Shift+mouse-select: If you hold down the shift key while selecting by mouse, text is copied to the X clipboard
-#       Shift+mouse-middle: Paste with mouse into tmux window
-#
-#   Startup with preset window layout:
-#       See ~lmatheson4/bin/tmux-main for an example startup script
+#   Cut and paste:
+#       [mouse select text]:  Copy to tmux + system clipboard
+#       [Ctrl+shift+insert]:  Paste into terminal from system clipboard
 #
 #   Rotate current pane:
-#       Ctrl-e } --> Move this pane 'forward' in rotation
 #       Ctrl-e { --> Move this pane 'backward' in rotation
-#
-#   Use the normal X clipboard:
-#       Ctrl-e z  --> Toggle zoom on current pane
-#          Then, the usual X mouse-left and mouse-center buttons can be used for copy and paste.
-#
-#       Ctrl-e Ctrl-y --> Copy the tmux buffer to X clipboard
-#       Ctrl-e Ctrl-p --> Fetch the X clipboard and paste it
+#       Ctrl-e } --> Move this pane 'forward' in rotation
 #
 #  Editing notes:
-#     
+#
 #     o Reloading ~/.tmux.conf:
 #           Ctrl+x :source ~/.tmux.conf
 #
@@ -38,21 +26,18 @@
 #  Renumbering windows:
 #       :move-window -t 1 -s 9   # Move window 1 to 9th position
 #       :move-window -r  # Renumber all the windows (eliminate gaps)
-#  
+#
 
 # Here's how we rebind the prefix key to Ctrl+E:
 set -g prefix C-e
 unbind-key C-b
 bind-key C-e send-prefix
 
+# Allow opening multiple terminals to view the same session at different sizes.
+setw -g aggressive-resize on
 
-
-# The mouse can be used to select active pane and resize panes with grab/drag.  It will
-# also copy text to the X clipboard and tmux paste buffer simultaneously.
-set-option -g mouse on  # As of tmux 2.1, there's only one mouse option.
-
-# Don't print gibberish on the screen when we copy to buffer with Ctrl-X [
-set-option -s set-clipboard off
+# The mouse can be used to select active pane and resize panes with grab/drag:
+set -g mouse on
 
 # The scroll buffer is too handy to make small:
 set-option -g history-limit 100000
@@ -60,14 +45,6 @@ set-option -g history-limit 100000
 # renumber-windows means that when you delete a window, tmux re-assigns window numbers to compensate.
 set-option -g renumber-windows on
 
-# Ctrl+P will copy the X clipboard into the tmux paste buffer, and then paste it:
-bind C-p run-shell -b "xclip -o -selection primary | tmux load-buffer -; tmux paste-buffer"
-
-# Ctrl+Y will copy the tmux buffer into the x clipboard
-bind C-y run-shell -b "tmux save-buffer - | xclip -i -selection primary >/dev/null"
-
-# When the mouse selects, copy that to X clipboard:
-bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -in -selection clipboard"
 
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
 set -g base-index 1

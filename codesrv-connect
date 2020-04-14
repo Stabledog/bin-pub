@@ -13,7 +13,7 @@
 #  Usage:
 #    1.  Open an integrated terminal in vscode, and run codesrv-connect
 #    2.  In an unrelated terminal window (i.e. wsl.exe or tmux, etc.), cd to the vscode
-#        workspace dir and run 'codesrv'.
+#        workspace dir and run 'codesrv'
 #    3.  Now the unrelated terminal has a 'code' command which communicates with the vscode
 #        instance started in step #1
 #
@@ -24,7 +24,7 @@
 #  Notes:
 #     The VSCODE_IPC_HOOK_CLI environment variable points to a socket which is rather volatile, while the long path for the 'code' alias is more stable: vscode doesn't change the latter even across a "code -r ." reload.  But the former is easily detached and so you need a fresh value if that happens.  This is what codesrv-connect does: it captures the value of these two and writes them to .codesrv-connect in the current dir.
 #
-#   Verinfo: v1.0.0 - les.matheson@gmail.com - 2020-03-31
+#   Verinfo: v1.0.1 - les.matheson@gmail.com - 2020-03-31
 #
 
 function errExit {
@@ -36,7 +36,13 @@ function errExit {
 if [[ $(which code) != *vscode-server* ]]; then
     errExit "The 'code' command doesn't refer to something under .vscode-server: $(type -a code)"
 fi
-cat <<EOF >.codesrv-connect
+if ! which pathadd &>/dev/null; then
+    errExit "Cant find pathadd on the PATH"
+fi
+
+codepath=$(echo $PATH | awk '/vscode-server/ {print $1}' RS=":")
+
+cat >.codesrv-connect <<EOF 
 # Temp file created by $(which codesrv-connect): source this into your working shell like '. .codesrv-connect'
 # ( git hint: add ".codesrv-connect" to .gitignore )
 #
@@ -46,11 +52,12 @@ if ! test -S "$VSCODE_IPC_HOOK_CLI"; then
 else
     export VSCODE_IPC_HOOK_CLI="$VSCODE_IPC_HOOK_CLI"
     alias code=$(which code)
+    PATH=\$(pathadd "${codepath}")
     echo "Done: the 'code' command will talk to socket \"$VSCODE_IPC_HOOK_CLI\" now."
     echo "You can delete .codesrv-connect when the vscode server context dies, or reuse it in other shells until then."
 fi
 EOF
 
-echo "# OK: run this to connect to vscode server in a destination shell:"
+echo "# OK: run 'codesrv' to connect to vscode server in a destination shell, or this command:"
 echo ". $PWD/.codesrv-connect"
 

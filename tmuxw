@@ -15,6 +15,7 @@ function errExit {
 tmux=$(which tmux)
 shopt -s extglob
 
+
 function launch_or_attach {
     local tgt_session_name="$1"
     shift
@@ -22,9 +23,11 @@ function launch_or_attach {
     if tmux ls | awk '{print $1}' | grep -qF "${tgt_session_name}:"; then
         echo "Session ${tgt_session_name} found, attaching:"
         tmux attach -t "${tgt_session_name}" "$@"
+        exit $?
     else
         echo "Session ${tgt_session_name} not found: creating new"
         tmux new-session -s "${tgt_session_name}" "$@"
+        exit $?
     fi
 }
 
@@ -41,7 +44,9 @@ function dispatch_args {
             # tmux-permitted pattern is more generous than this:
             @([a-zA-Z0-9]*([a-zA-Z0-9_.@\-/^%])) )
                 tgt_session_name="$1"
-                launch_or_attach "$tgt_session_name"
+                shift
+                launch_or_attach "$tgt_session_name" "$@"
+                return
                 ;;
 
             *)
@@ -115,6 +120,10 @@ function interactive {
 }
 
 if [[ -z $sourceMe ]]; then
+    if [[ ! -z $TMUX ]]; then
+        errExit "Cant run this inside a TMUX session.  Try [prefix-key]+W to switch sessions, or [prefix-key]+D to detach."
+    fi
+
     dispatch_args  "$@"
     # if dispatch_args doesn't do the job, run our picker:
     interactive "$@"

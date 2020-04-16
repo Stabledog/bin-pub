@@ -1,1 +1,1 @@
-../projects/dev-loop/bin/dev-loop-cur.sh
+../projects/dev-loop/bin/dev-loop-new.sh

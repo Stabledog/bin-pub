@@ -415,6 +415,8 @@ fi
 [[ -r ${LmHome}/bin/loop_cmd ]] && sourceMe=1 source ${LmHome}/bin/loop_cmd
 alias loop=loop_cmd
 
+alias dev-loop='$HOME/projects/dev-loop/bin/dev-loop.sh'
+
 
 unalias rm 2>/dev/null # If someone aliased my rm, cut it out.
 

@@ -1,5 +1,5 @@
 # Symlink to ~/.inputrc enables this.
-#
+# "man 3 readline" for help
 
 # Use vi mode for readline edit:
 set editing-mode vi
@@ -8,10 +8,14 @@ set editing-mode vi
 set bell-style none
 
 # Expand ~ when doing word completion:
-set expand-tilde on
+set expand-tilde off
 set show-mode-in-prompt on
 set vi-ins-mode-string  
 set vi-cmd-mode-string CMD: 
+set colored-stats on
+set mark-symlinked-directories on
+set colored-completion-prefix on
+set show-all-if-ambiguous on
 
 
 $if mode=vi
@@ -25,7 +29,6 @@ $if mode=vi
 
 	# Alt+. pulls in last argument:
 	"\e.": yank-last-arg
-
 
 $endif
 

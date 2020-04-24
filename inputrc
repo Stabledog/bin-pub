@@ -9,6 +9,9 @@ set bell-style none
 
 # Expand ~ when doing word completion:
 set expand-tilde on
+set show-mode-in-prompt on
+set vi-ins-mode-string  
+set vi-cmd-mode-string CMD: 
 
 
 $if mode=vi

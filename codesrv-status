@@ -1,0 +1,11 @@
+#!/bin/bash
+# codesrv-status
+
+type -ap code &>/dev/null || errExit "No 'code' command is defined "
+
+if code -s &>/dev/null; then
+    exit 0
+fi
+exit 2
+
+

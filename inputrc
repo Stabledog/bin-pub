@@ -1,33 +1,54 @@
-# Symlink to ~/.inputrc enables this.
-# "man 3 readline" for help
+#  Readline initialization file
+# Copy or symlink this as ~/.inputrc
+#
+# Run "man 3 readline" for details
 
-# Use vi mode for readline edit:
+# Un-comment this to set `vi` as your editing mode (default is emacs):
 set editing-mode vi
 
-# Bells are for Tinkers:
+# Audible error-bells are annoying.  Options are 'audible', 'visible', and 'none':
 set bell-style visual
 
-# Expand ~ when doing word completion:
+# Expand tilde (~) when doing word completion:
 set expand-tilde off
+
+# Show the insert vs. cmd mode in the shell prompt?
 set show-mode-in-prompt on
+
+# For vi mode, what should go into the prompt for each of cmd/ins mode?
 set vi-ins-mode-string INS:
-set vi-cmd-mode-string ___: 
+set vi-cmd-mode-string ___:
+
+# Colorize the listing when completing file names with TAB:
 set colored-stats on
+
+# Distinguish between real directories and symlinks visually:
 set mark-symlinked-directories on
+
+#  When showing candidate completions, highlight the common
+#  prefix with color:
 set colored-completion-prefix on
+
+# Immediately list candidates if multiple matches:
 set show-all-if-ambiguous on
 
 
 $if mode=vi
-    # set keymap vi-command # command-mode mappings go here:
 	set keymap vi-command
+    # vi command-mode mappings go here:
+
 	# Don't try to save here:
 	"s": nop
 
     set keymap vi-insert
+	# vi insert-mode mappings go here:
+	# vi users often map 'jk' or 'jj' as ESC to switch from insert to command mode,
+	# so they don't have to reach all the way up to the ESC key.  You can un-comment
+	# one of these to get that behavior:
     "jk": vi-movement-mode
+    #"jj": vi-movement-mode
 
-	# Alt+. pulls in last argument:
+	# Alt+. auto-inserts last argument from the previous command:
 	"\e.": yank-last-arg
 
 $endif

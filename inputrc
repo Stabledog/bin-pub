@@ -10,8 +10,8 @@ set bell-style visual
 # Expand ~ when doing word completion:
 set expand-tilde off
 set show-mode-in-prompt on
-set vi-ins-mode-string INS:
-set vi-cmd-mode-string ___: 
+set vi-ins-mode-string \033[;32mIns:\033[;0m
+set vi-cmd-mode-string \033[;31mCmd:\033[;0m
 set colored-stats on
 set mark-symlinked-directories on
 set colored-completion-prefix on

@@ -121,7 +121,8 @@ function interactive {
 
 if [[ -z $sourceMe ]]; then
     if [[ ! -z $TMUX ]]; then
-        errExit "Cant run this inside a TMUX session.  Try [prefix-key]+W to switch sessions, or [prefix-key]+D to detach."
+        tmux "$@"  # We're already inside tmux, so let it handle things...
+        exit $?
     fi
 
     dispatch_args  "$@"

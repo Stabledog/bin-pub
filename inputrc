@@ -10,7 +10,7 @@ set bell-style visual
 # Expand ~ when doing word completion:
 set expand-tilde off
 set show-mode-in-prompt on
-set vi-ins-mode-string  
+set vi-ins-mode-string ___:
 set vi-cmd-mode-string CMD: 
 set colored-stats on
 set mark-symlinked-directories on

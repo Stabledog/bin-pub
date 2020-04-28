@@ -67,6 +67,10 @@ cat >.codesrv-connect <<- EOF
 	fi
 	EOF
 
+if [[ $? == 0 ]] && [[ $(realpath $PWD) != $(realpath $HOME) ]]; then
+	ln -sf $(realpath $PWD)/.codesrv-connect $HOME/
+fi
+
 echo "# OK: run 'codesrv' to connect to vscode server in a destination shell, or this command:"
 echo ". $PWD/.codesrv-connect"
 

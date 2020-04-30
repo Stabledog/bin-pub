@@ -246,9 +246,16 @@ initGitStuff
 
 # Set the terminal title:
 function title {
+    export title_tail="$*"
 
-    printf '\E]2;%s\E\\' "$*"
+    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(hostname)"
 }
+
+if [[ -z $title_tail ]]; then
+    title "bash"
+else
+    title "$title_tail"
+fi
 
 function setDisplay {
     # If the $DISPLAY variable is unset or set wrong, this function attempts

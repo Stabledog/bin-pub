@@ -1,5 +1,14 @@
 # vim: filetype=sh :
 
+
+
+if [[ -n $CUSTOM_SHELL ]]; then
+    # We expect bash to come from our build:
+    if [[ `which bash` != ${CUSTOM_SHELL} ]]; then
+        PATH=$(dirname ${CUSTOM_SHELL}):$PATH
+    fi
+fi
+
 # set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
 [[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
 
@@ -77,7 +86,7 @@ function fix_PATH {
     unset origPath
 }
 
-[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # Also call this at the end of bashrc
+#[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # Also call this at the end of bashrc
 
 #----------------------------------------------------------------
 
@@ -437,7 +446,7 @@ alias tmux='tmux -2'
 alias tmux-detach='tmux detach'
 
 
-[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # There's another call earlier, too
+#[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # There's another call earlier, too
 
 
 

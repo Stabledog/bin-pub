@@ -17,6 +17,20 @@ fi
 
 alias pathadd=$LmHome/bin/pathadd
 
+# The ~/projects dir should be a symlink to a working root appropriate for
+# source controlled and/or toolchain-built projects.  An mbig is a good candidate,
+# or /c/Projects on a WSL environment, or /var/Projects on a Mac.  The HOME
+# dir itself is not an ideal place for the storage, in most cases.  On a
+# Docker container, /root/projects can point to a mounted volume to satisfy
+# this need:
+if [[ -d ~/projects ]]; then
+    ProjectsHome=$( cd ~/projects; realpath . )
+else
+    ProjectsHome=${ProjectsHome:-$HOME/projects}
+    echo "WARNING: no ~/projects dir: this should be a symlink to mbig, /c/Projects, /var/projects, or similar general project root.  \$ProjectsHome remains unresolved." >&2
+fi
+export ProjectsHome
+
 
 function isSunos {
     [[ $(uname) == "SunOS" ]]

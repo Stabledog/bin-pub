@@ -53,10 +53,13 @@ cat >.codesrv-connect <<- EOF
 	    echo "ERROR: $VSCODE_IPC_HOOK_CLI not a socket. Dead session."
 	else
 	    export VSCODE_IPC_HOOK_CLI="$VSCODE_IPC_HOOK_CLI"
-	    if ! PATH=${codepath}:$PATH codesrv-status; then
-	        echo "ERROR: dead vscode connection.  Deleting dead context info: $VSCODE_IPC_HOOK_CLI"
-            rm $VSCODE_IPC_HOOK_CLI
-            rm .codesrv-connect
+	    if ! PATH="${codepath}:\$PATH" codesrv-status; then
+	        echo "ERROR: dead vscode connection."
+            read -n 1 -p "Delete dead context info $VSCODE_IPC_HOOK_CLI ? (y/n): "
+            if [[ \$REPLY =~ [yY] ]]; then
+                rm $VSCODE_IPC_HOOK_CLI
+                rm .codesrv-connect
+            fi
 	    else
 	        alias code=$(which code)
 	        PATH=\$(pathadd "${codepath}")
@@ -66,6 +69,10 @@ cat >.codesrv-connect <<- EOF
         fi
 	fi
 	EOF
+
+if [[ $? == 0 ]] && [[ $(realpath $PWD) != $(realpath $HOME) ]]; then
+	ln -sf $(realpath $PWD)/.codesrv-connect $HOME/
+fi
 
 echo "# OK: run 'codesrv' to connect to vscode server in a destination shell, or this command:"
 echo ". $PWD/.codesrv-connect"

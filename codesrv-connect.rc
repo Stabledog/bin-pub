@@ -4,9 +4,24 @@
 
 function codesrv {
     if [[ ! -f ./.codesrv-connect ]]; then
-        echo "ERROR: no .codesrv-connect in this directory.  Run codesrv-connect first"
-        false
-        return
+        if [[ -f $HOME/.codesrv-connect ]]; then
+            read -n 1 -p "No .codesrv-connect in $PWD.  Press [y] to load the default connection [$(realpath ~/.codesrv-connect)]: "
+            echo
+            if [[ -z $REPLY || $REPLY =~ [yY] ]]; then
+                pushd $HOME &>/dev/null
+                source .codesrv-connect
+                local res=$?
+                popd &>/dev/null
+                return $?
+            fi
+        else
+            echo "WARNING: no .codesrv-connect in this directory.  Run codesrv-connect first"
+            false
+            return
+        fi
     fi
     source $PWD/.codesrv-connect
+    if [[ $? == 0 ]] && [[ $(realpath $PWD) != $(realpath $HOME) ]]; then
+        ln -sf $(realpath PWD)/.codesrv-connect $HOME/
+    fi
 }

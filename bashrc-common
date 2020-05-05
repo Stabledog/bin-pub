@@ -1,5 +1,14 @@
 # vim: filetype=sh :
 
+
+
+if [[ -n $CUSTOM_SHELL ]]; then
+    # We expect bash to come from our build:
+    if [[ `which bash` != ${CUSTOM_SHELL} ]]; then
+        PATH=$(dirname ${CUSTOM_SHELL}):$PATH
+    fi
+fi
+
 # set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
 [[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
 
@@ -91,7 +100,7 @@ function fix_PATH {
     unset origPath
 }
 
-[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # Also call this at the end of bashrc
+#[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # Also call this at the end of bashrc
 
 #----------------------------------------------------------------
 
@@ -260,9 +269,16 @@ initGitStuff
 
 # Set the terminal title:
 function title {
+    export title_tail="$*"
 
-    printf '\E]2;%s\E\\' "$*"
+    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(hostname)"
 }
+
+if [[ -z $title_tail ]]; then
+    title "bash"
+else
+    title "$title_tail"
+fi
 
 function setDisplay {
     # If the $DISPLAY variable is unset or set wrong, this function attempts
@@ -349,14 +365,6 @@ function no_exit {
 
 
 
-function setFancyPs1 {
-    if ${PS1_INCLUDE_GIT_BRANCH:-true}; then
-        local gitBranch=$(parse_git_branch)
-    fi
-PS1='
-\[\033[1;33m\][\D{%Y-%m-%d %H:%M.%S}]\[\033[0m\]  \[\033[1;35m\]\w\[\033[0m\]
-\[\033[1;36m\][\u.\h]\[\033[0m$(parse_git_branch)\] $Ps1Tail> '
-}
 
 function parse_vim_tail {
     # If we've shelled-out from vi/vim, we want to know about it to avoid chaos:
@@ -372,7 +380,7 @@ function t_setFancyPs1 {
     fi
 PS1='
 \[\033[1;33m\][\D{%Y-%m-%d %H:%M.%S}]\[\033[0m\]  \[\033[1;35m\]\w\[\033[0m\]$(parse_git_branch)
-\[\033[1;36m\][\u.\h]\[\033[0m$(parse_vim_tail)\]$Ps1Tail> '
+\[\033[1;36m\][\u.\h]\[\033[0m\]$(parse_vim_tail)$Ps1Tail> '
 }
 
 
@@ -444,7 +452,7 @@ alias tmux='tmux -2'
 alias tmux-detach='tmux detach'
 
 
-[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # There's another call earlier, too
+#[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # There's another call earlier, too
 
 
 

@@ -16,8 +16,8 @@ set expand-tilde off
 set show-mode-in-prompt on
 
 # For vi mode, use red/green Cmd: vs Ins:
-set vi-ins-mode-string \033[;32mIns:\033[;0m
-set vi-cmd-mode-string \033[;31mCmd:\033[;0m
+set vi-ins-mode-string \1\e[;32m\2Ins:\1\e[;0m\2
+set vi-cmd-mode-string \1\e[;31m\2Cmd:\1\e[;0m\2
 
 # Colorize the listing when completing file names with TAB:
 

@@ -33,7 +33,7 @@ alias pathadd=$LmHome/bin/pathadd
 # Docker container, /root/projects can point to a mounted volume to satisfy
 # this need:
 if [[ -d ~/projects ]]; then
-    ProjectsHome=$( cd ~/projects; realpath . )
+    ProjectsHome=$( cd ~/projects; /usr/bin/realpath . )
 else
     ProjectsHome=${ProjectsHome:-$HOME/projects}
     echo "WARNING: no ~/projects dir: this should be a symlink to mbig, /c/Projects, /var/projects, or similar general project root.  \$ProjectsHome remains unresolved." >&2
@@ -152,7 +152,7 @@ function histrc {
 	# Write a note to the bash history.  -l means 'list histNotes'.
 	function histNote {
 		if [[ "$1" == "-l" ]]; then
-			history | egrep -B 1 -A 1 '_h~[n_]' | sed 's/_h~[n_] //'
+			history | /bin/egrep -B 1 -A 1 '_h~[n_]' | /bin/sed 's/_h~[n_] //'
 		else
             echo -n "Enter your shell history note, finish with empty line: "
 			history -s "_h~n [$PWD]:"
@@ -186,7 +186,7 @@ function initLsStuff {
 		CLICOLOR=YES
 		alias ls='ls -G'
 	else
-		eval $(dircolors)
+		eval $(/usr/bin/dircolors)
 		alias ls='ls --color=auto '
 	fi
 }
@@ -211,7 +211,7 @@ function initGitStuff {
 
     function parse_git_branch() {
         if $PS1_INCLUDE_GIT_BRANCH; then
-            git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'
+            git branch 2> /dev/null | /bin/sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'
         fi
      }
 
@@ -271,7 +271,7 @@ initGitStuff
 function title {
     export title_tail="$*"
 
-    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(hostname)"
+    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(/bin/hostname)"
 }
 
 if [[ -z $title_tail ]]; then
@@ -318,7 +318,7 @@ export XEDITOR=$EDITOR
 
 
 # disable flow control for terminal:
-stty -ixon -ixoff
+/bin/stty -ixon -ixoff
 
 # Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
 # {cmd-frag}!<space> to expand the last command that started with that frag.
@@ -400,7 +400,7 @@ function load_rcs1 {
         [[ -z $path ]] && continue
         [[ -f $path ]] || continue
         echo "$path"
-    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | sed -e "s%^%${rootDir}/.taskrc/%" )
+    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | /bin/sed -e "s%^%${rootDir}/.taskrc/%" )
 }
 
 function loadTaskrcs {
@@ -443,7 +443,7 @@ alias loop=loop_cmd
 
 unalias rm 2>/dev/null # If someone aliased my rm, cut it out.
 
-export MYLIBS=${LmHome}/mylibs/$(uname)
+export MYLIBS=${LmHome}/mylibs/$(/bin/uname)
 alias cd-mylibs='cd $MYLIBS'
 
 #
@@ -454,12 +454,14 @@ alias tmux-detach='tmux detach'
 
 #[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # There's another call earlier, too
 
-
-
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
+
+# if which path_undupe &>/dev/null; then 
+    # PATH=$(path_undupe "$PATH")
+# fi
 
 

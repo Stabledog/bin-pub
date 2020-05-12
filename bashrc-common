@@ -9,6 +9,22 @@ if [[ -n $CUSTOM_SHELL ]]; then
     fi
 fi
 
+function init_sh_tools {
+    # Platform-dependent tools detection (dang you, MacOS!):
+    eval $(
+        PATH=/usr/local/bin:/usr/bin
+        for tool in Realpath.realpath Sed.sed Uname.uname; do
+            tk=${tool%.*}
+            tv=${tool#*.}
+            tp=$(which $tv)
+            [[ -z $tp ]] && { echo "ERROR: can't find $tv in $PATH" >&2; continue; }
+            echo "$tk=$tp;"
+        done
+    )
+}
+
+init_sh_tools
+
 # set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
 [[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
 
@@ -33,7 +49,7 @@ alias pathadd=$LmHome/bin/pathadd
 # Docker container, /root/projects can point to a mounted volume to satisfy
 # this need:
 if [[ -d ~/projects ]]; then
-    ProjectsHome=$( cd ~/projects; /usr/bin/realpath . )
+    ProjectsHome=$( cd ~/projects; $Realpath . )
 else
     ProjectsHome=${ProjectsHome:-$HOME/projects}
     echo "WARNING: no ~/projects dir: this should be a symlink to mbig, /c/Projects, /var/projects, or similar general project root.  \$ProjectsHome remains unresolved." >&2
@@ -42,7 +58,7 @@ export ProjectsHome
 
 
 function isSunos {
-    [[ $(uname) == "SunOS" ]]
+    [[ $( $Uname ) == "SunOS" ]]
 }
 
 
@@ -71,7 +87,7 @@ function shell_identify {
 	[[ -f /Cygwin.bat ]] && CYGWIN=true
 
 	[[ -d /Applications/Preview.app ]] && MACOSX=true
-    [[ $(uname) == Darwin ]] && MACOSX=true
+    [[ $( $Uname ) == Darwin ]] && MACOSX=true
 
 	# We treat Mobaterm as cygwin too:
     [[ -d /home/mobaxterm ]]  && CYGWIN=true
@@ -152,7 +168,7 @@ function histrc {
 	# Write a note to the bash history.  -l means 'list histNotes'.
 	function histNote {
 		if [[ "$1" == "-l" ]]; then
-			history | /bin/egrep -B 1 -A 1 '_h~[n_]' | /bin/sed 's/_h~[n_] //'
+			history | /bin/egrep -B 1 -A 1 '_h~[n_]' | $Sed 's/_h~[n_] //'
 		else
             echo -n "Enter your shell history note, finish with empty line: "
 			history -s "_h~n [$PWD]:"
@@ -211,7 +227,7 @@ function initGitStuff {
 
     function parse_git_branch() {
         if $PS1_INCLUDE_GIT_BRANCH; then
-            git branch 2> /dev/null | /bin/sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'
+            git branch 2> /dev/null | $Sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'
         fi
      }
 
@@ -400,7 +416,7 @@ function load_rcs1 {
         [[ -z $path ]] && continue
         [[ -f $path ]] || continue
         echo "$path"
-    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | /bin/sed -e "s%^%${rootDir}/.taskrc/%" )
+    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | $Sed -e "s%^%${rootDir}/.taskrc/%" )
 }
 
 function loadTaskrcs {
@@ -443,7 +459,7 @@ alias loop=loop_cmd
 
 unalias rm 2>/dev/null # If someone aliased my rm, cut it out.
 
-export MYLIBS=${LmHome}/mylibs/$(/bin/uname)
+export MYLIBS=${LmHome}/mylibs/$( $Uname )
 alias cd-mylibs='cd $MYLIBS'
 
 #

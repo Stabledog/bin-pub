@@ -12,7 +12,7 @@ fi
 function init_sh_tools {
     # Platform-dependent tools detection (dang you, MacOS!):
     eval $(
-        PATH=/usr/local/bin:/usr/bin:/bin
+        PATH=/opt/bb/bin:/usr/local/bin:/usr/bin:/bin
         for tool in Realpath.realpath Sed.sed Uname.uname; do
             tk=${tool%.*}
             tv=${tool#*.}

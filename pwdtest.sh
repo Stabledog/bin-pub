@@ -19,7 +19,7 @@ function parseArgs {
 
 parseArgs "$@"
 
-pwd=$1 
+pwd="$1"
 [[ -z $pwd ]] && { echo "Password should be \$1"; exit 1; }
 clear
 

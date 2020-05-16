@@ -1,4 +1,5 @@
 # ~/.tmux.conf.macos
+# vim: filetype=tmux :
 #
 # WARNING: this is Mac-specific flavor of tmux.conf.  There's also tmux.conf.other for linux/cygwin, etc.
 #
@@ -47,19 +48,19 @@ set -g prefix C-e
 unbind-key C-b
 bind-key C-e send-prefix
 
-# Macos has this reattach problem:
-set-option -g default-command "reattach-to-user-namespace -l /usr/local/bin/bash"
-#set-option -g default-shell /usr/local/bin/bash
+# Allow opening multiple terminals to view the same session at different sizes.
+setw -g aggressive-resize on
+
 
 # The mouse can be used to select active pane and resize panes with grab/drag.  It will
 # also copy text to the X clipboard and tmux paste buffer simultaneously.
-set-option -g mouse on  # As of tmux 2.1, there's only one mouse option.
-#set -g mode-mouse on
-#set -g mouse-resize-pane on
-#set -g mouse-select-pane on
+set-option -g mouse on  
 
 # Don't print gibberish on the screen when we copy to buffer with Ctrl-X [
 set-option -s set-clipboard on
+
+# Macos has this reattach problem:
+set-option -g default-command "reattach-to-user-namespace -l /usr/local/bin/bash"
 
 # The scroll buffer is too handy to make small:
 set-option -g history-limit 50000
@@ -87,10 +88,19 @@ set-window-option -g mode-keys vi  # Use vi mode for tmux command line
 
 set -g pane-border-status top
 set -g wrap-search off
-set -g pane-border-bg colour235
-set -g pane-border-fg colour238
-set -g pane-active-border-bg colour236
-set -g pane-active-border-fg colour51
+
+# These values set the border colors for panes. We're saying
+# the same thing twice, because tmux versions < 2.9 used the
+# first syntax, and the later versions use the second syntax.
+#set -g pane-border-bg colour235
+#set -g pane-border-fg colour247
+#set -g pane-active-border-bg colour5
+#set -g pane-active-border-fg colour4
+set -g pane-border-style bg=colour235
+set -g pane-border-style fg=colour247
+set -g pane-active-border-style bg=colour2
+set -g pane-active-border-style fg=colour4,bg=colour5
+
 
 # hjkl => change windows like vi
 unbind-key h
@@ -102,16 +112,21 @@ bind-key -r     l select-pane -R
 bind-key -r     j select-pane -D
 bind-key -r     k select-pane -U
 
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-yank'
-
-
-bind-key      @ choose-window 'join-pane -t "%%"'
 # <prefix>@ is sort-of the opposite of break-pane ( <prefix>! ),
 # allowing us to join the current pane to another window, and
 # using choose-window to navigate to the destination.
+bind-key      @ choose-window 'join-pane -t "%%"'
 
+# -----------------------------------------------------------------------------
+# Plugin Manager - https://github.com/tmux-plugins/tpm
+# In order to use the plugins below you need to install TPM and the plugins.
+#   Step 0) Exit all tmux sessions to shut it down completely
+#   Step 1) git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+#   Step 2) Launch tmux and hit <prefix>I to fetch any plugins
+# -----------------------------------------------------------------------------
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-yank'
 
 
 

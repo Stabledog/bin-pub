@@ -201,7 +201,7 @@ function initLsStuff {
 		CLICOLOR=YES
 		alias ls='ls -G'
 	elif which dircolors &>/dev/null; then
-		eval $(/usr/bin/dircolors)
+		eval $(/usr/bin/dircolors --bourne-shell)
 		alias ls='ls --color=auto '
 	fi
 }

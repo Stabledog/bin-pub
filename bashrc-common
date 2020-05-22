@@ -200,7 +200,7 @@ function initLsStuff {
 	if $MACOSX; then   # Mac doesn't have dircolors
 		CLICOLOR=YES
 		alias ls='ls -G'
-	else
+	elif which dircolors &>/dev/null; then
 		eval $(/usr/bin/dircolors)
 		alias ls='ls --color=auto '
 	fi
@@ -274,7 +274,7 @@ function initGitStuff {
 	alias gitg='gitgrep'
 
 	if $isBash; then
-        source ${LmHome}/bin/git-completion.bash
+        source ${LmHome}/bin/git-completion.bash &>/dev/null
     fi
 
 }
@@ -447,7 +447,7 @@ function reset {
 
 # The 'tox' command:
 if $isBash; then
-    source ${LmHome}/bin/tox-py/tox-completion.bash
+    source ${LmHome}/bin/tox-py/tox-completion.bash &>/dev/null
 fi
 
 # loop_cmd is very handy:

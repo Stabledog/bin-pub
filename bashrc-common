@@ -100,22 +100,6 @@ function shell_identify {
 
 shell_identify
 
-function fix_PATH {
-    origPath=$PATH
-    #echo "fix_PATH invoked" >&2
-    # These dirs are listed from most-general to most-specific. This wipes out any previous path, and  inserts
-    # the most-specific dirs ahead of the least-specfic:
-    for xd in /bin /sbin /usr/bin /usr/local/bin /usr/sbin /usr/local/bin /bb/bin /opt/swt/bin /opt/bb/bin  ${LmHome}/.local/bin ${LmHome}/mylibs/${lmPlatform}/bin $LmHome/bin $LmHome/binl  $LmHome/bin/localsys $cygPathAdd; do
-        if [[ -d $xd ]]; then
-            PATH=$xd:$PATH
-        fi
-    done
-
-    PATH=$($LmHome/bin/path_undupe $PATH:$origPath)
-    unset origPath
-}
-
-#[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # Also call this at the end of bashrc
 
 #----------------------------------------------------------------
 
@@ -200,8 +184,8 @@ function initLsStuff {
 	if $MACOSX; then   # Mac doesn't have dircolors
 		CLICOLOR=YES
 		alias ls='ls -G'
-	else
-		eval $(/usr/bin/dircolors)
+	elif which dircolors &>/dev/null; then
+		eval $(/usr/bin/dircolors --bourne-shell)
 		alias ls='ls --color=auto '
 	fi
 }
@@ -274,7 +258,7 @@ function initGitStuff {
 	alias gitg='gitgrep'
 
 	if $isBash; then
-        source ${LmHome}/bin/git-completion.bash
+        source ${LmHome}/bin/git-completion.bash &>/dev/null
     fi
 
 }
@@ -447,7 +431,7 @@ function reset {
 
 # The 'tox' command:
 if $isBash; then
-    source ${LmHome}/bin/tox-py/tox-completion.bash
+    source ${LmHome}/bin/tox-py/tox-completion.bash &>/dev/null
 fi
 
 # loop_cmd is very handy:
@@ -467,7 +451,6 @@ alias tmux='tmux -2'
 alias tmux-detach='tmux detach'
 
 
-#[[ -f ~/.taskrc/no-fix_PATH ]] || fix_PATH  # There's another call earlier, too
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.

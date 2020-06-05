@@ -11,3 +11,14 @@ for yy in $(seq 0 15); do
     done
     echo
 done
+
+echo "To generate color attributes in shell script, select the color value"
+echo "and add this:"
+echo "  tput setaf nnn"
+echo "  ... to change foreground color, or "
+echo "  tput setab nnn"
+echo "  ... to change background color."
+echo 
+echo "Reset with:"
+echo "  tput sgr0"
+echo

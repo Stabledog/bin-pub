@@ -232,6 +232,15 @@ function initGitStuff {
         echo ".gitattributes added to $PWD"
     }
 
+    function git_branch_diff_file {
+        # Compare one or more local files with peers on branch $GbrDiff, e.g. "GbrDiff=feature/br1 git_branch_diff_file README.md hello.cpp"
+        [[ -z $GbrDiff ]] && return $(errExit "No \$GbrDiff set. Try GbrDiff=name/of/reference/branch")
+        for file in "$@"; do
+            echo "Diff for ${file} vs ${GbrDiff}:${file} -> "
+            vimdiff ${file} <(git show ${GbrDiff}:${file})
+        done
+    }
+
 
 
 	alias gs='git status '

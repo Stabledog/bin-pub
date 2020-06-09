@@ -254,10 +254,12 @@ function initGitStuff {
 	alias gpa='git commit -am sync; git push'
 	alias gpull='git pull'
 	alias grs=git_remote_show
-	alias grv='git remote -v'
 	alias gd='git diff'
 	alias gdt='git difftool'
-	alias grv='git remote -v'
+	function git_remote_view {
+        git remote -v | grep -v \(push\) | sed -e "s/(fetch)//" -e "s/git@bbgithub.dev.bloomberg.com/bbgh/"
+    }
+    alias grv='git_remote_view'
 
     function gitgrep {
         local pattern="${1:-.*}"

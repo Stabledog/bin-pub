@@ -232,6 +232,15 @@ function initGitStuff {
         echo ".gitattributes added to $PWD"
     }
 
+    function git_branch_diff_file {
+        # Compare one or more local files with peers on branch $GbrDiff, e.g. "GbrDiff=feature/br1 git_branch_diff_file README.md hello.cpp"
+        [[ -z $GbrDiff ]] && return $(errExit "No \$GbrDiff set. Try GbrDiff=name/of/reference/branch")
+        for file in "$@"; do
+            echo "Diff for ${file} vs ${GbrDiff}:${file} -> "
+            vimdiff ${file} <(git show ${GbrDiff}:${file})
+        done
+    }
+
 
 
 	alias gs='git status '
@@ -241,14 +250,14 @@ function initGitStuff {
 	alias ga='git add'
 	alias gb='git branch -vv'
 	alias gba='git branch -a -vv'
-	alias gp='git push'
 	alias gpa='git commit -am sync; git push'
-	alias gpull='git pull'
 	alias grs=git_remote_show
-	alias grv='git remote -v'
 	alias gd='git diff'
 	alias gdt='git difftool'
-	alias grv='git remote -v'
+	function git_remote_view {
+        git remote -v | grep -v \(push\) | sed -e "s/(fetch)//" -e "s/git@bbgithub.dev.bloomberg.com/bbgh/" | cat -n
+    }
+    alias grv='git_remote_view'
 
     function gitgrep {
         local pattern="${1:-.*}"

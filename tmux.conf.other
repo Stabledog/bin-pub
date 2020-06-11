@@ -69,6 +69,16 @@ bind C-y run-shell -b "tmux save-buffer - | xclip -i -selection primary >/dev/nu
 # When the mouse selects, copy that to X clipboard:
 bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -in -selection clipboard"
 
+# Toggle mouse on with <prefix>M
+bind-key M \
+  set-option -g mouse on \;\
+  display-message 'Mouse: ON'
+
+# Toggle mouse off with <prefix>m
+bind-key m \
+  set-option -g mouse off \;\
+  display-message 'Mouse: OFF'
+
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
 set -g base-index 1
 set -g pane-base-index 1

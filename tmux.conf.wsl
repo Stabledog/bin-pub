@@ -45,6 +45,15 @@ set-option -g history-limit 100000
 # renumber-windows means that when you delete a window, tmux re-assigns window numbers to compensate.
 set-option -g renumber-windows on
 
+# Toggle mouse on with <prefix>M
+bind-key M \
+  set-option -g mouse on \;\
+  display-message 'Mouse: ON'
+
+# Toggle mouse off with <prefix>m
+bind-key m \
+  set-option -g mouse off \;\
+  display-message 'Mouse: OFF'
 
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
 set -g base-index 1

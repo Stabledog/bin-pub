@@ -7,6 +7,11 @@ function errExit {
 
 gopen_f() {
 
+    if [[ $(uname) == "Darwin" ]]; then
+        command open "$@"
+        return $?
+    fi
+
     local exp=`which explorer.exe 2>/dev/null`
     if [[ -z $exp ]]; then
         if [[ -x /c/Windows/explorer.exe ]]; then

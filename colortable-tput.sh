@@ -1,11 +1,14 @@
 #!/bin/bash
 # colortable-tput.sh
 
+
+[[ $(uname) == Darwin ]] && Tail=gtail || Tail=tail
+
 # Print terminal fg colors in a matrix:
 for yy in $(seq 0 15); do   
     for xx in $(seq 0 15); do
         fgc=$(( xx + yy * 16  ))
-        fgt=$(tail --bytes=4 <<< "  $fgc" )
+        fgt=$($Tail --bytes=4 <<< "  $fgc" )
         tput setaf $fgc
         echo -n "[$fgt]"; 
     done

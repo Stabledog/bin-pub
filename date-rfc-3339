@@ -5,7 +5,10 @@ function usage {
     echo 1
 }
 
+[[ $(uname) == Darwin ]] && Date=gdate || Date=date
+
 [[ $@ == --help ]] && exit $(usage)
 
+
 [[ -z $1 ]] && output_mode=seconds || output_mode=$1
-date --rfc-3339=$output_mode
+$Date --rfc-3339=${output_mode}

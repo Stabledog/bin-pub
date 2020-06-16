@@ -1,0 +1,14 @@
+#!/bin/bash
+
+function usage {
+    echo "$(basename $0) [date|ns|seconds(default)]" >&2
+    echo 1
+}
+
+[[ $(uname) == Darwin ]] && Date=gdate || Date=date
+
+[[ $@ == --help ]] && exit $(usage)
+
+
+[[ -z $1 ]] && output_mode=seconds || output_mode=$1
+$Date --rfc-3339=${output_mode}

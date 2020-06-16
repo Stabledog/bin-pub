@@ -1,0 +1,4 @@
+if [[ -z $diff_so_fancy ]]; then
+    PATH=$(pathadd /c/Projects/diff-so-fancy)
+    export diff_so_fancy=true
+fi

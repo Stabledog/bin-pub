@@ -1,16 +1,33 @@
 #!/bin/bash
-#   Usage:
-#       tmuxw my-session
-#              > start 'my-session' or attach to running session
-#       tmux
-#              > List running sessions. User chooses one to attach or creates new from prompt
-#       tmuxw ls [args]
-#              > Pass through for [ls,a,attach,new-session]
+
+script=$(basename $0)
+
+function usage {
+    cat <<- EOFX
+Usage:
+    $script my-session
+       > start 'my-session' or attach to 
+       > running session
+
+    $script
+       > List running sessions. User chooses 
+       > one to attach or creates new from prompt
+
+    $script ls [args]
+       > Pass through for 
+       >    [ls,a,attach,new-session]
+       
+    $script cwd {new-dir}
+       > Change session cwd, defaults to \$PWD 
+       > for calling pane
+EOFX
+}
 
 function errExit {
     echo "ERROR: $@" >&2
     exit 1
 }
+
 
 tmux=$(which tmux)
 shopt -s extglob
@@ -31,6 +48,13 @@ function launch_or_attach {
     fi
 }
 
+function change_session_dir {
+    local new_dir=$1
+    [[ -z $new_dir ]] && new_dir="$(pwd -P)"
+
+    command $tmux command-prompt -I "$new_dir" -p "New session dir:" "attach -c %1"
+}
+
 function dispatch_args {
     local tgt_session_name
     while [[ ! -z $1 ]]; do
@@ -39,6 +63,7 @@ function dispatch_args {
                 command $tmux $@
                 exit $?
                 ;;
+
 
             # Identifying session names, we enforce a few restrictions, the
             # tmux-permitted pattern is more generous than this:
@@ -120,7 +145,16 @@ function interactive {
 }
 
 if [[ -z $sourceMe ]]; then
+    if [[ $1 == --help ]]; then
+        usage
+        exit 1
+    fi
     if [[ ! -z $TMUX ]]; then
+        if [[ $1 == cwd ]]; then
+            shift
+            change_session_dir "$@"
+            exit $?
+        fi
         tmux "$@"  # We're already inside tmux, so let it handle things...
         exit $?
     fi

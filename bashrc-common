@@ -246,24 +246,34 @@ function initGitStuff {
         git diff --color "$@" | diff-so-fancy | less --tabs=4 -RFXS --pattern '^(Date|added|deleted|modified): '
     }
 
+    function git_log_more {
+        # More detail in git log
+        git log --stat --color "$@" | less --tabs=4 -RFXS
+    }
+
+	function git_remote_view {
+        git remote -v | grep -v \(push\) | sed -e "s/(fetch)//" -e "s/git@bbgithub.dev.bloomberg.com/bbgh/" | cat -n
+    }
 
 
-	alias gs='git status '
 	# Script-worthy git-status: check the branch, parseable output, etc.
     # See-also: git-dirty
+	alias gs='git status '
 	alias gc='git commit'
 	alias ga='git add'
 	alias gb='git branch -vv'
 	alias gba='git branch -a -vv'
+
 	alias gpa='git commit -am sync; git push'
+
 	alias grs=git_remote_show
+
 	alias gd='git diff'
+	alias gdf=git_diff_fancy
 	alias gdt='git difftool'
-	alias gdf='git_diff_fancy'
-	function git_remote_view {
-        git remote -v | grep -v \(push\) | sed -e "s/(fetch)//" -e "s/git@bbgithub.dev.bloomberg.com/bbgh/" | cat -n
-    }
-    alias grv='git_remote_view'
+
+	alias glm=git_log_more
+    alias grv=git_remote_view
 
     function gitgrep {
         local pattern="${1:-.*}"

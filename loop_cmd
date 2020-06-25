@@ -34,7 +34,7 @@ function loop_edit {
 }
 
 function loop_show {
-    echo -e "${color_green}Command is: [${color_none}${cmd}${color_green}]"
+    echo -e "${color_green}Command is: [${color_none}${cmd} $@${color_green}]"
     echo -e "Named as: ${color_none}${cmd_name}"
 }
 
@@ -101,7 +101,7 @@ function loop_cmd {
                     ;;
                 s|S)
                     echo ""
-                    loop_show
+                    loop_show "$@"
                     continue
                     ;;
                 n|N)

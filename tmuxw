@@ -49,6 +49,8 @@ function launch_or_attach {
 }
 
 function change_session_dir {
+    # See also: 
+    # https://stackoverflow.com/a/62422576/237059
     local new_dir=$1
     [[ -z $new_dir ]] && new_dir="$(pwd -P)"
 

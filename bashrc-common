@@ -122,12 +122,12 @@ function ptop {
 }
 
 
-function histrc {
+function hist_init {
 
 	# don't put duplicate lines in the history. See bash(1) for more options
 	# ... or force ignoredups and ignorespace
 	HISTCONTROL=ignoredups:ignorespace
-	HISTTIMEFORMAT="%F %T "
+	HISTTIMEFORMAT="%F %H:%M "
 
 
 	# append to the history file, don't overwrite it
@@ -141,6 +141,11 @@ function histrc {
 
 	alias hist='history '
 	alias hisg='history | grep '
+	function hist_less {
+	    history 500 | less +G
+    }
+    alias histl='hist_less'
+    alias hl='hist_less'
 
 	# PROMPT_COMMAND is a command that bash executes each time it prepares to
 	# issue the user prompt. It's used to customize the prompt in various ways,
@@ -165,7 +170,7 @@ function histrc {
 	alias hn='histNote '
 }
 
-histrc
+hist_init
 
 
 TERM=xterm-256color

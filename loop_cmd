@@ -29,8 +29,14 @@ function die {
 }
 
 function loop_edit {
-    which vipe &>/dev/null || return $(die vipe not available, sorry)
-    echo "$@" | vipe
+    if which vipe &>/dev/null; then 
+        echo "$@" | vipe
+    else
+        echo >&2
+        echo -e "${color_red}  --> Sorry, vipe not available.  Ctrl+D to end edit.${color_none}" >&2
+        echo -e "${color_yellow}  --> Command is: [${color_green}$@${color_yellow}]" >&2
+        cat
+    fi
 }
 
 function loop_show {

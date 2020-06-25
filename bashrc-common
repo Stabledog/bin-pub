@@ -171,6 +171,11 @@ histrc
 TERM=xterm-256color
 
 function initLsStuff {
+
+    function ls_less {
+        ls --color=yes "$@" | less -RFSX
+    }
+    alias lsl=ls_less
 	# some more ls aliases
 	alias ll='ls -alF'
 	alias la='ls -A'
@@ -268,7 +273,6 @@ function initGitStuff {
 
 	alias grs=git_remote_show
 
-	alias gd='git diff'
 	alias gdf=git_diff_fancy
 	alias gdt='git difftool'
 
@@ -290,6 +294,26 @@ function initGitStuff {
 
 initGitStuff
 
+function initLessStuff {
+    function tree_less {
+        tree -C "$@" | less -RFSX
+    }
+
+    function find_less {
+        if [[ -z $1 ]]; then
+            local args=
+        else
+            local args="--pattern $@"
+        fi
+
+        find | less -RFSX $args
+    }
+
+    alias treel=tree_less
+    alias findl=find_less
+}
+
+initLessStuff
 
 # Set the terminal title:
 function title {

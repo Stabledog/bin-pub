@@ -17,23 +17,71 @@
 #     sourceMe=1 source /path/to/loop_cmd/script
 #
 
+color_red="\033[;31m"
+color_green="\033[;32m"
+color_yellow="\033[;33m"
+color_none="\033[;0m"
+loopcmd_configdir=$HOME/.config/loop_cmd.d
+
+function die {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+function loop_edit {
+    which vipe &>/dev/null || return $(die vipe not available, sorry)
+    echo "$@" | vipe
+}
+
+function loop_show {
+    echo -e "${color_green}Command is: [${color_none}${cmd}${color_green}]"
+    echo -e "Named as: ${color_none}${cmd_name}"
+}
+
+function update_loopcmd_name {
+    mkdir -p ${loopcmd_configdir}
+    echo -ne "${color_green}
+  --> Assign a name to this command: ${color_none}" >&2
+    read -e -i "$1" 
+    if [[ -z $REPLY ]]; then
+        return 1
+    fi
+    echo "$cmd" > ${loopcmd_configdir}/$REPLY
+    echo -e "  ${color_green}--> (Command was saved as ${color_none}$loopcmd_configdir/$REPLY${color_green})" >&2
+    echo "$REPLY"
+}
+
 
 function loop_cmd {
-    cmd=$1
-    shift
-    if [[ -z $cmd ]]; then
-        echo -ne "\033[;32mEnter command to loop, then Ctrl+D: \033[;0m"
-        cmd=$(cat) 
+    if [[ $1 == -r ]]; then 
+        # Re-run a named command from ~/.config/loop_cmd.d:
+        shift
+        cmd_name=$1
+        [[ -f $loopcmd_configdir/${cmd_name} ]] || return $(die cant find ${loopcmd_configdir}/${cmd_name})
+        cmd="$(cat $loopcmd_configdir/${cmd_name})"
+        shift
+    else
+        # First arg is command to run:
+        cmd=$1
+        shift
+        if [[ -z $cmd ]]; then
+            cmd="$(loop_edit '# Enter loop command:
+    ')"
+        fi
     fi
     nloop=1
     while true; do
-        $cmd "$@"
+        eval "$cmd $@"
         res=$?
-        echo -e "\033[;33m<<-- loop_cmd[${nloop}], program returned $res.  Command was: "  
-        echo -e " -->> [\033[;32m$cmd $@\033[;33m]"  
+        if (( res == 0 )); then
+            echo -e "${color_yellow}<<-- loop_cmd[${nloop}]: ${color_green}OK${color_none}" 
+        else
+            echo -e "${color_yellow}<<-- loop_cmd[${nloop}]: ${color_red}FAIL: $res 
+    ${color_yellow}Command was: [${color_none}$cmd${color_yellow}]"
+        fi
 
         while true; do
-            echo -ne "\033[;33m[A]gain or [Q]uit:\033[;0m"
+            echo -ne "${color_yellow}[A]gain, [E]dit, [S]how, [N]ame+save or [Q]uit:${color_none}"
             
             read -n 1  </dev/tty
             case $REPLY in
@@ -45,8 +93,26 @@ function loop_cmd {
                     echo ""
                     break;
                     ;;
+                e|E)
+                    cmd=$(loop_edit "$cmd")
+                    echo ""
+                    unset REPLY
+                    break
+                    ;;
+                s|S)
+                    echo ""
+                    loop_show
+                    continue
+                    ;;
+                n|N)
+                    cmd_name=$(update_loopcmd_name "$cmd_name")
+                    unset REPLY
+                    echo ""
+                    continue
+                    ;;
+
                 *)
-                    echo -e "\033[;31m -->> loop_cmd doesn't understand: $REPLY\033[;0m"
+                    echo -e "${color_red} -->> loop_cmd doesn't understand: $REPLY${color_none}"
                     unset REPLY
                     ;;
             esac

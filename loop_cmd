@@ -87,22 +87,21 @@ function loop_cmd {
         fi
 
         while true; do
-            echo -ne "${color_yellow}[A]gain, [E]dit, [S]how, [N]ame+save or [Q]uit:${color_none}"
+            echo -ne "${color_yellow}[A]gain, [E]dit, [S]how, [N]ame+save, s[H]ell or [Q]uit:${color_none}"
             
+            unset REPLY
             read -n 1  </dev/tty
             case $REPLY in
                 q|Q) 
                     return $?;
                     ;;
                 a|A)
-                    unset REPLY
                     echo ""
                     break;
                     ;;
                 e|E)
                     cmd=$(loop_edit "$cmd")
                     echo ""
-                    unset REPLY
                     break
                     ;;
                 s|S)
@@ -110,16 +109,21 @@ function loop_cmd {
                     loop_show "$@"
                     continue
                     ;;
+                h|H)
+                    echo
+                    echo "${color_yello}Entering subshell, type exit to return to repl:${color_none}"
+                    $SHELL
+                    echo ""
+                    continue
+                    ;;
                 n|N)
                     cmd_name=$(update_loopcmd_name "$cmd_name")
-                    unset REPLY
                     echo ""
                     continue
                     ;;
 
                 *)
                     echo -e "${color_red} -->> loop_cmd doesn't understand: $REPLY${color_none}"
-                    unset REPLY
                     ;;
             esac
         done

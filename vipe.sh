@@ -19,7 +19,7 @@
 
 # version
 
-VERSION="0.1.0"
+VERSION="0.1.1"
 
 # usage
 
@@ -40,7 +40,7 @@ fi
 
 # temp file
 
-t=/tmp/vipe.$$.txt
+t=$(mktemp -t vipe.$$.XXX)
 touch $t
 
 # read from stdin

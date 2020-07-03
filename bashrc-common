@@ -218,6 +218,29 @@ function initGitStuff {
     # git branches all the time:
     PS1_INCLUDE_GIT_BRANCH=${PS1_INCLUDE_GIT_BRANCH:-true}
 
+    function git-find-root {
+        # Show the root of the current repo
+        command git rev-parse --show-toplevel 2>/dev/null
+    }
+        
+    function git-which {
+        # Identify the preferred git environment for the current working
+        local vx=$(git-find-root)
+        if [[ -f ${vx}/.git-which ]]; then
+            cat ${vx}/.git-which
+        fi
+    }
+
+    function git {
+        # Protect ourselves from using git in the wrong context:
+        local vw=$(git-which)
+        if [[ -n $vw && $vw != $(uname) ]]; then
+            echo "ERROR: this working-copy uses the ${vw} git environment.  Use 'command git' to override in $(uname), or update $(git-find-root)/.git-which" >&2
+            false; return;
+        fi
+        command git "$@"
+    }
+
     function parse_git_branch() {
         if $PS1_INCLUDE_GIT_BRANCH; then
             git branch 2> /dev/null | $Sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'

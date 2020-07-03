@@ -71,7 +71,7 @@ function loop_cmd {
         cmd=$1
         shift
         if [[ -z $cmd ]]; then
-            cmd="$(loop_edit '# Enter loop command:
+            cmd="$(loop_edit '# Enter loop command. (You may delete this line if you wish)
     ')"
         fi
     fi
@@ -111,7 +111,7 @@ function loop_cmd {
                     ;;
                 h|H)
                     echo
-                    echo "${color_yello}Entering subshell, type exit to return to repl:${color_none}"
+                    echo -e "${color_yello}Entering subshell, type exit to return to repl:${color_none}"
                     $SHELL
                     echo ""
                     continue

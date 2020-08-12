@@ -1,4 +1,5 @@
 # ~/.tmux.conf.wsl
+# vim: filetype=tmux :
 # Specialize for wsl
 # vim: filetype=tmux :
 #  See also: https://www.youtube.com/watch?time_continue=246&v=_MgrjgQqDcE&feature=emb_logo

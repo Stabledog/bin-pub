@@ -31,7 +31,12 @@
 # Here's how we rebind the prefix key to Ctrl+E:
 set -g prefix C-e
 unbind-key C-b
-bind-key C-e send-prefix
+
+# You can send the prefix to a nested tmux instance with <ctrl+e> <ctrl+e>
+bind-key C-e last-window
+
+# We allow nested sessions using Ctr+E E:  (hit E twice)
+bind-key e send-prefix
 
 # Allow opening multiple terminals to view the same session at different sizes.
 setw -g aggressive-resize on

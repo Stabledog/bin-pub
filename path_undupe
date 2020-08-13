@@ -1,1 +1,7 @@
-path_undupe.py
+# vim: filetype=sh
+# source this to de-duplicate dirs in PATH
+
+if test -x $HOME/bin/path_undupe.py; then
+    PATH=$($HOME/bin/path_undupe.py  "$PATH" )
+fi
+

@@ -7,14 +7,30 @@
 
 import sys
 
-already_appeared={}
+args=list(sys.argv[1:])
+verbose=False
+if args[0] == '-v':
+    verbose=True
+    args=args[1:]
+raw = ' '.join(args)
 
-if sys.argv[1:]:
-    for path in sys.argv[1].split(':'):
-        if path in already_appeared:
+already_appeared={}
+result=[]
+
+if raw:
+    for path in raw.split(':'):
+        path=path.rstrip('/')
+        if not path:
             continue
-        print(path)
+        if path in already_appeared:
+            if verbose:
+                sys.stderr.write("skipping dupe: %s\n" % path)
+            continue
         already_appeared[path]=True
+        result.append(path.rstrip('/'))
+
+    print(':'.join(result))
+
 
 
 

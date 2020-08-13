@@ -17,16 +17,24 @@ raw = ' '.join(args)
 already_appeared={}
 result=[]
 
+windirs=['/c/program files','/c/windows','/c/users','/c/program data']
+
 if raw:
     for path in raw.split(':'):
         path=path.rstrip('/')
         if not path:
             continue
-        if path in already_appeared:
+        key = path
+        for p in windirs:
+            # Dupe detection for windows dirs should be case-insensitive
+            if path.lower().startswith(p):
+                key=path.lower()
+                break
+        if key in already_appeared:
             if verbose:
                 sys.stderr.write("skipping dupe: %s\n" % path)
             continue
-        already_appeared[path]=True
+        already_appeared[key]=True
         result.append(path.rstrip('/'))
 
     print(':'.join(result))

@@ -105,10 +105,10 @@ set -g wrap-search off
 # These values set the border colors for panes. We're saying
 # the same thing twice, because tmux versions < 2.9 used the
 # first syntax, and the later versions use the second syntax.
-set -g pane-border-bg colour235
-set -g pane-border-fg colour247
-set -g pane-active-border-bg colour5
-set -g pane-active-border-fg colour4
+#set -g pane-border-bg colour235
+#set -g pane-border-fg colour247
+#set -g pane-active-border-bg colour5
+#set -g pane-active-border-fg colour4
 set -g pane-border-style bg=colour235
 set -g pane-border-style fg=colour247
 set -g pane-active-border-style bg=colour2

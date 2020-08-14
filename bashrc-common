@@ -24,6 +24,19 @@ function init_sh_tools {
 
 init_sh_tools
 
+function define_yellow {
+    function yellow {
+        # Do "Yellow=1 cmd [args]" to enable yellow (diagnostic) output:
+        if [[ -n $Yellow ]]; then
+            echo -en "\033[;33m" >&2
+            echo "$@" >&2
+            echo -en "\033[;0m" >&2
+        fi
+    }
+}
+
+define_yellow
+
 # set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
 [[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
 
@@ -535,6 +548,6 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-#[[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe
+[[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe
 
 

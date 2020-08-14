@@ -26,12 +26,16 @@ init_sh_tools
 
 function define_yellow {
     function yellow {
-        # Do "Yellow=1 cmd [args]" to enable yellow (diagnostic) output:
+        # Do "Yellow=1 [args]" to enable yellow (diagnostic) output,
+        # or "_yellow_ [args]" for unconditional output
         if [[ -n $Yellow ]]; then
-            echo -en "\033[;33m" >&2
-            echo "$@" >&2
-            echo -en "\033[;0m" >&2
+            _yellow_ "$@"
         fi
+    }
+    function _yellow_ {
+        echo -en "\033[;33m" >&2
+        echo "$@" >&2
+        echo -en "\033[;0m" >&2
     }
 }
 

@@ -1,7 +1,7 @@
 # vim: filetype=sh
 # source this to de-duplicate dirs in PATH
 
-if ! /usr/bin/env python &>/dev/null; then
+if ! /usr/bin/env python --version &>/dev/null; then
     echo "ERROR: /usr/bin/env python: no python on the PATH"
     exit 1
 fi

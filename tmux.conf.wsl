@@ -76,6 +76,10 @@ set-window-option -g mode-keys vi  # Use vi mode for tmux command line
 set -g pane-border-status top
 set -g wrap-search off
 
+# Most of the time we only have 1 window per session, so the status bar isn't that useful.
+# It can be toggled with ":set status" when needed:
+set -g status off
+
 # These values set the border colors for panes. We're saying
 # the same thing twice, because tmux versions < 2.9 used the
 # first syntax, and the later versions use the second syntax.

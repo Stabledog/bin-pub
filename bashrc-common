@@ -125,7 +125,6 @@ shell_identify
 alias which='type -p '
 
 
-umask 0022
 IGNOREEOF="3"   # Don't close interactive shell for ^D
 
 

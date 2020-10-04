@@ -72,6 +72,15 @@ set-option -g renumber-windows on
 # Doesn't work on Mac: bind C-p run-shell -b "xclip -o -selection primary | tmux load-buffer -; tmux paste-buffer"
 
 # Ctrl+Y will copy the tmux buffer into the x clipboard
+# Toggle mouse on with <prefix>M
+bind-key M \
+  set-option -g mouse on \;\
+  display-message 'Mouse: ON'
+
+# Toggle mouse off with <prefix>m
+bind-key m \
+  set-option -g mouse off \;\
+  display-message 'Mouse: OFF'
 # Doesn't work on Mac: bind C-y run-shell -b "tmux save-buffer - | xclip -i -selection primary >/dev/null"
 
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:

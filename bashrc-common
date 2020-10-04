@@ -24,6 +24,24 @@ function init_sh_tools {
 
 init_sh_tools
 
+function define_yellow {
+    function _yellow_ {
+        # Do "Yellow=1 [args]" to enable _yellow_ (diagnostic) output,
+        # or "yellow [args]" for unconditional output
+        if [[ -n $Yellow ]]; then
+            yellow "$@"
+        fi
+    }
+    function yellow {
+        echo -en "\033[;33m" >&2
+        echo "$@" >&2
+        echo -en "\033[;0m" >&2
+    }
+    unset define_yellow
+}
+
+define_yellow
+
 # set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
 [[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
 
@@ -107,7 +125,6 @@ shell_identify
 alias which='type -p '
 
 
-umask 0022
 IGNOREEOF="3"   # Don't close interactive shell for ^D
 
 
@@ -535,8 +552,6 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-# if which path_undupe &>/dev/null; then
-    # PATH=$(path_undupe "$PATH")
-# fi
+[[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe
 
 

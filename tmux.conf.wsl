@@ -1,4 +1,5 @@
 # ~/.tmux.conf.wsl
+# vim: filetype=tmux :
 # Specialize for wsl
 # vim: filetype=tmux :
 #  See also: https://www.youtube.com/watch?time_continue=246&v=_MgrjgQqDcE&feature=emb_logo
@@ -31,7 +32,12 @@
 # Here's how we rebind the prefix key to Ctrl+E:
 set -g prefix C-e
 unbind-key C-b
-bind-key C-e send-prefix
+
+# You can send the prefix to a nested tmux instance with <ctrl+e> <ctrl+e>
+bind-key C-e last-window
+
+# We allow nested sessions using Ctr+E E:  (hit E twice)
+bind-key e send-prefix
 
 # Allow opening multiple terminals to view the same session at different sizes.
 setw -g aggressive-resize on
@@ -69,6 +75,10 @@ set-window-option -g mode-keys vi  # Use vi mode for tmux command line
 
 set -g pane-border-status top
 set -g wrap-search off
+
+# Most of the time we only have 1 window per session, so the status bar isn't that useful.
+# It can be toggled with ":set status" when needed:
+set -g status off
 
 # These values set the border colors for panes. We're saying
 # the same thing twice, because tmux versions < 2.9 used the

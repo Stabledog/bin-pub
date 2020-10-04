@@ -1,7 +1,7 @@
 # bashrc-git-bash-windows tries to bring some order to the git bash env
 #
-# There's a lot of stuff that doesn't work in git bash.  But it gets along OK
-# with RDE and git projects.
+# There's a lot of stuff that doesn't work in git bash. In particular,
+# we don't really want to run the 'git' command at all, we prefer wsl
 
 function errExit {
     echo "ERROR: $@">&2
@@ -11,18 +11,16 @@ function errExit {
 alias lr='ls -lirt'
 alias ll='ls -la'
 
-alias gc='git commit'
-alias ga='git add'
-alias gs='git status'
 
-function gpa {
-   git commit -am sync
-   git push || return 1;
-}
 
 
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 
+function git {
+    # Redirect user to wsl:
+    echo "ERROR: git operations should use the wsl environment ('command git' to override)" >&2
+    false
+}
 
 title () 
 { 
@@ -49,7 +47,7 @@ PATH=$PATH:~/bin:$HOME/bin:$HOME/AppData/Local/npm
 PATH=$(~/bin/pathdelete $HOME/AppData/Local/Microsoft/WindowsApps)
 
 
-source ~/bin/taskrc_loader
+#source ~/bin/taskrc_loader
 alias taskrc=taskrc_v2
 
 function loadTaskrcs {

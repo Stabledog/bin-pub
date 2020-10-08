@@ -1,3 +1,4 @@
+# vim: filetype=sh :
 # bashrc-git-bash-windows tries to bring some order to the git bash env
 #
 # There's a lot of stuff that doesn't work in git bash. In particular,
@@ -22,8 +23,8 @@ function git {
     false
 }
 
-title () 
-{ 
+title ()
+{
     printf '\E]2;%s\E\\' "$*"
 }
 
@@ -59,7 +60,7 @@ function loadTaskrcs {
 	# Load everything in $HOME/.taskrc, sorting alpha.  Most
 	# of these should be symlinks.
 	while read line; do
-		if [[ -f $line ]]; then 
+		if [[ -f $line ]]; then
             source $line
         fi
     done < <( load_rcs1 "$HOME" )
@@ -67,14 +68,14 @@ function loadTaskrcs {
 	# Do it for any local .taskrc's in current dir also:
 	if [[ "$HOME" != "$PWD" ]]; then
         while read line; do
-            if [[ -f $line ]]; then 
+            if [[ -f $line ]]; then
                 source $line
             fi
         done < <( load_rcs1 "$PWD" )
     fi
 }
 
-title "Git-Bash $HOST"
+#title "Git-Bash $HOST"
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.

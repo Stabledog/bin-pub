@@ -2,10 +2,8 @@
 # source this to de-duplicate dirs in PATH
 
 if ! /usr/bin/env python --version &>/dev/null; then
-    echo "ERROR: /usr/bin/env python: no python on the PATH"
-    exit 1
-fi
-if test -x $HOME/bin/path_undupe.py; then
+    echo "ERROR: /usr/bin/env python: no python on the PATH" >&2
+elif test -x $HOME/bin/path_undupe.py; then
     PATH=$($HOME/bin/path_undupe.py  "$PATH" )
 fi
 

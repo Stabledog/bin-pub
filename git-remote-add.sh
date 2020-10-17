@@ -1,1 +1,0 @@
-/home/lmatheson4/projects/git-ext/bin/git-remote-add.sh

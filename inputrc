@@ -7,7 +7,7 @@
 set editing-mode vi
 
 # Audible error-bells are annoying.  Options are 'audible', 'visible', and 'none':
-set bell-style visual
+set bell-style none
 
 # Expand tilde (~) when doing word completion:
 set expand-tilde off

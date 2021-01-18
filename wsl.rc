@@ -31,6 +31,9 @@ function itemstatus {
 
 function do_wslrc {
     # Help: this function can be re-run within a shell to refresh the initialization
+
+    # vscode may have been launched from TMUX, so it inherits this, but we no longer need to protect sessions
+    unset TMUX
     print_divide
     print_frame "do_wslrc() loading:"
 

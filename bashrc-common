@@ -268,7 +268,8 @@ function initGitStuff {
         ( which code && code -s | grep -q Version ) &>/dev/null
         [[ $? -ne 0 ]] && { echo "Sorry, vscode not running."; false; return; }
         ( cd ; code changes; )
-        git diff
+        git add .
+        git diff --cached
         read -n 1 -p "Commit now with ~/changes as message? [y/N]: "
         if [[ $REPLY =~ [yY] ]]; then
             git commit -F ~/changes

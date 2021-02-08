@@ -1,0 +1,12 @@
+#!/bin/bash
+# Thin wrapper for multitail with color
+
+
+die() {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+which multitail &>/dev/null || die "multitail is not installed"
+
+multitail -C "$@"

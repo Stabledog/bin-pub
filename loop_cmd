@@ -76,6 +76,7 @@ function loop_cmd {
         fi
     fi
     nloop=1
+    autorepeat=false
     while true; do
         eval "$cmd $@"
         res=$?
@@ -87,9 +88,15 @@ function loop_cmd {
         fi
 
         while true; do
-            echo -ne "${color_yellow}[A]gain, [E]dit, [S]how, [N]ame+save, s[H]ell or [Q]uit:${color_none}"
+            echo -ne "${color_yellow}[A]gain, auto[R]epeat, [E]dit, [S]how, [N]ame+save, s[H]ell or [Q]uit:${color_none}"
             
             unset REPLY
+            if $autorepeat; then
+                TMOUT=0.5
+            else
+                TMOUT=0
+            fi
+
             read -n 1  </dev/tty
             case $REPLY in
                 q|Q) 
@@ -97,6 +104,16 @@ function loop_cmd {
                     ;;
                 a|A)
                     echo ""
+                    break;
+                    ;;
+                r|R)
+                    if $autorepeat; then
+                        autorepeat=false
+                        printf "\nAuto-repeat OFF\n"
+                    else
+                        autorepeat=true
+                        printf "\nAuto-repeat ON, hit R to disable\n"
+                    fi
                     break;
                     ;;
                 e|E)
@@ -123,6 +140,10 @@ function loop_cmd {
                     ;;
 
                 *)
+                    if $autorepeat; then
+                        echo ""
+                        break
+                    fi
                     echo -e "${color_red} -->> loop_cmd doesn't understand: $REPLY${color_none}"
                     ;;
             esac

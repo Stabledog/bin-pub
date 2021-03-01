@@ -10,10 +10,10 @@
 #  or...
 #
 #  $ loop_cmd <<< "echo \$(date)"
-# 
+#
 # Advanced:  If you'd like to have this as a function in your login shell (so you can use it with internal
 # shell commands too), add this to ~/.bashrc:
-# 
+#
 #     sourceMe=1 source /path/to/loop_cmd/script
 #
 
@@ -29,7 +29,7 @@ function die {
 }
 
 function loop_edit {
-    if which vipe &>/dev/null; then 
+    if which vipe &>/dev/null; then
         echo "$@" | vipe
     else
         echo >&2
@@ -48,7 +48,7 @@ function update_loopcmd_name {
     mkdir -p ${loopcmd_configdir}
     echo -ne "${color_green}
   --> Assign a name to this command: ${color_none}" >&2
-    read -e -i "$1" 
+    read -e -i "$1"
     if [[ -z $REPLY ]]; then
         return 1
     fi
@@ -59,13 +59,18 @@ function update_loopcmd_name {
 
 
 function loop_cmd {
-    if [[ $1 == -r ]]; then 
+    autorepeat=false
+    if [[ $1 == --rerun ]]; then
         # Re-run a named command from ~/.config/loop_cmd.d:
         shift
         cmd_name=$1
         [[ -f $loopcmd_configdir/${cmd_name} ]] || return $(die cant find ${loopcmd_configdir}/${cmd_name})
         cmd="$(cat $loopcmd_configdir/${cmd_name})"
         shift
+    elif [[ $1 == --auto ]]; then
+        # Turn on autorepeat immediately
+        shift
+        autorepeat=true
     else
         # First arg is command to run:
         cmd=$1
@@ -76,20 +81,19 @@ function loop_cmd {
         fi
     fi
     nloop=1
-    autorepeat=false
     while true; do
         eval "$cmd $@"
         res=$?
         if (( res == 0 )); then
-            echo -e "${color_yellow}<<-- loop_cmd[${nloop}]: ${color_green}OK${color_none}" 
+            echo -e "${color_yellow}<<-- loop_cmd[${nloop}]: ${color_green}OK${color_none}"
         else
-            echo -e "${color_yellow}<<-- loop_cmd[${nloop}]: ${color_red}FAIL: $res 
-    ${color_yellow}Command was: [${color_none}$cmd${color_yellow}]"
+            echo -e "${color_yellow}<<-- loop_cmd[${nloop}]: ${color_red}FAIL: $res
+    ${color_yellow}Command was: [${color_none}$cmd $@${color_yellow}]"
         fi
 
         while true; do
             echo -ne "${color_yellow}[A]gain, auto[R]epeat, [E]dit, [S]how, [N]ame+save, s[H]ell or [Q]uit:${color_none}"
-            
+
             unset REPLY
             if $autorepeat; then
                 TMOUT=0.5
@@ -99,7 +103,7 @@ function loop_cmd {
 
             read -n 1  </dev/tty
             case $REPLY in
-                q|Q) 
+                q|Q)
                     return $?;
                     ;;
                 a|A)

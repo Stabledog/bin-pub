@@ -492,7 +492,8 @@ function no_exit {
 	alias exit="echo 'Sorry, exit is disabled.  Use \"command exit\" if  serious'"
 }
 
-
+# Preferred options for `less`:
+export LESS="-rFX"
 
 
 function parse_ext_tail {

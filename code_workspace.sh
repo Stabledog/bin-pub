@@ -5,7 +5,7 @@
 # workspace file, to ensure that ${WorkspaceFolder} matches the CWD for
 # vscode itself.
 
-Code="$(which code)"
+Code="$(type -a code | grep Microsoft | sed 's/code is //')"
 
 die() {
     echo "ERROR: $@" >&2

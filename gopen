@@ -27,6 +27,12 @@ gopen_f() {
     fi
 
     while [[ ! -z $1 ]]; do
+        # Is it a web url?
+        if [[ $1 =~ https?: ]]; then
+            chrome $1
+            shift
+            continue
+        fi
         # get full unsymlinked filename
         local dir=$(dirname "$1")
         cd "$dir" || return $(errExit "Can't cd to $dir")

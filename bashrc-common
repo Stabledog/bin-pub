@@ -327,11 +327,11 @@ function initGitStuff {
         local line;
         while read line; do
             if [[ $line == .git ]]; then
-                yellow "Working: $(pwd -P)";
+                yellow "GDR in: $(pwd -P)";
                 $@;
             else
                 pushd $(dirname $line) &> /dev/null;
-                yellow "Change working: $(dirname $line)";
+                yellow "GDR cd to: $(dirname $line)";
                 $@;
                 popd &> /dev/null;
             fi;

@@ -1,0 +1,4 @@
+#!/bin/bash
+# code-sync-edit
+
+code --wait "$@"

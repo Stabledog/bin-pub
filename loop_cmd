@@ -60,6 +60,7 @@ function update_loopcmd_name {
 
 function loop_cmd {
     autorepeat=false
+    read_timeout=0
     if [[ $1 == --rerun ]]; then
         # Re-run a named command from ~/.config/loop_cmd.d:
         shift
@@ -71,6 +72,7 @@ function loop_cmd {
         # Turn on autorepeat immediately
         shift
         autorepeat=true
+        read_timeout=0.5
     else
         # First arg is command to run:
         cmd=$1
@@ -96,12 +98,15 @@ function loop_cmd {
 
             unset REPLY
             if $autorepeat; then
-                TMOUT=0.5
+                read_timeout=0.5
             else
-                TMOUT=0
+                read_timeout=0
             fi
 
+
+            TMOUT=$read_timeout
             read -n 1  </dev/tty
+            TMOUT=0
             case $REPLY in
                 q|Q)
                     return $?;

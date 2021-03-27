@@ -1,0 +1,32 @@
+#!/bin/bash
+# make_sh_script
+# Template-generate a do-nothing shell script
+
+
+
+raw_sh() {
+    cat <<XEOF
+    #!/bin/sh
+    # :vim filetype=sh :
+    #
+
+    canonpath() {
+        ( cd -L -- "\$(dirname -- \$0)"; echo "\$(pwd -P)/\$(basename -- \$0)" )
+    }
+
+    Script=\$(canonpath "\$0")
+    Scriptdir=\$(dirname -- "\$Script")
+
+    die() {
+        echo "ERROR: \$@" >&2
+    }
+
+    if [ -z \$sourceMe ]; then
+        echo "Hello \$Script"
+    fi
+XEOF
+}
+
+if [[ -z $sourceMe ]]; then
+    raw_sh | sed 's/^    //'
+fi

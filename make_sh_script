@@ -3,30 +3,97 @@
 # Template-generate a do-nothing shell script
 
 
+strip_indent() {
+    sed 's/^    //'
+}
 
-raw_sh() {
-    cat <<XEOF
+emit_canonpath() {
+    cat > >(strip_indent) <<YEOF
+    canonpath() {
+            ( cd -L -- "\$(dirname -- \$0)"; echo "\$(pwd -P)/\$(basename -- \$0)" )
+    }
+YEOF
+}
+
+emit_colorhelpers() {
+    cat > >(strip_indent) <<CEOF
+    red() {
+            echo -en "\033[;31m\$@\033[;0m"
+    }
+    green() {
+            echo -en "\033[;32m\$@\033[;0m"
+    }
+    yellow() {
+            echo -en "\033[;33m\$@\033[;0m"
+    }
+CEOF
+}
+
+emit_shbang_sh() {
+    cat > >(strip_indent) <<ZEOF
     #!/bin/sh
     # :vim filetype=sh :
     #
 
-    canonpath() {
-        ( cd -L -- "\$(dirname -- \$0)"; echo "\$(pwd -P)/\$(basename -- \$0)" )
-    }
+    set -ue
+ZEOF
+}
 
+emit_script_names() {
+    cat > >(strip_indent) <<KEOF
     Script=\$(canonpath "\$0")
     Scriptdir=\$(dirname -- "\$Script")
+KEOF
+}
 
+emit_die() {
+    cat > >(strip_indent) <<DEOF
     die() {
-        echo "ERROR: \$@" >&2
+            $( $do_color && echo 'red "$@\n" >&2' || echo 'echo "ERROR: $@" >&2' )
+            exit 1
     }
+DEOF
+}
 
-    if [ -z \$sourceMe ]; then
-        echo "Hello \$Script"
+emit_raw_sh() {
+    cat > >( strip_indent ) <<XEOF
+    $(emit_shbang_sh)
+
+    $(emit_canonpath)
+
+    $(emit_script_names)
+
+    $( $do_color && emit_colorhelpers )
+
+    $(emit_die)
+
+    set +u
+    if [ -z "\$sourceMe" ]; then
+        set -u
+        die "Hello: \$Script is not ready to run yet."
     fi
 XEOF
 }
 
+
+parseArgs() {
+    if [[ -z $1 ]]; then
+        emit_raw_sh
+        exit 0
+    fi
+    local shell=sh
+    local color=false
+    while [[ -n $1 ]]; do
+        case $1 in
+            -c|--color)
+                do_color=true
+                ;;
+        esac
+        shift
+    done
+    emit_raw_sh
+}
+
 if [[ -z $sourceMe ]]; then
-    raw_sh | sed 's/^    //'
+    parseArgs "$@"
 fi

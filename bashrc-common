@@ -5,7 +5,7 @@
 if [[ -n $CUSTOM_SHELL ]]; then
     # We expect bash to come from our build:
     if [[ `which bash` != ${CUSTOM_SHELL} ]]; then
-        PATH=$(dirname ${CUSTOM_SHELL}):$PATH
+        PATH=$(dirname -- ${CUSTOM_SHELL}):$PATH
     fi
 fi
 
@@ -195,7 +195,7 @@ TERM=xterm-256color
 function initLsStuff {
 
     function ls_less {
-        ls --color=yes "$@" | less -RFSX
+        ls --color=yes -- "$@" | less -RFSX
     }
     alias lsl=ls_less
 	# some more ls aliases
@@ -330,8 +330,8 @@ function initGitStuff {
                 yellow "GDR in: $(pwd -P)"; echo
                 $@;
             else
-                pushd $(dirname $line) &> /dev/null;
-                yellow "GDR cd to: $(dirname $line)"; echo
+                pushd $(dirname -- $line) &> /dev/null;
+                yellow "GDR cd to: $(dirname -- $line)"; echo
                 $@;
                 popd &> /dev/null;
             fi;
@@ -474,8 +474,6 @@ function cdmods {
 
     # And also, return-to-prev dir:
     alias .-='cd -'
-    # Print previous dir:
-    alias xcd='(cd -)'
     # Let's not forget popdir:
     alias .p='popd'
 }
@@ -534,7 +532,7 @@ function load_rcs1 {
         [[ -z $path ]] && continue
         [[ -f $path ]] || continue
         echo "$path"
-    done < <( /bin/ls -1 ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | $Sed -e "s%^%${rootDir}/.taskrc/%" )
+    done < <( /bin/ls -1 -- ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | $Sed -e "s%^%${rootDir}/.taskrc/%" )
 }
 
 function loadTaskrcs {

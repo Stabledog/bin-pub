@@ -556,6 +556,17 @@ function loadTaskrcs {
 
 }
 
+sourceMeRun() {
+    [[ -z $1 ]] && return $(die no script source path provided)
+    [[ -f $1 ]] || return $(die cant find script "$1")
+    (
+        sourceMe=1 source "$1"
+        shift
+        "$@"
+    )
+    echo "[result=$?]"
+}
+
 function reset {
     # The standard reset doesn't restore the cursor, necessarily.
     setterm -cursor on

@@ -448,7 +448,7 @@ export XEDITOR=$EDITOR
 
 
 # disable flow control for terminal:
-/bin/stty -ixon -ixoff
+/bin/stty -ixon -ixoff 2>/dev/null
 
 # Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
 # {cmd-frag}!<space> to expand the last command that started with that frag.
@@ -549,7 +549,7 @@ function loadTaskrcs {
 	while read line; do
 		if [[ -f $line ]]; then
 		    xlog_rc "$line"
-            source $line
+            source $line 2>/dev/null
             [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9;  }
         fi
     done < <( load_rcs1 "$HOME" )
@@ -602,6 +602,6 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-[[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe
+[[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe 2>/dev/null
 
 

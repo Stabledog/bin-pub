@@ -557,12 +557,13 @@ function loadTaskrcs {
 }
 
 sourceMeRun() {
+    # Source script $1 and eval everything after that
     [[ -z $1 ]] && return $(die no script source path provided)
     [[ -f $1 ]] || return $(die cant find script "$1")
     (
         sourceMe=1 source "$1"
         shift
-        "$@"
+        eval "$@"
     )
     echo "[result=$?]"
 }

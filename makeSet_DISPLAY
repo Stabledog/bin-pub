@@ -1,6 +1,6 @@
 #!/bin/bash
 
-scriptName=$(readlink -f $0)
+scriptName=$(readlink -f  -- $0)
 # Capture the current DISPLAY value. If a tmux shell gets
 # disconnected, you can reconnect by running ~/tmp/set_DISPLAY
 newScript=$HOME/tmp/set_DISPLAY

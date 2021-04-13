@@ -37,7 +37,7 @@ gopen_f() {
         local dir=$(dirname "$1")
         cd "$dir" || return $(errExit "Can't cd to $dir")
         local base=$(basename "$1")
-        local file=$(readlink -e "$base")
+        local file=$(readlink -e -- "$base")
         # open item using default windows application
         $exp "$base"
         shift

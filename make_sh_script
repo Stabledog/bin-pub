@@ -2,6 +2,8 @@
 # make_sh_script
 # Template-generate a do-nothing shell script
 
+Script=$(readlink -f -- $0)
+Scriptdir=$(dirname -- $Script)
 
 strip_indent() {
     sed 's/^    //'
@@ -14,6 +16,7 @@ emit_canonpath() {
     }
 YEOF
 }
+
 
 emit_colorhelpers() {
     cat > >(strip_indent) <<CEOF

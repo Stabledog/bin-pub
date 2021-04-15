@@ -9,16 +9,16 @@ function stub() {
 
 function bpoint() {
     # Miniature REPL for shell to aid debugging scripts
-    # 
+    #
     # How to use bpoint within a piped context:
     #    If the function you're debugging has its input or output redirected
-    #    in ways which interfere with the bpoint eval loop, 
+    #    in ways which interfere with the bpoint eval loop,
     #    you'll need to invoke bpoint with an explicit terminal device,
     #    e.g.:
     #       tty # Get tty for your test terminal
     #       bpoint < /dev/pts/101
     #       bpoint 2>/dev/pts/101
-    #       
+    #
     if [[ -z $bp_hist_init ]]; then
         HISTORY=$HOME/.bpoint_history
         [[ -f $HISTORY ]] || touch $HISTORY
@@ -43,7 +43,7 @@ function bpoint() {
 }
 
 sourceMeRun() {
-    # Source script $1 and eval everything after that in SUBshell
+    # Source script $1 and eval everything after that in subshell
     [[ -z $1 ]] && return $(die no script source path provided)
     [[ -f $1 ]] || return $(die cant find script "$1")
     (
@@ -63,4 +63,18 @@ sourceMeEval() {
     eval "$@"
     echo "[result=$?]"
 }
+
+sourceMeLoop() {
+    # Source script $1 and then enter a bpoint loop in CURRENT shell
+    [[ -z $1 ]] && return $(die no script source path provided)
+    [[ -f $1 ]] || return $(die cant find script "$1")
+    (
+        sourceMe=1 source "$1"
+        shift
+        echo "REPL loop with $1 context:"
+        bpoint "SourceMe"
+    )
+    echo "[result=$?]"
+}
+
 

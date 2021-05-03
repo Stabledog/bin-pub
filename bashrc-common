@@ -339,6 +339,16 @@ function initGitStuff {
     }
     alias gdr=git_do_recursive
 
+    function git_commit_sync {
+        # If arg is supplied, that's our commit message.  Otherwise the msg
+        # is just 'Sync (auto)'
+        local msg="Sync (auto)"
+        if [[ $# -gt 0 ]]; then
+            msg="$@"
+        fi
+        command git commit -am "$msg"
+        command git push
+    }
 
 
 	# Script-worthy git-status: check the branch, parseable output, etc.
@@ -351,7 +361,7 @@ function initGitStuff {
 	alias gb='git branch -vv'
 	alias gba='git branch -a -vv'
 
-	alias gpa='git commit -am sync; git push'
+	alias gpa='git_commit_sync'
 
 	alias grs=git_remote_show
 

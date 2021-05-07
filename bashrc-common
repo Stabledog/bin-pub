@@ -1,7 +1,6 @@
 # vim: filetype=sh :
 
 
-
 if [[ -n $CUSTOM_SHELL ]]; then
     # We expect bash to come from our build:
     if [[ `which bash` != ${CUSTOM_SHELL} ]]; then
@@ -23,6 +22,12 @@ function init_sh_tools {
 }
 
 init_sh_tools
+
+init_browser_tools() {
+    alias goo='google-search.sh'
+}
+
+init_browser_tools
 
 function define_yellow {
     function _yellow_ {

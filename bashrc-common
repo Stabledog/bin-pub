@@ -24,7 +24,12 @@ function init_sh_tools {
 init_sh_tools
 
 init_browser_tools() {
-    alias goo='google-search.sh'
+    alias wbs='web-search.sh'
+    alias goo='web-search.sh google'
+    alias gogl='web-search.sh gogl'
+    alias web-search='web-search.sh'
+    alias trnma='web-search trnma'
+    alias mine='web-search mine'
 }
 
 init_browser_tools

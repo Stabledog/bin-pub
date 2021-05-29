@@ -535,7 +535,7 @@ function parse_host_suffix {
             ;;
         # Other platform-type detections can be added here:
         *)
-            PS1_HOST_SUFFIX='^g'  # "generic" or undetected
+            PS1_HOST_SUFFIX='g'  # "generic" or undetected
             ;;
     esac
 }

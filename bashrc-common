@@ -526,6 +526,7 @@ function parse_host_suffix {
     # What sort of unix variant/flavor are we?
     [[ -n $PS1_HOST_SUFFIX ]] && { echo $PS1_HOST_SUFFIX; return; }
     [[ -n $PS1_SUPPRESS_HOST_SUFFIX ]] && return
+    [[ -f /.dockerenv ]] && { PS1_HOST_SUFFIX='Docker'; echo $PS1_HOST_SUFFIX; return; }
     case $(uname -a) in
         Linux*-WSL2*)
             PS1_HOST_SUFFIX='Wsl2'; echo $PS1_HOST_SUFFIX ; return
@@ -538,7 +539,6 @@ function parse_host_suffix {
             ;;
         # Other platform-type detections can be added here:
     esac
-    [[ -f /.dockerenv ]] && { PS1_HOST_SUFFIX='Docker'; echo $PS1_HOST_SUFFIX; return; }
     PS1_HOST_SUFFIX='G'  # "generic" or undetected
 }
 

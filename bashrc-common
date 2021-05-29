@@ -533,11 +533,13 @@ function parse_host_suffix {
         Linux*-Microsoft*)
             PS1_HOST_SUFFIX='Wsl1'; echo $PS1_HOST_SUFFIX ; return
             ;;
-        # Other uname-based detections can be added here:
-        #
+        CYGWIN*)
+            PS1_HOST_SUFFIX='Cyg'; echo $PS1_HOST_SUFFIX ; return
+            ;;
+        # Other platform-type detections can be added here:
     esac
     [[ -f /.dockerenv ]] && { PS1_HOST_SUFFIX='Docker'; echo $PS1_HOST_SUFFIX; return; }
-    PS1_HOST_SUFFIX='^g'  # "generic" or undetected
+    PS1_HOST_SUFFIX='G'  # "generic" or undetected
 }
 
 function t_setFancyPs1 {

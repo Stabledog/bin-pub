@@ -533,6 +533,9 @@ function parse_host_suffix {
         Linux*-Microsoft*)
             PS1_HOST_SUFFIX='Wsl1'
             ;;
+        CYGWIN*)
+            PS1_HOST_SUFFIX='Cyg'
+            ;;
         # Other platform-type detections can be added here:
         *)
             PS1_HOST_SUFFIX='g'  # "generic" or undetected

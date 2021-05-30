@@ -539,6 +539,11 @@ function parse_host_suffix {
             ;;
         # Other platform-type detections can be added here:
     esac
+    if which lsb_release &>/dev/null; then
+        if lsb_release -a | egrep -q 'RedHat'; then
+            PS1_HOST_SUFFIX='rhat'; echo $PS1_HOST_SUFFIX; return
+        fi
+    fi
     PS1_HOST_SUFFIX='G'  # "generic" or undetected
 }
 

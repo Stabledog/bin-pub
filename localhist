@@ -8,10 +8,11 @@
 #   localhist [of]f    # Switch HISTFILE back to ~/.bash_history
 #   localhist s[how]   # Show status
 #   localhist e[dit]   # Load current HISTFILE into $EDITOR
-#   localhost on read  # Sequence example: turn on, then read.
-#   localhost o r      # ... same thing, fewer letters
+#   localhist on read  # Sequence example: turn on, then read.
+#   localhist o r      # ... same thing, fewer letters
 
 localhist() {
+    [[ -z $1 ]] && { localhist help; return; }
     while [[ -n $1 ]]; do
         case $1 in
             o|on)
@@ -51,6 +52,11 @@ localhist() {
             h|help)
                 egrep '^#   localhist ' ~/bin/localhist | cut -c 3-
             ;;
+            *)
+                localhost help
+                echo "Error: unknown arg $1" >&2
+            ;;
+
         esac
         shift
     done

@@ -1,0 +1,57 @@
+# vim: filetype=sh
+# localhost
+#
+#   localhist h[elp]   # Get help.
+#   localhist o[n]     # Set HISTFILE to <current dir>/.bash_history
+#   localhist w[rite]  # Write buffer to current HISTFILE
+#   localhist r[ead]   # Read from current HISTFILE to buffer
+#   localhist [of]f    # Switch HISTFILE back to ~/.bash_history
+#   localhist s[how]   # Show status
+#   localhist e[dit]   # Load current HISTFILE into $EDITOR
+#   localhost on read  # Sequence example: turn on, then read.
+#   localhost o r      # ... same thing, fewer letters
+
+localhist() {
+    while [[ -n $1 ]]; do
+        case $1 in
+            o|on)
+                if [[ $HISTFILE == $PWD/.bash_history ]] ; then
+                    echo Already on
+                    localhist show
+                else
+                    HISTFILE=$PWD/.bash_history
+                    echo "Ok: I set HISTFILE is $HISTFILE "
+                fi
+            ;;
+            f|off)
+                if [[ $HISTFILE == ~/.bash_history ]]; then
+                    echo Already off
+                    localhist show
+                else
+                    HISTFILE=~/.bash_history
+                    echo "Ok: I set HISTFILE to ~/.bash_history"
+                fi
+            ;;
+            w|write)
+                history -w
+                echo "Ok: I wrote buffer to $HISTFILE"
+            ;;
+            r|read)
+                history -r
+                echo "Ok: I read buffer from $HISTFILE"
+            ;;
+            e|edit)
+                echo "Editing $HISTFILE:"
+                [[ -n $EDITOR ]] && { $EDITOR $HISTFILE; } || vi $HISTFILE
+            ;;
+            s|show)
+                echo "HISTFILE=$HISTFILE"
+                echo "$(wc -l $HISTFILE) lines"
+            ;;
+            h|help)
+                egrep '^#   localhist ' ~/bin/localhist | cut -c 3-
+            ;;
+        esac
+        shift
+    done
+}

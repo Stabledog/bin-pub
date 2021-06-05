@@ -151,36 +151,38 @@ function ptop {
 
 function hist_init {
 
-	# don't put duplicate lines in the history. See bash(1) for more options
-	# ... or force ignoredups and ignorespace
-	HISTCONTROL=ignoredups:ignorespace
-	HISTTIMEFORMAT="%F %H:%M "
+    # don't put duplicate lines in the history. See bash(1) for more options
+    # ... or force ignoredups and ignorespace
+    HISTCONTROL=ignoredups:ignorespace
+    HISTTIMEFORMAT="%F %H:%M "
+    # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+    HISTSIZE=5000
+    HISTFILESIZE=5000
+    function hist_less {
+        history 500 | less +G
+    }
+    # PROMPT_COMMAND is a command that bash executes each time it prepares to
+    # issue the user prompt. It's used to customize the prompt in various ways,
+    # or to perform shell maintenance activities.  In this case, we're using
+    # it to update the stored command history:
+    export PROMPT_COMMAND="history -a"
 
+    if [[ -n $HISTFILE_PRESERVE ]]; then
+        export HISTFILE=$HISTFILE_PRESERVE  # see ~/bin/localhist
+    fi
 
 	# append to the history file, don't overwrite it
 	if $isBash; then
         shopt -s histappend
         shopt -s histverify # Load history events for editing rather than immediate execution
     fi
-	# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-	HISTSIZE=5000
-	HISTFILESIZE=5000
 
 	alias hist='history '
 	alias hisg='history | grep '
-	function hist_less {
-	    history 500 | less +G
-    }
     alias histl='hist_less'
     alias hl='hist_less'
 
     [[ -f ~/bin/localhist ]] && { source ~/bin/localhist; alias lh=localhist; }
-
-	# PROMPT_COMMAND is a command that bash executes each time it prepares to
-	# issue the user prompt. It's used to customize the prompt in various ways,
-	# or to perform shell maintenance activities.  In this case, we're using
-	# it to update the stored command history:
-	export PROMPT_COMMAND="history -a"
 
 	# Write a note to the bash history.  -l means 'list histNotes'.
 	function histNote {
@@ -566,6 +568,43 @@ t_setFancyPs1
 if $isBash; then
     shopt -s direxpand
 fi
+
+function notepad {
+    local fname=~/notepad
+    while [[ -n $1 ]]; do
+        case $1 in
+            [0-9])
+                fname=~/notepad_$1
+                ;;
+            --help|-h)
+                (
+                    echo "notepad # Edit ~/notepad"
+                    echo "notepad 3 # Edit ~/notepad_3"
+                    echo "notepad 2 - # Cat stdin to ~/notepad_2 then edit"
+                    echo "notepad 4 -c # Send ~/notepad_4 to clipboard"
+                ) >&2
+                return
+                ;;
+
+            -c)
+                cat $fname | xclip -i
+                return
+                ;;
+            -)
+                echo "Hit Ctrl+D to end entry:" >&2
+                cat > $fname
+                $EDITOR $fname
+                return
+                ;;
+            *)
+                echo "ERROR: unknown arg $1" >&2; return;
+                return
+                ;;
+        esac
+        shift
+    done
+    $EDITOR $fname
+}
 
 function load_rcs1 {
     eval "$xlocal rootDir=$1"

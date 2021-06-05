@@ -1,15 +1,43 @@
 # vim: filetype=sh
-# localhost
+# localhist
 #
 #   localhist h[elp]   # Get help.
 #   localhist o[n]     # Set HISTFILE to <current dir>/.bash_history
+#   localhist j[oin]   # Join by searching up in tree for 'bash_history'
 #   localhist w[rite]  # Write buffer to current HISTFILE
 #   localhist r[ead]   # Read from current HISTFILE to buffer
 #   localhist [of]f    # Switch HISTFILE back to ~/.bash_history
 #   localhist s[how]   # Show status
-#   localhist e[dit]   # Load current HISTFILE into $EDITOR
+#   localhist e[dit]   # Load current history buffer into $EDITOR
 #   localhist on read  # Sequence example: turn on, then read.
 #   localhist o r      # ... same thing, fewer letters
+
+localhist_join() {
+    # Search up thru parent dirs to find nearest 'bash_history' (no dot),
+    # and set HISTFILE to that path.  Typically such files are per-project
+    # bound.
+    local orgDir=$PWD
+    while true; do
+        if [[ -f bash_history ]]; then
+            localhist_set $PWD/bash_history
+            echo "Ok I found and set HISTFILE to $HISTFILE"
+            cd $orgDir
+            return
+        fi
+        if [[ $PWD == '/' ]]; then
+            echo "I can't find a parent bash_history, HISTFILE is still $HISTFILE"
+            false
+            return
+        fi
+        cd ..
+    done
+    cd $orgDir
+}
+localhist_set() {
+    # So we can restore our HISTFILE across shell init:
+    HISTFILE=$1
+    export HISTFILE_PRESERVE=$1
+}
 
 localhist() {
     [[ -z $1 ]] && { localhist help; return; }
@@ -20,16 +48,19 @@ localhist() {
                     echo Already on
                     localhist show
                 else
-                    HISTFILE=$PWD/.bash_history
+                    localhist_set $PWD/.bash_history
                     echo "Ok: I set HISTFILE is $HISTFILE "
                 fi
+            ;;
+            j|join)
+                localhist_join "$@"
             ;;
             f|off)
                 if [[ $HISTFILE == ~/.bash_history ]]; then
                     echo Already off
                     localhist show
                 else
-                    HISTFILE=~/.bash_history
+                    localhist_set ~/.bash_history
                     echo "Ok: I set HISTFILE to ~/.bash_history"
                 fi
             ;;
@@ -43,17 +74,17 @@ localhist() {
             ;;
             e|edit)
                 echo "Editing $HISTFILE:"
-                [[ -n $EDITOR ]] && { $EDITOR $HISTFILE; } || vi $HISTFILE
+                history > /tmp/hist-temp-$$
+                [[ -n $EDITOR ]] &&  $EDITOR /tmp/hist-temp-$$  || vi /tmp/hist-temp-$$
             ;;
             s|show)
-                echo "HISTFILE=$HISTFILE"
-                echo "$(wc -l $HISTFILE) lines"
+                echo "HISTFILE=$HISTFILE: $(wc -l $HISTFILE | cut -d' ' -f 1) lines"
             ;;
             h|help)
                 egrep '^#   localhist ' ~/bin/localhist | cut -c 3-
             ;;
             *)
-                localhost help
+                localhist help
                 echo "Error: unknown arg $1" >&2
             ;;
 

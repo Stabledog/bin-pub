@@ -2,13 +2,14 @@
 # localhist
 #
 #   localhist h[elp]   # Get help.
-#   localhist o[n]     # Set HISTFILE to <current dir>/.bash_history
+#   localhist o[n]     # Set HISTFILE to <current dir>/bash_history
 #   localhist j[oin]   # Join by searching up in tree for 'bash_history'
 #   localhist w[rite]  # Write buffer to current HISTFILE
 #   localhist r[ead]   # Read from current HISTFILE to buffer
-#   localhist [of]f    # Switch HISTFILE back to ~/.bash_history
+#   localhist [of]f    # Switch HISTFILE back to ~/bash_history
 #   localhist s[how]   # Show status
 #   localhist e[dit]   # Load current history buffer into $EDITOR
+#   localhist c[lean]  # Clean current HISTFILE, removing short lines
 #   localhist on read  # Sequence example: turn on, then read.
 #   localhist o r      # ... same thing, fewer letters
 
@@ -44,11 +45,11 @@ localhist() {
     while [[ -n $1 ]]; do
         case $1 in
             o|on)
-                if [[ $HISTFILE == $PWD/.bash_history ]] ; then
+                if [[ $HISTFILE == $PWD/bash_history ]] ; then
                     echo Already on
                     localhist show
                 else
-                    localhist_set $PWD/.bash_history
+                    localhist_set $PWD/bash_history
                     echo "Ok: I set HISTFILE is $HISTFILE "
                 fi
             ;;
@@ -67,6 +68,10 @@ localhist() {
             w|write)
                 history -w
                 echo "Ok: I wrote buffer to $HISTFILE"
+            ;;
+            c|clean)
+                histfile_clean $HISTFILE || return;
+                echo "Ok: cleaned $HISTFILE"
             ;;
             r|read)
                 history -r

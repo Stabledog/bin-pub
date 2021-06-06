@@ -71,6 +71,7 @@ localhist() {
             ;;
             c|clean)
                 histfile_clean $HISTFILE || return;
+                history -r
                 echo "Ok: cleaned $HISTFILE"
             ;;
             r|read)

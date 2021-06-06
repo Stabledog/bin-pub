@@ -104,11 +104,11 @@ set -g status off
 #set -g pane-border-bg colour235
 #set -g pane-border-fg colour247
 #set -g pane-active-border-bg colour5
-#set -g pane-active-border-fg colour4
+#set -g pane-active-border-fg colour255
 set -g pane-border-style bg=colour235
 set -g pane-border-style fg=colour247
 set -g pane-active-border-style bg=colour2
-set -g pane-active-border-style fg=colour4,bg=colour5
+set -g pane-active-border-style fg=colour255,bg=colour5
 
 
 # hjkl => change windows like vi

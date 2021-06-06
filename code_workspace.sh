@@ -15,7 +15,7 @@ die() {
 function code_ws {
 
     [[ -n $1 ]] || return $(die Please supply a workspace file as \$1)
-    local ws_name=$(readlink -f $1 | sed 's/\.code-workspace//')
+    local ws_name=$(readlink -f -- $1 | sed 's/\.code-workspace//')
     shift
     local ws_filename=${ws_name}.code-workspace
     [[ -f $ws_filename ]] || return $(die "Can't find $ws_filename")

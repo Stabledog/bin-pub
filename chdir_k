@@ -42,7 +42,7 @@ function chdir_k_add_to_cache {
     fi
     if ! [[ ${dir_to_add:0:1} =~ [~/] ]]; then
         # We don't want relative paths in the cache:
-        dir_to_add=$(readlink -f "$dir_to_add")
+        dir_to_add=$(readlink  -f -- "$dir_to_add")
     fi
     if <${cachefile} egrep -q "^${dir_to_add}$"; then
         return  # Already in the cache

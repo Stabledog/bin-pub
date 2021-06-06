@@ -1,0 +1,80 @@
+# vim: filetype=sh :
+# sourceMeRun.taskrc
+
+function stub() {
+    [[ -z $stub_count ]] && stub_count=1
+    echo -e "\033[;31m >>> [$stub_count]: stub: [$@]\033[;0m" >&2
+    (( stub_count++ ))
+}
+
+function bpoint() {
+    # Miniature REPL for shell to aid debugging scripts
+    #
+    # How to use bpoint within a piped context:
+    #    If the function you're debugging has its input or output redirected
+    #    in ways which interfere with the bpoint eval loop,
+    #    you'll need to invoke bpoint with an explicit terminal device,
+    #    e.g.:
+    #       tty # Get tty for your test terminal
+    #       bpoint < /dev/pts/101
+    #       bpoint 2>/dev/pts/101
+    #
+    if [[ -z $bp_hist_init ]]; then
+        HISTORY=$HOME/.bpoint_history
+        [[ -f $HISTORY ]] || touch $HISTORY
+        history -c
+        history -r $HISTORY
+        bp_hist_init=true
+    fi
+    [[ -z $bpoint_count ]] && bpoint_count=1
+    echo -e "\033[;31m >>> [$bpoint_count]: Break at $@\033[;0m" >&2
+    local eval_result=0
+    local color
+    while true; do
+        read -p "$(echo -en '\033[;33m >>> Enter expression: \033[;0m')" -e expression
+        [[ -z $expression ]] && break
+        eval "$expression" >&2
+        eval_result=$?
+        [[ $eval_result == 0 ]] && color=32 || color=31
+        echo -e "\033[;${color}m >>> eval {${expression}} returns ${eval_result}\033[;0m" >&2
+        history -s "$expression" ; history -w $HISTORY
+    done
+    (( bpoint_count += 1 ))
+}
+
+sourceMeRun() {
+    # Source script $1 and eval everything after that in subshell
+    [[ -z $1 ]] && return $(die no script source path provided)
+    [[ -f $1 ]] || return $(die cant find script "$1")
+    (
+        sourceMe=1 source "$1"
+        shift
+        eval "$@"
+    )
+    echo "[result=$?]"
+}
+
+sourceMeEval() {
+    # Source script $1 and eval everything after that in CURRENT shell
+    [[ -z $1 ]] && return $(die no script source path provided)
+    [[ -f $1 ]] || return $(die cant find script "$1")
+    sourceMe=1 source "$1"
+    shift
+    eval "$@"
+    echo "[result=$?]"
+}
+
+sourceMeLoop() {
+    # Source script $1 and then enter a bpoint loop in CURRENT shell
+    [[ -z $1 ]] && return $(die no script source path provided)
+    [[ -f $1 ]] || return $(die cant find script "$1")
+    (
+        sourceMe=1 source "$1"
+        shift
+        echo "REPL loop with $1 context:"
+        bpoint "SourceMe"
+    )
+    echo "[result=$?]"
+}
+
+

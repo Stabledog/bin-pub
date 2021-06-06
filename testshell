@@ -44,11 +44,11 @@ if [[ -z $sourceMe ]]; then
     while [[ ! -z $1 ]]; do
         case $1 in
             -s|--start-script) 
-                startScript=$(readlink -f $2)
+                startScript=$(readlink -f -- $2)
                 shift
                 ;;
             -i|--init-script)
-                initScript=$(readlink -f $2)
+                initScript=$(readlink -f -- $2)
                 shift
                 ;;
             -k|--ksh)

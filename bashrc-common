@@ -636,7 +636,7 @@ function loadTaskrcs {
 	while read line; do
 		if [[ -f $line ]]; then
 		    xlog_rc "$line"
-            source $line 2>/dev/null
+            source $line >> $logfile9 2>&1
             [[ $? == 0 ]] || { echo "Error sourcing [$line] in loadTaskrcs()" >> $logfile9;  }
         fi
     done < <( load_rcs1 "$HOME" )
@@ -679,6 +679,6 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-[[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe 2>/dev/null
+# [[ -f $HOME/bin/path_undupe ]] && source $HOME/bin/path_undupe 2>/dev/null
 
 

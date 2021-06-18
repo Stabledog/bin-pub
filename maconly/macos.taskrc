@@ -5,5 +5,5 @@ alias readlink=greadlink
 
 alias tkr=taskrc
 
-PATH=$PATH:$HOME/bin/maconly:/Users/lmatheson/Library/Python/3.8/bin
+PATH=$PATH:/usr/local/bin:$HOME/bin/maconly:/Users/lmatheson/Library/Python/3.8/bin
 

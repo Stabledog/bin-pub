@@ -2,5 +2,5 @@
 
 alias blender=/Applications/Blender.app/Contents/MacOS/Blender
 
-PATH=$(pathadd $HOME/bin)
+[[ -x $HOME/bin/pathadd ]] && PATH=$( $HOME/bin/pathadd $HOME/bin )
 

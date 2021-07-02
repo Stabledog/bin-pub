@@ -45,9 +45,12 @@ function bpoint() {
 sourceMeRun() {
     # Source script $1 and eval everything after that in subshell
     [[ -z $1 ]] && return $(die no script source path provided)
-    [[ -f $1 ]] || return $(die cant find script "$1")
+    cscript=$1
+    if [[ -f $cscript ]]; then
+        cscript=`which $1` || return $(die cant find script "$1")
+    fi
     (
-        sourceMe=1 source "$1"
+        sourceMe=1 source "$cscript"
         shift
         eval "$@"
     )
@@ -57,8 +60,11 @@ sourceMeRun() {
 sourceMeEval() {
     # Source script $1 and eval everything after that in CURRENT shell
     [[ -z $1 ]] && return $(die no script source path provided)
-    [[ -f $1 ]] || return $(die cant find script "$1")
-    sourceMe=1 source "$1"
+    cscript=$1
+    if [[ -f $cscript ]]; then
+        cscript=`which $1` || return $(die cant find script "$1")
+    fi
+    sourceMe=1 source "$cscript"
     shift
     eval "$@"
     echo "[result=$?]"
@@ -67,11 +73,14 @@ sourceMeEval() {
 sourceMeLoop() {
     # Source script $1 and then enter a bpoint loop in CURRENT shell
     [[ -z $1 ]] && return $(die no script source path provided)
-    [[ -f $1 ]] || return $(die cant find script "$1")
+    cscript=$1
+    if [[ -f $cscript ]]; then
+        cscript=`which $1` || return $(die cant find script "$1")
+    fi
     (
-        sourceMe=1 source "$1"
+        sourceMe=1 source "$cscript"
         shift
-        echo "REPL loop with $1 context:"
+        echo "REPL loop with $cscript context:"
         bpoint "SourceMe"
     )
     echo "[result=$?]"

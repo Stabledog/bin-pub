@@ -1,0 +1,35 @@
+#!/bin/bash
+# vim: filetype=sh:
+# pylintish -- invoke pylint using the .pylintrc file found by searching dir ancestry
+
+die() {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+which_py() {
+    which python3.9 python3.8 python3.7 | head -n 1
+}
+
+find_rcfile() {
+    local tgt_dir=$PWD
+    while true; do
+        if [[ -f ${tgt_dir}/.pylintrc ]]; then
+            echo "${tgt_dir}/.pylintrc"
+            return
+        fi
+        tgt_dir="$(dirname $tgt_dir)"
+        [[ $tgt_dir == / ]] && return $(die "Failed to locate .pylintrc")
+    done
+}
+
+main() {
+    local rcfile=$(find_rcfile)
+    [[ -n $rcfile ]] && local rcfile_arg="--rcfile=${rcfile}"
+    $PYTHON -m pylint $rcfile_arg "$@"
+}
+
+if [[ -z $sourceMe ]]; then
+    [[ -z $PYTHON ]] && PYTHON="$(which_py)"
+    main "$@"
+fi

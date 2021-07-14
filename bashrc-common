@@ -183,6 +183,7 @@ function hist_init {
     }
 
 	alias hist='history '
+
 	alias his='history '
 	alias hisg='set -f; history_grep'
 	alias hg='set -f; history_grep'
@@ -379,6 +380,7 @@ function initGitStuff {
 	alias gs='git status '
 	alias gc='git commit'
     alias gco='git checkout'
+    complete -F _complete_alias gco
 	alias ga='git add'
 	alias gap='git add -p'
 	alias gb='git branch -vv'
@@ -654,10 +656,18 @@ function reset {
     command reset
 }
 
-# The 'tox' command:
 if $isBash; then
-    source ${LmHome}/bin/tox-py/tox-completion.bash &>/dev/null
+    # The 'tox' command:
+    if [[ $PS1 ]]; then
+        source ${LmHome}/bin/tox-py/tox-completion.bash &>/dev/null
+        [[ -f ${HOME}/.bash_completion.d/complete_alias ]] && source ${HOME}/.bash_completion.d/complete_alias
+        # Example: how to use complete_alias:
+        alias container=docker\ container
+        complete -F _complete_alias container
+    fi
 fi
+
+
 
 # loop_cmd is very handy:
 [[ -r ${LmHome}/bin/loop_cmd ]] && sourceMe=1 source ${LmHome}/bin/loop_cmd

@@ -53,6 +53,7 @@ runLoop() {
     while true; do
         (
             git commit -am .
+            git pull
             git push
             echo "   (...sleeping $LOOP_PERIOD_SECS at $(date -Iseconds) )"
             sleep $LOOP_PERIOD_SECS

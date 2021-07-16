@@ -33,10 +33,15 @@ cleanup_histstream() {
             #stub "<tooshort>"
             continue
         fi
+        # We're not interested in stuff that starts with hist or HIST:
+        if [[ $line =~ ^hist|HIST ]]; then
+            #stub "<hist-stuff>"
+            continue
+        fi
         if [[ $line =~ .+#.+ ]]; then
             #stub "<output-ok>"
             echo "$timestamp"
-            echo "$line"
+            echo $line
         fi
     done
 }

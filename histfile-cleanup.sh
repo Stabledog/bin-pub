@@ -6,13 +6,39 @@ die() {
     exit 1
 }
 
+stub() {
+    echo "stub[$@]" >&2
+}
+
 cleanup_histfile() {
     local file=$1
     local tmpf=$(mktemp)
-    grep -v '^#' ${file} | grep \# > ${tmpf}
-    [[ -f ${tmpf} ]] || die "Can't find ${tmpf}"
-    mv ${tmpf} $1
+    cleanup_histstream <${file} >${tmpf}
+    mv ${tmpf} ${file}
     echo "Done cleaning $file"
+}
+
+cleanup_histstream() {
+    local timestamp="#$(date +%s)"
+    while read line; do
+        #stub "raw:$line"
+        # Is this a timestamp?
+        if [[ $line =~ ^#[[:digit:]]+$ ]]; then
+            timestamp=$line
+            #stub "<timestamp>"
+            continue
+        fi
+        # We're not interested in lines less than this long:
+        if (( ${#line} < 9  )); then
+            #stub "<tooshort>"
+            continue
+        fi
+        if [[ $line =~ .+#.+ ]]; then
+            #stub "<output-ok>"
+            echo "$timestamp"
+            echo "$line"
+        fi
+    done
 }
 
 parseArgs() {

@@ -13,8 +13,9 @@ stub() {
 cleanup_histfile() {
     local file=$1
     local tmpf=$(mktemp)
+    trap "rm ${tmpf} &>/dev/null" exit
     cleanup_histstream <${file} >${tmpf}
-    mv ${tmpf} ${file}
+    cp ${tmpf} ${file}
     echo "Done cleaning $file"
 }
 
@@ -32,18 +33,21 @@ cleanup_histstream() {
         if [[ ${line} == ${prev_line} ]]; then
             continue  # Simplistic dupe removal
         # We're not interested in lines less than this long:
-        elif (( ${#line} < 9  )); then
-            #stub "<tooshort>"
+        elif ! [[ $line =~ .+\# ]]; then
             continue
-        # We're not interested in stuff that starts with hist or HIST:
-        elif [[ $line =~ ^hist|HIST ]]; then
-            #stub "<hist-stuff>"
-            continue
-        elif [[ $line =~ .+#.+ ]]; then
-            #stub "<output-ok>"
-            echo "$timestamp"
-            echo $line
         fi
+        prev_line=$line
+        # elif (( ${#line} < 9  )); then
+        #     #stub "<tooshort>"
+        #     continue
+        # # We're not interested in stuff that starts with hist or HIST:
+        # elif [[ $line =~ ^hist|HIST ]]; then
+        #     #stub "<hist-stuff>"
+        #     continue
+        # elif [[ $line =~ .+# ]]; then
+            #stub "<output-ok>"
+        echo "$timestamp"
+        echo -E $line
     done
 }
 

@@ -20,6 +20,7 @@ cleanup_histfile() {
 
 cleanup_histstream() {
     local timestamp="#$(date +%s)"
+    local prev_line
     while read line; do
         #stub "raw:$line"
         # Is this a timestamp?
@@ -28,17 +29,17 @@ cleanup_histstream() {
             #stub "<timestamp>"
             continue
         fi
+        if [[ ${line} == ${prev_line} ]]; then
+            continue  # Simplistic dupe removal
         # We're not interested in lines less than this long:
-        if (( ${#line} < 9  )); then
+        elif (( ${#line} < 9  )); then
             #stub "<tooshort>"
             continue
-        fi
         # We're not interested in stuff that starts with hist or HIST:
-        if [[ $line =~ ^hist|HIST ]]; then
+        elif [[ $line =~ ^hist|HIST ]]; then
             #stub "<hist-stuff>"
             continue
-        fi
-        if [[ $line =~ .+#.+ ]]; then
+        elif [[ $line =~ .+#.+ ]]; then
             #stub "<output-ok>"
             echo "$timestamp"
             echo $line

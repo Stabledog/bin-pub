@@ -37,15 +37,6 @@ cleanup_histstream() {
             continue
         fi
         prev_line=$line
-        # elif (( ${#line} < 9  )); then
-        #     #stub "<tooshort>"
-        #     continue
-        # # We're not interested in stuff that starts with hist or HIST:
-        # elif [[ $line =~ ^hist|HIST ]]; then
-        #     #stub "<hist-stuff>"
-        #     continue
-        # elif [[ $line =~ .+# ]]; then
-            #stub "<output-ok>"
         echo "$timestamp"
         echo -E $line
     done

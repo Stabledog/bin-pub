@@ -36,7 +36,7 @@ cleanup_histstream() {
         elif ! [[ $line =~ .+\# ]]; then
             continue
         fi
-        prev_line=$line
+        prev_line=${line}
         echo "$timestamp"
         echo -E $line
     done

@@ -1,17 +1,19 @@
 # vim: filetype=sh
 # localhist
 #
-#   localhist h[elp]   # Get help.
-#   localhist o[n]     # Set HISTFILE to <current dir>/bash_history
-#   localhist j[oin]   # Join by searching up in tree for 'bash_history'
-#   localhist w[rite]  # Write buffer to current HISTFILE
-#   localhist r[ead]   # Read from current HISTFILE to buffer
-#   localhist [of]f    # Switch HISTFILE back to ~/bash_history
-#   localhist s[how]   # Show status
-#   localhist e[dit]   # Load current history buffer into $EDITOR
-#   localhist c[lean]  # Clean current HISTFILE, removing short lines
-#   localhist on read  # Sequence example: turn on, then read.
-#   localhist o r      # ... same thing, fewer letters
+#   localhist h[elp]    # Get help.
+#   localhist o[n]      # Set HISTFILE to <current dir>/bash_history
+#   localhist j[oin]    # Join by searching up in tree for 'bash_history'
+#   localhist w[rite]   # Write buffer to current HISTFILE
+#   localhist r[ead]    # Read from current HISTFILE to buffer
+#   localhist [of]f     # Switch HISTFILE back to ~/bash_history
+#   localhist s[how]    # Show status
+#   localhist d[ump]    # Dump current histfile
+#   localhist e[dit]    # Load current history buffer into $EDITOR
+#   localhist c[lean]   # Clean current HISTFILE, removing short lines
+#   localhist co[m]pare # Compare current HISTFILE with ~/.bash_history
+#   localhist on read   # Sequence example: turn on, then read.
+#   localhist o r       # ... same thing, fewer letters
 
 localhist_join() {
     # Search up thru parent dirs to find nearest 'bash_history' (no dot),
@@ -41,7 +43,7 @@ localhist_set() {
 }
 
 localhist() {
-    [[ -z $1 ]] && { localhist help; return; }
+    [[ -z $1 ]] && { localhist help; echo -en "  \033[;33mNow:" $'\U27a9' " " ; localhist show; echo -en "\033[;0m"; return; }
     while [[ -n $1 ]]; do
         case $1 in
             o|on)
@@ -71,7 +73,6 @@ localhist() {
             ;;
             c|clean)
                 histfile_clean $HISTFILE || return;
-                history -r
                 echo "Ok: cleaned $HISTFILE"
             ;;
             r|read)
@@ -80,11 +81,21 @@ localhist() {
             ;;
             e|edit)
                 echo "Editing $HISTFILE:"
-                history > /tmp/hist-temp-$$
-                [[ -n $EDITOR ]] &&  $EDITOR /tmp/hist-temp-$$  || vi /tmp/hist-temp-$$
+                $EDITOR $HISTFILE
             ;;
             s|show)
                 echo "HISTFILE=$HISTFILE: $(wc -l $HISTFILE | cut -d' ' -f 1) lines"
+            ;;
+            d|dump)
+                ( history -c; history -r; history; echo -e "  \033[;33m(From $HISTFILE)\033[;0m" )
+            ;;
+            m|compare)
+                if [[ $HISTFILE == ~/.bash_history ]]; then
+                    echo "ERROR: nothing to compare, we're on $HISTFILE" >&2
+                    false
+                    return
+                fi
+                vimdiff ~/.bash_history $HISTFILE
             ;;
             h|help)
                 egrep '^#   localhist ' ~/bin/localhist | cut -c 3-

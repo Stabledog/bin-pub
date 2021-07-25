@@ -192,21 +192,6 @@ function hist_init {
 
     [[ -f ~/bin/localhist ]] && { source ~/bin/localhist; alias lh=localhist; }
 
-	# Write a note to the bash history.  -l means 'list histNotes'.
-	function histNote {
-		if [[ "$1" == "-l" ]]; then
-			history | /bin/egrep -B 1 -A 1 '_h~[n_]' | $Sed 's/_h~[n_] //'
-		else
-            echo -n "Enter your shell history note, finish with empty line: "
-			history -s "_h~n [$PWD]:"
-			history -s "_h~n ---------------------------------"
-            while read; do
-                [[ -z $REPLY ]] && return
-                history -s "_h~_     $REPLY"
-            done
-		fi
-	}
-	alias hn='histNote '
 }
 
 hist_init
@@ -236,6 +221,7 @@ function initLsStuff {
 	elif which dircolors &>/dev/null; then
 		eval $(/usr/bin/dircolors --bourne-shell)
 		alias ls='ls --color=auto '
+        LS_COLORS+=':ow=01;33' # fix horrid unreadable blue-on-green other-writable dirnames
 	fi
 }
 

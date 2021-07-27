@@ -46,6 +46,19 @@ localhist_set() {
     export HISTFILE_PRESERVE=$1
 }
 
+help_highlight() {
+    local line
+    local lx
+    while read line; do
+        if [[ $line == loc* ]]; then
+            lx=$(echo "$line" | sed 's/\[/[\\033[;31m/' | sed 's/]/\\033[;0m]/')
+        else
+            lx="\033[;32m${line}\033[;0m"
+        fi
+        echo -e "$lx"
+    done
+}
+
 localhist() {
     [[ -z $1 ]] && { localhist help; echo -en "  \033[;33mNow:" $'\U27a9' " " ; localhist show; echo -en "\033[;0m"; return; }
     while [[ -n $1 ]]; do
@@ -95,7 +108,7 @@ localhist() {
                 echo "HISTFILE=$HISTFILE: $(wc -l $HISTFILE | cut -d' ' -f 1) lines"
             ;;
             d|dump)
-                ( history -c; history -r; history; echo -e "  \033[;33m(From $HISTFILE)\033[;0m" )
+                ( history -c; history -r; history | cut -d' ' -f5-; echo -e "  \033[;33m(From $HISTFILE, $(wc -l $HISTFILE | cut -d' ' -f 1) events)\033[;0m" )
             ;;
             m|compare)
                 if [[ $HISTFILE == ~/.bash_history ]]; then
@@ -111,7 +124,7 @@ localhist() {
                 vimdiff ~/.bash_history $HISTFILE
             ;;
             h|help)
-                egrep '^#   l' ~/bin/localhist | cut -c 3-
+                egrep '^#   l' ~/bin/localhist | cut -c 3- | help_highlight
             ;;
             *)
                 localhist help

@@ -1,19 +1,22 @@
 # vim: filetype=sh
 # localhist
 #
-#   localhist h[elp]    # Get help.
-#   localhist o[n]      # Set HISTFILE to <current dir>/bash_history
-#   localhist j[oin]    # Join by searching up in tree for 'bash_history'
-#   localhist w[rite]   # Write buffer to current HISTFILE
-#   localhist r[ead]    # Read from current HISTFILE to buffer
-#   localhist [of]f     # Switch HISTFILE back to ~/bash_history
-#   localhist s[how]    # Show status
-#   localhist d[ump]    # Dump current histfile
-#   localhist e[dit]    # Load current history buffer into $EDITOR
-#   localhist c[lean]   # Clean current HISTFILE, removing short lines
+#   localhist [h]elp    # Get help.
+#   localhist [o]n      # Set HISTFILE to <current dir>/bash_history
+#   localhist [j]oin    # Join by searching up in tree for 'bash_history'
+#   localhist [w]rite   # Write buffer to current HISTFILE
+#   localhist [r]ead    # Read from current HISTFILE to buffer
+#   localhist of[f]     # Switch HISTFILE back to ~/bash_history
+#   localhist [s]how    # Show status
+#   localhist [d]ump    # Dump current histfile
+#   localhist [e]dit    # Load current history buffer into $EDITOR
+#   localhist [c]lear   # Clear buffer only
+#   localhist c[l]ean   # Clean current HISTFILE, removing unworthy stuff
 #   localhist co[m]pare # Compare current HISTFILE with ~/.bash_history
+#   :: Examples ::
 #   localhist on read   # Sequence example: turn on, then read.
 #   localhist o r       # ... same thing, fewer letters
+#   localhist r l w     # Read, cLean, Write
 
 localhist_join() {
     # Search up thru parent dirs to find nearest 'bash_history' (no dot),
@@ -71,13 +74,17 @@ localhist() {
                 history -w
                 echo "Ok: I wrote buffer to $HISTFILE"
             ;;
-            c|clean)
+            l|clean)
                 histfile_clean $HISTFILE || return;
                 echo "Ok: cleaned $HISTFILE"
             ;;
             r|read)
                 history -r
                 echo "Ok: I read buffer from $HISTFILE"
+            ;;
+            c|clear)
+                history -c
+                echo "Ok: I cleared the buffer"
             ;;
             e|edit)
                 echo "Editing $HISTFILE:"
@@ -95,6 +102,7 @@ localhist() {
                     false
                     return
                 fi
+                echo "Comparing ~/.bash_history and $HISTFILE:"
                 vimdiff ~/.bash_history $HISTFILE
             ;;
             h|help)

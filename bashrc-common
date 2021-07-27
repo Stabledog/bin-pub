@@ -34,6 +34,15 @@ init_browser_tools() {
 
 init_browser_tools
 
+init_complete_alias() {
+    # _complete_alias needs ~/.bash_completion.d/complete_alias
+    [[ -f ${HOME}/.bash_completion.d/complete_alias ]] && source ${HOME}/.bash_completion.d/complete_alias
+    # Example: how to use complete_alias:
+    alias container=docker\ container
+    complete -F _complete_alias container
+}
+init_complete_alias
+
 function define_yellow {
     function _yellow_ {
         # Do "Yellow=1 [args]" to enable _yellow_ (diagnostic) output,
@@ -366,7 +375,7 @@ function initGitStuff {
 	alias gs='git status '
 	alias gc='git commit'
     alias gco='git checkout'
-    complete -F _complete_alias gco
+    type -t _complete_alias &>/dev/null && complete -F _complete_alias gco
 	alias ga='git add'
 	alias gap='git add -p'
 	alias gb='git branch -vv'
@@ -650,10 +659,6 @@ if $isBash; then
     # The 'tox' command:
     if [[ $PS1 ]]; then
         source ${LmHome}/bin/tox-py/tox-completion.bash &>/dev/null
-        [[ -f ${HOME}/.bash_completion.d/complete_alias ]] && source ${HOME}/.bash_completion.d/complete_alias
-        # Example: how to use complete_alias:
-        alias container=docker\ container
-        complete -F _complete_alias container
     fi
 fi
 

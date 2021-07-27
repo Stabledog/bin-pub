@@ -375,7 +375,6 @@ function initGitStuff {
 	alias gs='git status '
 	alias gc='git commit'
     alias gco='git checkout'
-    type -t _complete_alias &>/dev/null && complete -F _complete_alias gco
 	alias ga='git add'
 	alias gap='git add -p'
 	alias gb='git branch -vv'
@@ -391,6 +390,12 @@ function initGitStuff {
 	alias glm=git_log_more
     alias grv=git_remote_view
     alias glc='git-log-compact --decorate'
+    if type -t _complete_alias &>/dev/null; then
+        complete -F _complete_alias gco
+        complete -F _complete_alias gb
+        complete -F _complete_alias gba
+    fi
+
 
     function gitgrep {
         local pattern="${1:-.*}"

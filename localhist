@@ -13,10 +13,11 @@
 #   localhist [c]lear   # Clear buffer only
 #   localhist c[l]ean   # Clean current HISTFILE, removing unworthy stuff
 #   localhist co[m]pare # Compare current HISTFILE with ~/.bash_history
-#   :: Examples ::
-#   localhist on read   # Sequence example: turn on, then read.
+#   lo             : : : :  E x a m p l e s   : : : :
+#   localhist on read   # Turn on, then read.
 #   localhist o r       # ... same thing, fewer letters
 #   localhist r l w     # Read, cLean, Write
+#   localhost w l m     # Write, cLean, coMpare with ~/.bash_history
 
 localhist_join() {
     # Search up thru parent dirs to find nearest 'bash_history' (no dot),
@@ -101,12 +102,16 @@ localhist() {
                     echo "ERROR: nothing to compare, we're on $HISTFILE" >&2
                     false
                     return
+                elif diff $HISTFILE ~/.bash_history &>/dev/null; then
+                    echo "$HISTFILE is not different from ~/.bash_history"
+                    false
+                    return
                 fi
                 echo "Comparing ~/.bash_history and $HISTFILE:"
                 vimdiff ~/.bash_history $HISTFILE
             ;;
             h|help)
-                egrep '^#   localhist ' ~/bin/localhist | cut -c 3-
+                egrep '^#   l' ~/bin/localhist | cut -c 3-
             ;;
             *)
                 localhist help

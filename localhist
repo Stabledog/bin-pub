@@ -33,6 +33,7 @@ localhist_join() {
         fi
         if [[ $PWD == '/' ]]; then
             echo "I can't find a parent bash_history, HISTFILE is still $HISTFILE"
+            cd $orgDir
             false
             return
         fi

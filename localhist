@@ -145,6 +145,7 @@ localhist() {
                 vimdiff ~/.bash_history $HISTFILE
             ;;
             g|grep)
+                shift
                 localhist-grep.sh "$@"
                 set --
             ;;

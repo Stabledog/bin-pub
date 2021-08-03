@@ -11,5 +11,4 @@ die() {
 [[ -d ~/.localhist ]] || die No ~/.localhist dir exists
 
 cd ~/.localhist
-echo "myargs[$@]" >&2
 grep -E $@ *

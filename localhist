@@ -49,8 +49,16 @@ localhist_join() {
     cd $orgDir
 }
 localhist_set() {
-    # So we can restore our HISTFILE across shell init:
-    HISTFILE=$1
+    # HISTFILE_PRESERVE allows restore our HISTFILE across shell init:
+    if [[ $1 != $HISTFILE ]]; then
+        (
+            HISTFILE=$HOME/.bash_history;
+            history -s "HISTFILE=$1  # Switching from $HISTFILE";
+            history -w
+        )
+        export HISTFILE_PREV=$HISTFILE
+        HISTFILE=$1
+    fi
     export HISTFILE_PRESERVE=$1
 }
 

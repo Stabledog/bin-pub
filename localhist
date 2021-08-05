@@ -51,12 +51,12 @@ localhist_join() {
 localhist_set() {
     # HISTFILE_PRESERVE allows restore our HISTFILE across shell init:
     if [[ $1 != $HISTFILE ]]; then
+        export HISTFILE_PREV=$HISTFILE
         (
             HISTFILE=$HOME/.bash_history;
-            history -s "HISTFILE=$1  # Switching from $HISTFILE";
+            history -s "HISTFILE=$1  # Switching from $HISTFILE_PREV";
             history -w
         )
-        export HISTFILE_PREV=$HISTFILE
         HISTFILE=$1
     fi
     export HISTFILE_PRESERVE=$1

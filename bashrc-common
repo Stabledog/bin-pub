@@ -165,11 +165,8 @@ function hist_init {
     HISTCONTROL=ignoredups:ignorespace
     HISTTIMEFORMAT="%F %H:%M "
     # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-    HISTSIZE=5000
+    HISTSIZE=10000
     HISTFILESIZE=5000
-    function hist_less {
-        history 500 | less -FRX +G
-    }
     # PROMPT_COMMAND is a command that bash executes each time it prepares to
     # issue the user prompt. It's used to customize the prompt in various ways,
     # or to perform shell maintenance activities.  In this case, we're using
@@ -196,8 +193,6 @@ function hist_init {
 	alias his='history '
 	alias hisg='set -f; history_grep'
 	alias hg='set -f; history_grep'
-    alias histl='hist_less'
-    alias hl='hist_less'
 
     [[ -f ~/bin/localhist ]] && { source ~/bin/localhist; alias lh=localhist; }
 

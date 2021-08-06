@@ -13,7 +13,12 @@ for xf in *; do
     xf=$(readlink -f ${xf})
     (
         cd $(dirname ${xf});
+        set -o history
+        history -c
+        HISTTIMEFORMAT="%F %H:%M "
+        HISTFILE=$PWD/bash_history
+        history -r
         echo -e "\033[;33mcd $(pwd -P)\033[;0m"
-        grep -E "$@" $(basename ${xf}) 2>/dev/null | sed 's/^/  /'
+        history | grep -E "$@" 2>/dev/null | sed 's/^/  /'
     )
 done

@@ -31,7 +31,7 @@ cleanup_histfile() {
     else
         cleanup_histstream <${file} >${tmpf}
     fi
-    cp ${tmpf} ${file}
+    cat ${tmpf} > ${file}
     local new_event_count=$(histevent_count ${file})
     echo "Done cleaning $file: ${old_event_count} -> ${new_event_count} events"
 }

@@ -118,7 +118,7 @@ localhist() {
                 echo "Ok: I wrote buffer to $HISTFILE"
             ;;
             l|clean)
-                histfile_clean $HISTFILE || return;
+                histfile-cleanup.sh $HISTFILE || return;
                 echo "Ok: cleaned $HISTFILE"
             ;;
             r|read)

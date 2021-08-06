@@ -8,7 +8,8 @@
 
 
 
-from typing import Iterable, OrderedDict, Callable, Type
+import sys
+from typing import Iterable, OrderedDict, List
 from collections import OrderedDict
 import re
 
@@ -90,9 +91,14 @@ def cleanup_stream(instream,outstream):
         outstream.write(str(event))
         outstream.write('\n')
 
+def parse_args(argv:List[str]):
+    if len(argv) > 1:
+        raise RuntimeError(f"Unknown argument: {argv[1]}")
+    return '/dev/stdin','/dev/stdout'
+
 
 if __name__=="__main__":
-    with open('/dev/stdin','r') as instr, open('/dev/stdout','w') as ostr:
+    infile,outfile=parse_args(sys.argv)
+    with open(infile,'r') as instr, open(outfile,'w') as ostr:
         cleanup_stream(instr,ostr)
-    #result = condense_bash_history(get_events_reversed(testdata_1))
-    #[print(str(e)) for e in result]
+    sys.exit(0)

@@ -10,11 +10,22 @@ stub() {
     echo "stub[$@]" >&2
 }
 
+Script=$(readlink -f $0)
+Scriptdir=$(dirname $Script)
+
+Python=$(which python3.9 python3.8 python3.7 python3.6 python3.5 2>/dev/null | head -n 1)
+
+use_python_cleaner=true
+
 cleanup_histfile() {
     local file=$1
     local tmpf=$(mktemp)
     trap "rm ${tmpf} &>/dev/null" exit
-    cleanup_histstream <${file} >${tmpf}
+    if $use_python_cleaner && [[ -n $Python ]] && [[ -r ${Scriptdir}/bash_history_tool.py ]]; then
+        $Python ${Scriptdir}/bash_history_tool.py <${file} >${tmpf} || die "Failed cleaning in bash_history_tool.py"
+    else
+        cleanup_histstream <${file} >${tmpf}
+    fi
     cp ${tmpf} ${file}
     echo "Done cleaning $file"
 }

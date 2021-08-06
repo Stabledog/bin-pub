@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
-# Helper for bash history maintenance
+# Helper for bash history maintenance.
+#  - Condense + order a history stream or file:
+#     - Remove dupes, coalesce timestamps, keep most recent only,
+#        discard entries without comment hashes, impose strict
+#        time-ordering
+
 
 
 from typing import Iterable, OrderedDict, Callable, Type
@@ -79,6 +84,15 @@ def condense_bash_history(
     time_ordered = sorted(cache.values(),key=lambda x: x.timestamp)
     return time_ordered
 
+def cleanup_stream(instream,outstream):
+    ''' Reorder, remove dupes and uncommented, ensure uniqueness '''
+    for event in condense_bash_history(get_events_reversed(instream.read())):
+        outstream.write(str(event))
+        outstream.write('\n')
+
+
 if __name__=="__main__":
-    result = condense_bash_history(get_events_reversed(testdata_1))
-    [print(str(e)) for e in result]
+    with open('/dev/stdin','r') as instr, open('/dev/stdout','w') as ostr:
+        cleanup_stream(instr,ostr)
+    #result = condense_bash_history(get_events_reversed(testdata_1))
+    #[print(str(e)) for e in result]

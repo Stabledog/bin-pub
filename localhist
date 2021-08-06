@@ -25,6 +25,10 @@
 #     echo -e "\033[;34m   stub[$@]\033[;0m" >&2
 # }
 
+histevent_count() {
+    ( grep -vE '^#[0-9]+' ${1} 2>/dev/null || :) | wc -l
+}
+
 localhist_join() {
     # Search up thru parent dirs to find nearest 'bash_history' (no dot),
     # and set HISTFILE to that path.  Typically such files are per-project
@@ -134,10 +138,10 @@ localhist() {
                 $EDITOR $HISTFILE
             ;;
             s|show)
-                echo "HISTFILE=$HISTFILE: $(wc -l $HISTFILE | cut -d' ' -f 1) lines"
+                echo "HISTFILE=$HISTFILE: $(histevent_count $HISTFILE ) events"
             ;;
             d|dump)
-                ( history -c; history -r; history | cut -d' ' -f5-; echo -e "  \033[;33m(From $HISTFILE, $(wc -l $HISTFILE | cut -d' ' -f 1) events)\033[;0m" )
+                ( history -c; history -r; history | cut -d' ' -f5-; echo -e "  \033[;33m(From $HISTFILE, $(histevent_count $HISTFILE ) events)\033[;0m" )
             ;;
             m|compare)
                 if [[ $HISTFILE == ~/.bash_history ]]; then

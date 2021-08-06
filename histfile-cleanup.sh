@@ -17,9 +17,14 @@ Python=$(which python3.9 python3.8 python3.7 python3.6 python3.5 2>/dev/null | h
 
 use_python_cleaner=true
 
+histevent_count() {
+    ( grep -vE '^#[0-9]+' ${1} 2>/dev/null || :) | wc -l
+}
+
 cleanup_histfile() {
     local file=$1
     local tmpf=$(mktemp)
+    local old_event_count=$(histevent_count ${file})
     trap "rm ${tmpf} &>/dev/null" exit
     if $use_python_cleaner && [[ -n $Python ]] && [[ -r ${Scriptdir}/bash_history_tool.py ]]; then
         $Python ${Scriptdir}/bash_history_tool.py <${file} >${tmpf} || die "Failed cleaning in bash_history_tool.py"
@@ -27,7 +32,8 @@ cleanup_histfile() {
         cleanup_histstream <${file} >${tmpf}
     fi
     cp ${tmpf} ${file}
-    echo "Done cleaning $file"
+    local new_event_count=$(histevent_count ${file})
+    echo "Done cleaning $file: ${old_event_count} -> ${new_event_count} events"
 }
 
 cleanup_histstream() {

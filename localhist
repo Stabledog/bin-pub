@@ -5,6 +5,7 @@
 #   localhist [o]n      # Set HISTFILE to <current dir>/bash_history
 #   localhist [j]oin    # Join by searching up in tree for 'bash_history'
 #   localhist [w]rite   # Write buffer to current HISTFILE
+#   localhist e[x]port  # Write buffer to specific file, with edit option
 #   localhist [r]ead    # Read from current HISTFILE to buffer
 #   localhist of[f]     # Switch HISTFILE back to ~/bash_history
 #   localhist [s]how    # Show status
@@ -13,6 +14,7 @@
 #   localhist [c]lear   # Clear buffer only
 #   localhist c[l]ean   # Clean current HISTFILE, removing unworthy stuff
 #   localhist co[m]pare # Compare current HISTFILE with ~/.bash_history
+#   localhist [z]merge  # Merge one or more file args into HISTFILE
 #   localhist [g]rep    # Search all ~/.localhist/* registered files
 #   localhist ca[t]alog # Print stats on all ~/.localhist registered files
 #   lo             : : : :  E x a m p l e s   : : : :
@@ -92,6 +94,17 @@ localhist_register() {
     ln -sf "${filename}" $HOME/.localhist/${linkname}  &>/dev/null
 }
 
+localhist_export_help() {
+    # Set up context and invoke localhist_export.sh
+    (
+        [[ -x localhist-merge.sh ]] || { echo "ERROR: can't find localhist-merge.sh" >&2; exit 1; }
+        HISTFILE=$(mktemp)
+        trap 'rm $HISTFILE' exit
+        history -w
+        localhist-merge.sh $HISTFILE "$@"
+    )
+}
+
 localhist() {
     [[ -z $1 ]] && { localhist help; echo -en "  \033[;33mNow:" $'\U27a9' " " ; localhist show; echo -en "\033[;0m"; return; }
     while [[ -n $1 ]]; do
@@ -122,6 +135,16 @@ localhist() {
                 history -w
                 echo "Ok: I wrote buffer to $HISTFILE"
             ;;
+            x|export)
+                shift
+                localhist_export_help "$@"
+                set --
+            ;;
+            z|merge)
+                shift
+                localhist-merge.sh "$@" -o $HISTFILE
+                set --
+            ;;
             l|clean)
                 histfile-cleanup.sh $HISTFILE || return;
                 echo "Ok: cleaned $HISTFILE"
@@ -140,7 +163,7 @@ localhist() {
             ;;
             s|show)
                 echo "HISTFILE=$HISTFILE: $(histevent_count $HISTFILE ) events, memory: $HISTCMD events"
-            ;
+            ;;
             d|dump)
                 ( history -c; history -r; history | cut -d' ' -f5-; echo -e "  \033[;33m(From $HISTFILE, $(histevent_count $HISTFILE ) events)\033[;0m" )
             ;;

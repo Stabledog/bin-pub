@@ -33,6 +33,9 @@ set colored-completion-prefix on
 # Immediately list candidates if multiple matches:
 set show-all-if-ambiguous on
 
+# Indicate file type during completion
+set visible-stats on
+
 
 $if mode=vi
 	set keymap vi-command

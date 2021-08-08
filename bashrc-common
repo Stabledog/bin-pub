@@ -24,6 +24,7 @@ function init_sh_tools {
 init_sh_tools
 
 init_browser_tools() {
+
     alias wbs='web-search.sh'
     alias goo='web-search.sh google'
     alias gogl='web-search.sh gogl'
@@ -32,9 +33,10 @@ init_browser_tools() {
     alias mine='web-search mine'
 }
 
-init_browser_tools
+[[ -n $PS1 ]] && init_browser_tools
 
 init_complete_alias() {
+    [[ -n $PS1 ]] || return
     # _complete_alias needs ~/.bash_completion.d/complete_alias
     # Example: how to use complete_alias:
     alias container=docker\ container
@@ -158,6 +160,10 @@ function ptop {
 
 
 function hist_init {
+    function history_grep {
+        history | grep -E "$@"
+        set +f
+    }
 
     # don't put duplicate lines in the history. See bash(1) for more options
     # ... or force ignoredups and ignorespace
@@ -182,13 +188,7 @@ function hist_init {
         shopt -s histverify # Load history events for editing rather than immediate execution
     fi
 
-    function history_grep {
-        history | grep -E "$@"
-        set +f
-    }
-
 	alias hist='history '
-
 	alias his='history '
 	alias hisg='set -f; history_grep'
 	alias hg='set -f; history_grep'
@@ -207,16 +207,18 @@ function initLsStuff {
     function ls_less {
         ls --color=yes -- "$@" | less -RFSX
     }
-    alias lsl=ls_less
-	# some more ls aliases
-	alias ll='ls -alF'
-	alias la='ls -A'
-	alias lra='ls -lrta'
-	alias l='ls -CF'
-	alias l1='ls -1'
-	alias lr='ls -lrt'
-	alias lg='ls -la | egrep '
-	alias lsg='ls -la | egrep '
+    if [[ -n $PS1 ]]; then
+        alias lsl=ls_less
+        # some more ls aliases
+        alias ll='ls -alF'
+        alias la='ls -A'
+        alias lra='ls -lrta'
+        alias l='ls -CF'
+        alias l1='ls -1'
+        alias lr='ls -lrt'
+        alias lg='ls -la | egrep '
+        alias lsg='ls -la | egrep '
+    fi
 
 	if $MACOSX; then   # Mac doesn't have dircolors
 		CLICOLOR=YES
@@ -236,8 +238,6 @@ initLsStuff
 if $isBash; then
     shopt -s checkwinsize
 fi
-
-
 
 
 function initGitStuff {
@@ -366,30 +366,31 @@ function initGitStuff {
 
 	# Script-worthy git-status: check the branch, parseable output, etc.
     # See-also: git-dirty
-	alias gs='git status '
-	alias gc='git commit'
-    alias gco='git checkout'
-	alias ga='git add'
-	alias gap='git add -p'
-	alias gb='git branch -vv'
-	alias gba='git branch -a -vv'
+    if [[ -n $PS1 ]]; then
+        alias gs='git status '
+        alias gc='git commit'
+        alias gco='git checkout'
+        alias ga='git add'
+        alias gap='git add -p'
+        alias gb='git branch -vv'
+        alias gba='git branch -a -vv'
 
-	alias gpa='git_commit_sync'
+        alias gpa='git_commit_sync'
 
-	alias grs=git_remote_show
+        alias grs=git_remote_show
 
-	alias gdf=git_diff_fancy
-	alias gdt='git difftool'
+        alias gdf=git_diff_fancy
+        alias gdt='git difftool'
 
-	alias glm=git_log_more
-    alias grv=git_remote_view
-    alias glc='git-log-compact --decorate'
-    if type -t _complete_alias &>/dev/null; then
-        complete -F _complete_alias gco
-        complete -F _complete_alias gb
-        complete -F _complete_alias gba
+        alias glm=git_log_more
+        alias grv=git_remote_view
+        alias glc='git-log-compact --decorate'
+        if type -t _complete_alias &>/dev/null; then
+            complete -F _complete_alias gco
+            complete -F _complete_alias gb
+            complete -F _complete_alias gba
+        fi
     fi
-
 
     function gitgrep {
         local pattern="${1:-.*}"
@@ -578,7 +579,7 @@ PS1='
 
 
 
-t_setFancyPs1
+[[ -n $PS1 ]] && t_setFancyPs1
 
 if $isBash; then
     shopt -s direxpand

@@ -36,7 +36,6 @@ init_browser_tools
 
 init_complete_alias() {
     # _complete_alias needs ~/.bash_completion.d/complete_alias
-    [[ -f ${HOME}/.bash_completion.d/complete_alias ]] && source ${HOME}/.bash_completion.d/complete_alias
     # Example: how to use complete_alias:
     alias container=docker\ container
     complete -F _complete_alias container
@@ -471,6 +470,11 @@ if $isBash; then
 	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 		. /etc/bash_completion
 	fi
+	[[ -d ${HOME}/.bash_completion.d ]] && {
+        for xf in ${HOME}/.bash_completion.d/*; do
+            source ${xf}
+        done
+    }
 fi
 
 

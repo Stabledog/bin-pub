@@ -36,6 +36,8 @@ set show-all-if-ambiguous on
 # Indicate file type during completion
 set visible-stats on
 
+set match-hidden-files on
+
 
 $if mode=vi
 	set keymap vi-command

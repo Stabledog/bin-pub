@@ -568,7 +568,7 @@ function t_setFancyPs1 {
     fi
     PROMPT_DIRTRIM=3
 PS1='
-\[\033[1;33m\][\D{%m-%d %H:%M.%S}]\[\033[0m\]  \[\033[1;35m\]\w\[\033[0m\]$(parse_git_branch)
+\[\033[1;33m\][\D{%m-%d %H:%M.%S}]\[\033[0m\]$(echo -e $"\U27a9") \[\033[1;35m\]\w\[\033[0m\]$(parse_git_branch)
 \[\033[1;36m\][\u $(parse_host_suffix) \h]\[\033[0m\]$(parse_ext_tail)$Ps1Tail> '
 }
 

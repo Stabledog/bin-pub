@@ -113,6 +113,8 @@ localhist() {
                 if [[ $HISTFILE == $PWD/bash_history ]] ; then
                     echo Already on
                     localhist show
+                elif [[ -f ./.bash_history ]]; then
+                    echo "Can't do 'on' when ./.bash_history exists"
                 else
                     localhist_set $PWD/bash_history
                     localhist_register $HISTFILE

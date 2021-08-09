@@ -22,4 +22,12 @@ if [[ -z $sourceMe ]]; then
         yellow "Searching $PWD for \"${expr}\":" >&2
         grep -E "$expr" * 2>/dev/null | sed "s%^% $PWD/%"
     done
+    (
+        PS1="." source ~/.bashrc
+        shopt -s extdebug
+        echo "declare -Ff $@ :"
+        declare -Ff $@
+        shopt -u extdebug
+    )
 fi
+

@@ -7,6 +7,17 @@ function stub() {
     (( stub_count++ ))
 }
 
+function call_stack() {
+    local -i cur_frame=$1
+    [[ -n $cur_frame ]] || cur_frame=1
+    while true; do
+        if ! caller $cur_frame >&2 ; then
+            break
+        fi
+        (( cur_frame++ ))
+    done
+}
+
 function bpoint() {
     # Miniature REPL for shell to aid debugging scripts
     #
@@ -27,7 +38,7 @@ function bpoint() {
         bp_hist_init=true
     fi
     [[ -z $bpoint_count ]] && bpoint_count=1
-    echo -e "\033[;31m >>> [$bpoint_count]: Break at $@\033[;0m" >&2
+    echo -e "\033[;31m$(call_stack 1 2>&1)\n >>> [$bpoint_count]: Break args=[$@]\033[;0m" >&2
     local eval_result=0
     local color
     while true; do

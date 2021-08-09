@@ -1,9 +1,9 @@
 # _completion_debug_monitor.bash
 # Debug monitor for bash completion debugging:
 
-#  1. Add "_cstb_term [context-tag]" calls in your completion function
+#  1. Add "_cstb [context-tag]" calls in your completion function
 #  2. Set "_cstb_term /path/to/tty" in the testing window, pointing to a monitor tty
-#  3. Each time _cstb_term() is called, diagnostics show in the monitor tty
+#  3. Each time _cstb() is called, diagnostics show in the monitor tty
 
 _cstb() {
     [[ -z $_cstb_term ]] && return;

@@ -8,8 +8,13 @@ _tmuxw_lev0() {
         echo "ls cwd"
         return
     fi
+    [[ $COMP_CWORD == 1 ]] || return;
     local sessions="$(tmux ls 2>/dev/null | cut -d: -f1)"
-    echo "${sessions}"
+    if [[ -n $sessions ]]; then
+        echo "${sessions}"
+    else
+        echo "main (new-session)"
+    fi
 }
 
 _tmuxw_completion() {

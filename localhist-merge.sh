@@ -108,9 +108,18 @@ merge_noedit() {
     histfile-cleanup.sh "${outfile}"
 }
 
+backup_original() {
+    for arg; do
+        [[ -r ${arg} ]] || { red "Warning: can't back up unreadable or unknown file ${arg}\n"; continue; }
+        cp ${arg} ${arg}.bak
+    done
+}
+
 if [ -z "$sourceMe" ]; then
     parseArgs "$@"
     #stubstate post parse
+
+    backup_original ${output_file}
     if $edit_mode; then
         merge_edit "${output_file}" "${input_files[@]}"
     else

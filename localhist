@@ -7,6 +7,7 @@
 #   localhist [w]rite   # Write buffer to current HISTFILE
 #   localhist e[x]port  # Write buffer to specific file, with edit option
 #   localhist [r]ead    # Read from current HISTFILE to buffer
+#   localhist [i]mport  # Read from file(s) into buffer
 #   localhist of[f]     # Switch HISTFILE back to ~/bash_history
 #   localhist [s]how    # Show status
 #   localhist [d]ump    # Dump current histfile
@@ -105,6 +106,23 @@ localhist_export_help() {
     )
 }
 
+localhist_import_files() {
+    # Import files in $@.  If empty, default to current dir bash_history
+    [[ $# == 0 ]] && set -- ./bash_history
+    local imported_files=()
+    local orig_histfile=$HISTFILE
+    for arg in "$@"; do
+        local srcfile=$(readlink -f $1)
+        shift
+        [[ -r $srcfile ]] || { echo "ERROR: Can't find/read $srcfile\n"; continue; }
+        HISTFILE=$srcfile
+        history -r || { echo "ERROR loading $srcfile"; continue; }
+        imported_files+=( ${arg} )
+    done
+    HISTFILE=$orig_histfile
+    printf "OK: I imported ${imported_files[@]}"
+}
+
 localhist() {
     [[ -z $1 ]] && { localhist help; echo -en "  \033[;33mNow:" $'\U27a9' " " ; localhist show; echo -en "\033[;0m"; return; }
     while [[ -n $1 ]]; do
@@ -154,6 +172,11 @@ localhist() {
             r|read)
                 history -r
                 echo "Ok: I read buffer from $HISTFILE"
+            ;;
+            i|import)
+                shift
+                localhist_import_files "$@"
+                set --
             ;;
             c|clear)
                 history -c

@@ -14,6 +14,7 @@
 #   localhist [e]dit    # Load current history buffer into $EDITOR
 #   localhist [c]lear   # Clear buffer only
 #   localhist c[l]ean   # Clean current HISTFILE, removing unworthy stuff
+#   localhist [mem]clean# Clean current memory buffer removing unworthy stuff
 #   localhist co[m]pare # Compare current HISTFILE with ~/.bash_history
 #   localhist [z]merge  # Merge one or more file args into HISTFILE
 #   localhist [g]rep    # Search all ~/.localhist/* registered files
@@ -106,6 +107,19 @@ localhist_export_help() {
     )
 }
 
+localhist_memclean() {
+    local -r tmpfile=$(mktemp)
+    local -r orig_histfile=$HISTFILE
+    trap "rm $tmpfile &>/dev/null; HISTFILE=${orig_histfile};" return
+    HISTFILE=${tmpfile}
+    history -w
+    #histfile-cleanup.sh $HISTFILE &>/dev/null
+    histfile-cleanup.sh $HISTFILE
+    history -c
+    history -r
+    echo "Ok: I cleaned history in buffer"
+}
+
 localhist_import_files() {
     # Import files in $@.  If empty, default to current dir bash_history
     [[ $# == 0 ]] && set -- ./bash_history
@@ -169,6 +183,10 @@ localhist() {
                 histfile-cleanup.sh $HISTFILE || return;
                 echo "Ok: cleaned $HISTFILE"
             ;;
+            mem|memclean)
+                localhist_memclean
+            ;;
+
             r|read)
                 history -r
                 echo "Ok: I read buffer from $HISTFILE"

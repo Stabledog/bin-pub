@@ -69,3 +69,4 @@ if [[ -z $sourceMe ]]; then
     parseArgs "$@"
     cleanup_histfile $target_file
 fi
+

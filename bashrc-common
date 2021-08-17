@@ -193,8 +193,13 @@ function hist_init {
 	alias hisg='set -f; history_grep'
 	alias hg='set -f; history_grep'
 
-    [[ -f ~/bin/localhist ]] && { source ~/bin/localhist; alias lh=localhist; }
-
+	if which localhist-version.sh &>/dev/null; then 
+        local lfs=$(localhist-version.sh | cut -f1)
+        if [[ -f $lfs ]]; then
+            source ${lfs}
+            alias lh=localhist
+        fi
+	fi
 }
 
 hist_init

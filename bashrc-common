@@ -193,13 +193,6 @@ function hist_init {
 	alias hisg='set -f; history_grep'
 	alias hg='set -f; history_grep'
 
-	if which localhist-version.sh &>/dev/null; then 
-        local lfs=$(localhist-version.sh | cut -f1)
-        if [[ -f $lfs ]]; then
-            source ${lfs}
-            alias lh=localhist
-        fi
-	fi
 }
 
 hist_init
@@ -687,3 +680,6 @@ alias tw='tmuxw'
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
+[[ -n $PS1 &&  -f /home/lmatheson4/.local/bin/localhist/localhist  ]] && source  /home/lmatheson4/.local/bin/localhist/localhist  # Added by localhist setup.sh
+[[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
+

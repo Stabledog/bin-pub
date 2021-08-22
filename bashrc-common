@@ -165,27 +165,9 @@ function hist_init {
         set +f
     }
 
-    # don't put duplicate lines in the history. See bash(1) for more options
-    # ... or force ignoredups and ignorespace
-    HISTCONTROL=ignoredups:ignorespace
-    HISTTIMEFORMAT="%F %H:%M "
-    # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-    HISTSIZE=10000
-    HISTFILESIZE=5000
-    # PROMPT_COMMAND is a command that bash executes each time it prepares to
-    # issue the user prompt. It's used to customize the prompt in various ways,
-    # or to perform shell maintenance activities.  In this case, we're using
-    # it to update the stored command history:
-    export PROMPT_COMMAND="history -a"
 
     if [[ -n $HISTFILE_PRESERVE ]]; then
-        export HISTFILE=$HISTFILE_PRESERVE  # see ~/bin/localhist
-    fi
-
-	# append to the history file, don't overwrite it
-	if $isBash; then
-        shopt -s histappend
-        shopt -s histverify # Load history events for editing rather than immediate execution
+        export HISTFILE=$HISTFILE_PRESERVE  # see ~/.local/bin/localhist
     fi
 
 	alias hist='history '
@@ -497,22 +479,7 @@ if $CYGWIN; then
     cygPathAdd=$LmHome/bin/cyg
 fi
 
-function cdmods {
-    # Quick directory up-changes
-    alias .1='cd ../'
-    alias .2='cd ../../'
-    alias .3='cd ../../../'
-    alias .4='cd ../../../../'
-    alias .5='cd ../../../../../'
-    alias .6='cd ../../../../../../'
 
-    # And also, return-to-prev dir:
-    alias .-='cd -'
-    # Let's not forget popdir:
-    alias .p='popd'
-}
-
-cdmods
 
 
 # If we want a shell to not quit, here's how:
@@ -675,11 +642,13 @@ export MYLIBS=${LmHome}/mylibs/$( $Uname )
 alias tmux='tmux -2'
 alias tw='tmuxw'
 
+
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
-[[ -n $PS1 &&  -f /home/lmatheson4/.local/bin/localhist/localhist  ]] && source  /home/lmatheson4/.local/bin/localhist/localhist  # Added by localhist setup.sh
-[[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 
+[[ -n $PS1 &&  -f /home/lmatheson4/.local/bin/localhist/localhist  ]] && source  /home/lmatheson4/.local/bin/localhist/localhist  # Added by localhist-setup.sh
+[[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist-setup.sh
+[[ -n $PS1 &&  -f /home/lmatheson4/.local/bin/cdpp/cdpp  ]] && source  /home/lmatheson4/.local/bin/cdpp/cdpp  # Added by cdpp-setup.sh

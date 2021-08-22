@@ -32,7 +32,7 @@ selfcert
 setlang
 tags
 termux-only
-tox-py
+tox-py*
 urwid
 vimprobable
 visio

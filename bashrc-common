@@ -411,8 +411,14 @@ initLessStuff
 # Set the terminal title:
 function title {
     export title_tail="$*"
-
-    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(/bin/hostname)"
+    export title_hostname_result=
+    title_hostname() {
+        [[ -n $title_hostname_result ]] && { echo $title_hostname_result; return; }
+        [[ -x /bin/hostname ]] && { title_hostname_result=$(/bin/hostname); return; }
+        title_hostname_result=$HOSTNAME
+        echo $title_hostname_result
+    }
+    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(title_hostname)"
 }
 
 if [[ -z $title_tail ]]; then
@@ -651,5 +657,5 @@ fi
 
 [[ -n $PS1 &&  -f ${HOME}/.local/bin/localhist/localhist  ]] && source  ${HOME}/.local/bin/localhist/localhist  # Added by localhist-setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist-setup.sh
-[[ -n $PS1 &&  -f ${HOME}/.local/bin/cdpp/cdpp  ]] && source  ${HOME}/.local/bin/cdpp/cdpp  # Added by cdpp-setup.sh
+[[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 

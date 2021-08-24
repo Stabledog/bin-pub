@@ -159,26 +159,6 @@ function ptop {
 }
 
 
-function hist_init {
-    function history_grep {
-        history | grep -E "$@"
-        set +f
-    }
-
-
-    if [[ -n $HISTFILE_PRESERVE ]]; then
-        export HISTFILE=$HISTFILE_PRESERVE  # see ~/.local/bin/localhist
-    fi
-
-	alias hist='history '
-	alias his='history '
-	alias hisg='set -f; history_grep'
-	alias hg='set -f; history_grep'
-
-}
-
-hist_init
-
 
 TERM=xterm-256color
 
@@ -659,3 +639,4 @@ fi
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist-setup.sh
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 
+[[ -f $HOME/bin/path_undupe.bash ]] && { source $HOME/bin/path_undupe.bash; path_undupe ; }

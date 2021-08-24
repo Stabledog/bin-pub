@@ -1,45 +1,47 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # path_undupe.py
-
-# Given a colon-delimited input path as $1, print
-# the de-duplicated version, such that if path X appears
-# in the sequence, any subsequent appearance of X is eliminated
-
 import sys
+import os
+from typing import List
 
-args=list(sys.argv[1:])
-verbose=False
-if args[0] == '-v':
-    verbose=True
-    args=args[1:]
-raw = ' '.join(args)
-
-already_appeared={}
-result=[]
-
-windirs=['/c/program files','/c/windows','/c/users','/c/program data']
-
-if raw:
-    for path in raw.split(':'):
-        path=path.rstrip('/')
-        if not path:
+def make_counts(path:str, delim=':') -> List[str]:
+    ''' Returns
+    [a] ordered list of [path,count]
+    [b] set of {dupes} '''
+    known={}
+    dupes={}
+    ordered=[]
+    for pp in path.split(delim):
+        if not pp:
             continue
-        key = path
-        for p in windirs:
-            # Dupe detection for windows dirs should be case-insensitive
-            if path.lower().startswith(p):
-                key=path.lower()
-                break
-        if key in already_appeared:
-            if verbose:
-                sys.stderr.write("skipping dupe: %s\n" % path)
-            continue
-        already_appeared[key]=True
-        result.append(path.rstrip('/'))
-
-    print(':'.join(result))
+        if pp in known:
+            known[pp] += 1
+            if known[pp] == 2:
+                dupes[pp] = True
+        else:
+            known[pp] = 1
+            ordered.append(pp)
+    return [ ( px, known[px] ) for px in ordered ], set(dupes.keys())
 
 
 
+if __name__=="__main__":
+    path=os.environ['PATH']
+    if len(sys.argv)==1:
+        ord,dup=make_counts(path)
+        print('--- All: ---')
+        [ print(f'{o[0]} {o[1]}') for o in ord ]
+        print('--- Dupes: ---')
+        print(dup)
 
+    elif sys.argv[1] in ['-l',"--list-duplicates"]:
+        ord,_=make_counts(path,':')
+        for vv in ord:
+            if vv[1] > 1:
+                print(f"{vv[0]}:{vv[1]}")
+
+    elif sys.argv[1] in ['-u','--unique']:
+        ord,_=make_counts(path,':')
+        items=[vv[0] for vv in ord ]
+        print(':'.join(items))
 

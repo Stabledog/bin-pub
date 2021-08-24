@@ -56,6 +56,7 @@ runLoop() {
             git pull
             git push
             echo "   (...sleeping $LOOP_PERIOD_SECS at $(date -Iseconds) )"
+            echo "    ...in:  $(pwd -P)"
             sleep $LOOP_PERIOD_SECS
         ) || :
     done

@@ -53,12 +53,49 @@ function bpoint() {
     (( bpoint_count += 1 ))
 }
 
+sourceMe() {
+    # Help function
+    cat <<EOF
+sourceMeRun [script-name] [commands...]
+   Sources [script-name] in a subshell with "sourceMe=1" and 
+   then eval()'s "commands".  Result code is printed.  If 
+   script is on the path it is found, otherwise current dir is 
+   assumed. Commands can read stdin if needed.  
+
+sourceMeEval [script-name] [commands ...]
+    Same as sourceMeRun() but evals in current shell.
+
+sourceMeLoop [script-name] [commands ...]
+    Same as sourceMeRun() but enters bpoint() loop inside the
+    subshell after evaluating "commands"
+
+bpoint <breakpoint name args...>
+    Embeddable breakpoint. Prints "breakpoint name args" 
+    and then prompts for expression on stdin and evals it in 
+    the current shell context, printing expr result. Empty
+    expr returns. 
+
+    Includes expression in readline history
+
+stub <trace data>
+    Print auto-incrementing counter and stub text in red to 
+    to stderr.
+
+call_stack <cur_frame=1>
+    Print bash caller info for given frame
+
+EOF
+}
+
 sourceMeRun() {
     # Source script $1 and eval everything after that in subshell
     [[ -z $1 ]] && return $(die no script source path provided)
     cscript=$1
-    if [[ -f $cscript ]]; then
+    if [[ ! -f $cscript ]]; then
         cscript=`which $1` || return $(die cant find script "$1")
+    else
+        # They don't specify a path, so its local dir:
+        [[ $cscript != */* ]] && cscript="./${cscript}"
     fi
     (
         sourceMe=1 source "$cscript"
@@ -72,8 +109,11 @@ sourceMeEval() {
     # Source script $1 and eval everything after that in CURRENT shell
     [[ -z $1 ]] && return $(die no script source path provided)
     cscript=$1
-    if [[ -f $cscript ]]; then
+    if [[ ! -f $cscript ]]; then
         cscript=`which $1` || return $(die cant find script "$1")
+    else
+        # They don't specify a path, so its local dir:
+        [[ $cscript != */* ]] && cscript="./${cscript}"
     fi
     sourceMe=1 source "$cscript"
     shift
@@ -85,8 +125,11 @@ sourceMeLoop() {
     # Source script $1 and then enter a bpoint loop in CURRENT shell
     [[ -z $1 ]] && return $(die no script source path provided)
     cscript=$1
-    if [[ -f $cscript ]]; then
+    if [[ ! -f $cscript ]]; then
         cscript=`which $1` || return $(die cant find script "$1")
+    else
+        # They don't specify a path, so its local dir:
+        [[ $cscript != */* ]] && cscript="./${cscript}"
     fi
     (
         sourceMe=1 source "$cscript"

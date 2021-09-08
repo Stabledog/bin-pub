@@ -168,13 +168,12 @@ function initLsStuff {
         command ls --color=yes -- "$@" | less -RFSX
     }
     function ls_grep() {
-        command ls -la | egrep "$@"
+        command ls -la | command grep -E"$@"
         builtin set +f
     }
 
     if [[ -n $PS1 ]]; then
         alias lsl=ls_less
-        # some more ls aliases
         alias ll='ls -alF'
         alias la='ls -A'
         alias lra='ls -lrta'

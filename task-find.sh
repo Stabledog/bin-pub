@@ -13,9 +13,10 @@ yellow() {
     echo -e "\033[;33m$@\033[;0m"
 }
 
+
 find_dirs="$PWD $HOME/.taskrc $HOME/.taskrc/bin $HOME/bin $(cat ~/.taskrc/task-find-dirs 2>/dev/null | tr -d '#' )"
 
-if [[ -z $sourceMe ]]; then
+main() {
     expr="$1"
     for xdir in $find_dirs; do
         cd $xdir || { echo "ERROR: Can't cd to $xdir" >&2; continue; }
@@ -29,5 +30,9 @@ if [[ -z $sourceMe ]]; then
         declare -Ff $@
         shopt -u extdebug
     )
+}
+
+if [[ -z $sourceMe ]]; then
+    main "$@"
 fi
 

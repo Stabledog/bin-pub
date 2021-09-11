@@ -168,7 +168,7 @@ function initLsStuff {
         command ls --color=yes -- "$@" | less -RFSX
     }
     function ls_grep() {
-        command ls -la | command grep -E"$@"
+        command ls -la | command grep -E "$@"
         builtin set +f
     }
 

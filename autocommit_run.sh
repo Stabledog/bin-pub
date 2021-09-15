@@ -45,14 +45,14 @@ parseArgs() {
         shift
     done
 
-    [[ -d $PWD/.git ]] || die "Dir $PWD is not a git working tree"
+    git-find-root &>/dev/null || die "Dir $PWD is not a git working tree"
     set -u
 }
 
 runLoop() {
     while true; do
         (
-            git commit -am .
+            git commit -am "Auto commit by autocommit_run.sh"
             git pull
             git push
             echo "   (...sleeping $LOOP_PERIOD_SECS at $(date -Iseconds) )"

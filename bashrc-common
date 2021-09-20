@@ -470,6 +470,12 @@ if $CYGWIN; then
 fi
 
 
+# setargs is used for arbitrary mapping of positional args.  (Disabling
+# glob expansion is both a feature and sometimes a bug.)
+alias setargs='set -f; set -- '
+alias seta=setargs
+alias getargs='builtin echo "$@"'
+alias geta=getargs
 
 
 # If we want a shell to not quit, here's how:
@@ -648,6 +654,7 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
+
 
 [[ -n $PS1 &&  -f /home/lmatheson4/.local/bin/localhist/localhist  ]] && source  /home/lmatheson4/.local/bin/localhist/localhist  # Added by localhist setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh

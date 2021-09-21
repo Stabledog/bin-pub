@@ -20,6 +20,9 @@ Usage:
     $script cwd {new-dir}
        > Change session cwd, defaults to \$PWD 
        > for calling pane
+
+    $script rename {new-session-name}
+       > Change session name, prompts if not provided.
 EOFX
 }
 
@@ -29,7 +32,7 @@ function errExit {
 }
 
 
-tmux=$(which tmux)
+tmux=$(which tmux || echo /usr/bin/tmux)
 shopt -s extglob
 
 
@@ -55,6 +58,13 @@ function change_session_dir {
     [[ -z $new_dir ]] && new_dir="$(pwd -P)"
 
     command $tmux command-prompt -I "$new_dir" -p "New session dir:" "attach -c %1"
+}
+
+function rename_session {
+    local new_name=$1
+    [[ -n $new_name ]] || read -ep "New session name: " new_name
+
+    command $tmux command-prompt -I "$new_name" -p "New session name:" 'rename-session %1'
 }
 
 function dispatch_args {
@@ -152,12 +162,19 @@ if [[ -z $sourceMe ]]; then
         exit 1
     fi
     if [[ ! -z $TMUX ]]; then
-        if [[ $1 == cwd ]]; then
-            shift
-            change_session_dir "$@"
-            exit $?
-        fi
-        tmux "$@"  # We're already inside tmux, so let it handle things...
+        case $1 in 
+            cwd)
+                shift
+                change_session_dir "$@"
+                exit $?
+                ;;
+            ren|rename|rename-session)
+                shift
+                rename_session "$@"
+                exit $?
+                ;;
+        esac
+        tmux "$@"  # We're already inside tmux, so forward args:
         exit $?
     fi
 

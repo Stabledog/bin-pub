@@ -55,16 +55,16 @@ function change_session_dir {
     # See also: 
     # https://stackoverflow.com/a/62422576/237059
     local new_dir=$1
-    [[ -z $new_dir ]] && new_dir="$(pwd -P)"
+    [[ -z $new_dir ]] && new_dir="$(pwd)"
 
-    command $tmux command-prompt -I "$new_dir" -p "New session dir:" "attach -c %1"
+    $tmux -C <<< "attach-session -t $(get_session_name) -c \"$new_dir\"" >/dev/null
+    [[ $? -eq 0 ]] || { echo "ERROR changing to $new_dir"; false; return; }
+    echo "tmux cwd is now $new_dir for session $(get_session_name): Ok"
 }
 
 function rename_session {
     local new_name="$*"
     [[ -n $new_name ]] || read -ep "New session name: " new_name
-
-    #command $tmux command-prompt -I "$new_name" -p "New session name:" 'rename-session %1'
 
     local old_name="$( $tmux display-message -p '#S' )"
     command $tmux -C rename-session -t "$old_name" "$new_name"  >/dev/null

@@ -61,10 +61,19 @@ function change_session_dir {
 }
 
 function rename_session {
-    local new_name=$1
+    local new_name="$*"
     [[ -n $new_name ]] || read -ep "New session name: " new_name
 
-    command $tmux command-prompt -I "$new_name" -p "New session name:" 'rename-session %1'
+    #command $tmux command-prompt -I "$new_name" -p "New session name:" 'rename-session %1'
+
+    local old_name="$( $tmux display-message -p '#S' )"
+    command $tmux -C rename-session -t "$old_name" "$new_name"  >/dev/null
+    [[ $? -ne 0 ]] && { echo "ERROR renaming $old_name -> $new_name"; false; return; }
+    echo "$old_name -> $new_name: Ok"
+}
+
+function get_session_name {
+    $tmux display-message -p '#S' 
 }
 
 function dispatch_args {
@@ -171,6 +180,11 @@ if [[ -z $sourceMe ]]; then
             ren|rename|rename-session)
                 shift
                 rename_session "$@"
+                exit $?
+                ;;
+            ses|get-session)
+                shift
+                get_session_name "$@"
                 exit $?
                 ;;
         esac

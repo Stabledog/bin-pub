@@ -5,7 +5,7 @@
 _tmuxw_lev0() {
     if [[ -n $TMUX ]]; then
         # If a session is live, don't list sessions
-        echo "ls cwd"
+        echo "ls cwd rename"
         return
     fi
     [[ $COMP_CWORD == 1 ]] || return;

@@ -57,9 +57,10 @@ function change_session_dir {
     local new_dir=$1
     [[ -z $new_dir ]] && new_dir="$(pwd)"
 
-    $tmux -C <<< "attach-session -t $(get_session_name) -c \"$new_dir\"" >/dev/null
-    [[ $? -eq 0 ]] || { echo "ERROR changing to $new_dir"; false; return; }
-    echo "tmux cwd is now $new_dir for session $(get_session_name): Ok"
+    command $tmux command-prompt -I "$new_dir" -p "New session dir:" "attach -c %1"
+    #$tmux -C <<< "attach-session -t $(get_session_name) -c \"$new_dir\"" >/dev/null
+    #[[ $? -eq 0 ]] || { echo "ERROR changing to $new_dir"; false; return; }
+    #echo "tmux cwd is now $new_dir for session $(get_session_name): Ok"
 }
 
 function rename_session {

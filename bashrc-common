@@ -357,11 +357,11 @@ function initGitStuff {
     fi
 
     function gitgrep {
-        local pattern="${1:-.*}"
-        shift
-        git ls-files | egrep "${pattern}" "$@"
+        # Find files in git repo matching pattern $1
+        git ls-files | grep -E "$@"
+        set +f
     }
-	alias gitg='gitgrep'
+	alias gitg='set -f; gitgrep'
 
 	if $isBash; then
         source ${LmHome}/bin/git-completion.bash &>/dev/null

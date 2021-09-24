@@ -171,7 +171,11 @@ if [[ -z $sourceMe ]]; then
         usage
         exit 1
     fi
-    if [[ ! -z $TMUX ]]; then
+    if [[ -n $TMUX ]]; then
+        [[ $# -eq 0 ]] && {
+            echo "session: $(get_session_name)"
+            exit $?
+        }
         case $1 in 
             cwd)
                 shift

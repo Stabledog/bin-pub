@@ -320,6 +320,9 @@ function initGitStuff {
         command git push
     }
 
+	if $isBash; then
+        source ${LmHome}/bin/git-completion.bash &>/dev/null
+    fi
 
 	# Script-worthy git-status: check the branch, parseable output, etc.
     # See-also: git-dirty
@@ -346,6 +349,7 @@ function initGitStuff {
             complete -F _complete_alias gco
             complete -F _complete_alias gb
             complete -F _complete_alias gba
+            
         fi
     fi
 
@@ -356,9 +360,6 @@ function initGitStuff {
     }
 	alias gitg='set -f; gitgrep'
 
-	if $isBash; then
-        source ${LmHome}/bin/git-completion.bash &>/dev/null
-    fi
 
 }
 

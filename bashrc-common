@@ -662,3 +662,7 @@ fi
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 
+[[ -f ~/bin/path_undupe.py ]] && which python3 &>/dev/null && {
+    PATH=$( python3 ~/bin/path_undupe.py -u )
+}
+

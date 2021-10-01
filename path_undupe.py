@@ -30,7 +30,7 @@ if __name__=="__main__":
     if len(sys.argv)==1:
         ord,dup=make_counts(path)
         print('--- All: ---')
-        [ print(f'{o[0]} {o[1]}') for o in ord ]
+        [ print('%s %s' % (o[0],o[1])) for o in ord ]
         print('--- Dupes: ---')
         print(dup)
 
@@ -38,7 +38,7 @@ if __name__=="__main__":
         ord,_=make_counts(path,':')
         for vv in ord:
             if vv[1] > 1:
-                print(f"{vv[0]}:{vv[1]}")
+                print("%s %s" % (vv[0],vv[1]))
 
     elif sys.argv[1] in ['-u','--unique']:
         ord,_=make_counts(path,':')

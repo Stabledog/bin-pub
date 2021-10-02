@@ -1,0 +1,14 @@
+#!/bin/bash
+# Run latest version of python found on the path
+
+for vx in {11..5}; do
+    which python3.${vx} &>/dev/null && break
+done
+
+Py=$(which python3.${vx})
+
+[[ $1 == '-p' && $# == 1 ]] && { echo "$Py"; exit 0; }
+
+$Py "$@"
+    
+

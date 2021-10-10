@@ -51,6 +51,11 @@ set-option -g history-limit 100000
 # renumber-windows means that when you delete a window, tmux re-assigns window numbers to compensate.
 set-option -g renumber-windows on
 
+# the repeat-time is annoying: when you switch panes quickly and start typing, tmux
+# is still listening for window-switching commands and you end up back in the original
+# pane frequently.  I have no use for this option:
+set-option -g repeat-time 0
+
 # Toggle mouse on with <prefix>M
 bind-key M \
   set-option -g mouse on \;\

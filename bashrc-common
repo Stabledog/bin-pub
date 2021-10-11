@@ -609,8 +609,8 @@ function quickshell() {
         echo 'export QSLEV'
         echo '[[ -n QSLEV ]] && QSLEV=$(( $QSLEV + 1 )) || QSLEV=1'
         echo 'export Ps1Tail="qs:${QSLEV}"'
-        echo 'unset HISTFILE'
         cat ~/.bashrc; 
+        echo 'HISTFILE=~/.bash_history'
         if [[ $# -gt 0 ]]; then 
             echo 'set -x'
             echo "$@"

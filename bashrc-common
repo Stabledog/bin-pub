@@ -596,6 +596,31 @@ initGitStuff
 
 [[ -n $PS1 ]] && t_setFancyPs1
 
+function quickshell() {
+    [[ $@ =~ -h|--help ]] && {
+        echo 'Reset project-specific env and start interactive subshell. Examples:'
+        echo '$  qs echo Entering quickshell # Run any command you like on entry'
+        echo '$  qs cd somewhere/else \; ls -al # Sequence with \; separator'
+        echo '$  qs --help  # This help'
+        return
+    }
+    
+    $BASH --init-file <( 
+        echo 'export QSLEV'
+        echo '[[ -n QSLEV ]] && QSLEV=$(( $QSLEV + 1 )) || QSLEV=1'
+        echo 'export Ps1Tail="qs:${QSLEV}"'
+        echo 'unset HISTFILE'
+        cat ~/.bashrc; 
+        if [[ $# -gt 0 ]]; then 
+            echo 'set -x'
+            echo "$@"
+            echo 'set +x'
+        fi
+    )
+}
+
+[[ -n $PS1 ]] && alias qs=quickshell
+
 function load_rcs1 {
     eval "$xlocal rootDir=$1"
     while read path; do

@@ -336,6 +336,7 @@ function initGitStuff {
         alias gba='git branch -a -vv'
 
         alias gpa='git_commit_sync'
+        alias gpu='git push -u'
 
         alias grs=git_remote_show
 
@@ -349,6 +350,7 @@ function initGitStuff {
             complete -F _complete_alias gco
             complete -F _complete_alias gb
             complete -F _complete_alias gba
+            complete -F _complete_alias gpu
             
         fi
     fi

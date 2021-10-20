@@ -615,9 +615,9 @@ function quickshell() {
         cat ~/.bashrc; 
         echo 'HISTFILE=~/.bash_history'
         if [[ $# -gt 0 ]]; then 
-            echo 'set -x'
+            echo 'set -x &>/dev/null'
             echo "$@"
-            echo 'set +x'
+            echo 'set +x &>/dev/null'
         fi
     )
 }

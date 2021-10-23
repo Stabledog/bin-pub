@@ -61,6 +61,7 @@ function update_loopcmd_name {
 function loop_cmd {
     autorepeat=false
     read_timeout=0
+    local loop_args=
     if [[ $1 == --rerun ]]; then
         # Re-run a named command from ~/.config/loop_cmd.d:
         shift
@@ -73,9 +74,10 @@ function loop_cmd {
         shift
         autorepeat=true
         read_timeout=0.5
-     elif [[ $@ == "-" ]]; then
-         echo "Enter command(s) to loop, then ^D:" >&2
-         set --
+     elif [[ $1 == "-" ]]; then
+         shift
+         [[ $# -gt 0 ]] && echo "Args for command: [$@]" >&2
+         echo "Enter command(s) , then ^D to execute:" >&2
          cmd="$(cat)"
      else
         # First arg is command to run:

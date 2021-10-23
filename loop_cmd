@@ -73,7 +73,11 @@ function loop_cmd {
         shift
         autorepeat=true
         read_timeout=0.5
-    else
+     elif [[ $@ == "-" ]]; then
+         echo "Enter command(s) to loop, then ^D:" >&2
+         set --
+         cmd="$(cat)"
+     else
         # First arg is command to run:
         cmd=$1
         shift
@@ -138,7 +142,7 @@ function loop_cmd {
                 h|H)
                     echo
                     echo -e "${color_yello}Entering subshell, type exit to return to repl:${color_none}"
-                    $SHELL
+                    Ps1Tail=loop $SHELL
                     echo ""
                     continue
                     ;;

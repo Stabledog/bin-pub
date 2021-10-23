@@ -68,10 +68,10 @@ bind-key m \
 
 # "<prefix>." moves pane divider up , "<prefix>," moves it down
 bind-key . \
-    resize-p -U 9
+    resize-p -U 5
 
 bind-key , \
-    resize-p -D 9
+    resize-p -D 5
 
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
 set -g base-index 1

@@ -92,6 +92,13 @@ bind-key m \
   set-option -g mouse off \;\
   display-message 'Mouse: OFF'
 
+# "<prefix>." moves pane divider up , "<prefix>," moves it down
+bind-key . \
+    resize-p -U 5
+
+bind-key , \
+    resize-p -D 5
+
 # Change the default base index from 0 to 1, so panes and windows are reachable with left hand easily:
 set -g base-index 1
 set -g pane-base-index 1

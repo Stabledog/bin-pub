@@ -56,6 +56,8 @@ set-option -g renumber-windows on
 # pane frequently.  I have no use for this option:
 set-option -g repeat-time 0
 
+set-option -g default-terminal "xterm-256color"
+
 # Toggle mouse on with <prefix>M
 bind-key M \
   set-option -g mouse on \;\

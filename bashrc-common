@@ -327,6 +327,18 @@ function initGitStuff {
         source ${LmHome}/bin/git-completion.bash &>/dev/null
     fi
 
+    function git_branches_all() {
+        # Show branches sorted by date (newest last).  If args are provided, we'll pass them as a pattern to grep
+        local filter=cat
+        local fmt="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"
+        if [[ $# == 0 ]]; then
+            git branch -r --sort=committerdate --format="$fmt"
+        else
+            git branch -r --sort=committerdate --format="$fmt" | grep -E "$@"
+        fi
+        set +f
+    }
+
 	# Script-worthy git-status: check the branch, parseable output, etc.
     # See-also: git-dirty
     if [[ -n $PS1 ]]; then
@@ -336,8 +348,7 @@ function initGitStuff {
         alias ga='git add'
         alias gap='git add -p'
         alias gb='git branch -vv'
-        alias gba='git branch -a -vv'
-
+        alias gba='set -f; git_branches_all'
         alias gpa='git_commit_sync'
         alias gpu='git push -u'
 
@@ -700,3 +711,4 @@ fi
 
 
 
+. "$HOME/.cargo/env"

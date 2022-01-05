@@ -11,10 +11,10 @@ function cygwin {
         cd ~/cyghome
     fi
     if [[ $# == 0 ]]; then
-        ( /c/cygwin/bin/bash.exe -l )
+        ( ~/cyghome/bin/bash.exe -l )
     else
         local xcmd="source ~/.cyg-wsl-environ; $@"
-        /c/cygwin/bin/bash.exe -c "$xcmd"
+        ~/cyghome/bin/bash.exe -c "$xcmd"
     fi
     cd $orgDir
 }

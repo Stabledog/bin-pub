@@ -1,0 +1,83 @@
+# vim: filetype=sh :
+# multirun  bash helper
+# 
+# Source this from ~/.bashrc
+# Recommended to alias multirun as 'mr'
+# 
+##   multirun [function_name] <initial text ... >  
+##    :: Define function_name and load editor with initial text for further pre-run 
+##       attention. The text is cached by function name on disk for later updates.
+##
+##   multirun [function_name]  
+##    :: Load function_name from cache into editor for revision.
+##
+##   multirun -d [function_name]
+##    (Remove function_name from the cache and undefine it in current shell)
+##
+##   echo 'ls /' | multirun [function_name]
+##    :: Define function_name from content of stdin, save it in cache for later
+##       use
+##
+##   multirun -q <function_name>
+##    :: Display contents of <function_name> from cache
+##    :: Display current config and list of functions in cache if no <function_name>
+
+
+[[ -z $MULTIRUN_CACHE ]] && { export MULTIRUN_CACHE=$HOME/.multirun-cache; }
+
+multirun_help() {
+    cat $HOME/bin/multirun | grep -E '^##' | cut -c 6- >&2
+    false
+}
+
+stub() {
+    echo "multirun_stub::: [$@]:::" >&2
+}
+
+
+multirun() {
+    # No args earns help:
+    local init_data=
+    local mode="define"  # define  | edit | query | delete 
+    local cache_name=/tmp/multirun.1
+    [[ $1 == -q ]] && { shift; mode="query" ; }
+    [[ $1 == -d ]] && { shift; mode="delete"; }
+
+    local func_name=$1; shift; 
+    [[ -z $func_name ]] && { multirun_help; return; }
+
+    if [[ $mode == define ]]; then
+        [[ $1 == - ]] && { init_data="$(cat)"; shift; }
+
+        if [[ ! -t 0 ]] && [[ -z $init_data ]]; then
+            # stdin is not a terminal, so let's read it for init_data
+            init_data=$(cat)
+        fi
+        # Any remaining args get appended to init_data
+        init_data="$init_data $@"
+    fi
+    case $mode in
+        define)
+            if [[ -f $cache_name ]]; then
+                read -p "Function $func_name is already in the cache.  [o]verwrite or [E]dit? " -n 1
+                if [[ $REPLY =~ [oO] ]]; then
+                    rm $cache_name
+                fi
+            else
+                # Function not cached, so let's create it:
+                echo "function $func_name {" > $cache_name
+                echo "$init_data" | sed 's/^/    /' >> $cache_name
+                echo "}" >> $cache_name
+            fi
+            $EDITOR +2 $cache_name
+            source $cache_name
+            type -a $func_name
+            ;;
+        delete)
+            ;;
+        query)
+            ;;
+    esac
+    set +x
+
+}

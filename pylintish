@@ -19,7 +19,7 @@ find_rcfile() {
             return
         fi
         tgt_dir=$(dirname "$tgt_dir")
-        [[ $tgt_dir == / ]] && return "$(die Failed to locate .pylintrc)"
+        [[ -z $tgt_dir || $tgt_dir == / ]] && return $(die "Failed to locate .pylintrc" )
     done
 }
 
@@ -27,7 +27,7 @@ main() {
     local rcfile
     rcfile=$(find_rcfile)
     [[ -n $rcfile ]] && local rcfile_arg="--rcfile=${rcfile}"
-    $PYTHON -m pylint "$rcfile_arg" "$@"
+    $PYTHON -m pylint $rcfile_arg "$@"
 }
 
 if [[ -z $sourceMe ]]; then

@@ -8,18 +8,32 @@ die() {
 }
 
 show_containers() {
-    echo "Running containers:"
-    echo "-------------------"
     docker ps --format "{{.Names}}"
-    echo
 }
 
-container=$1
-shift
-[[ -z $container ]] && { show_containers; die "Container name required"; }
+pick_container() {
+    select result in $(show_containers); do
+        echo "$result"
+        return
+    done
+}
 
-if (( $# > 0 )); then
-    docker exec $container $@
-else
-    docker exec -it $container bash
+main() {
+    if (( $# > 0 )); then
+        docker exec $container $@
+    else
+        docker exec -it $container bash
+    fi
+}
+
+if [[ -z $sourceMe ]]; then
+
+    container=$1
+    shift
+    [[ -z $container ]] && { 
+        container=$(pick_container)
+        die "Container name required"; 
+    }
+
+    main "$@"
 fi

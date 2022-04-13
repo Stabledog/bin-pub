@@ -1,0 +1,156 @@
+#!/bin/bash
+# projects depends on .pjl files scattered about.  Each defines
+# a list of project ("task") names, URL, tags, etc.
+
+print_help() {
+    cat <<-EOF
+projects --new   
+    Create+edit new projects.pjl in current dir
+
+projects --paths
+    Show the search paths for .pjl files
+
+projects --edit
+    Launch editor with list of .pjl files found for editing
+
+EOF
+}
+
+die() {
+    echo "ERROR: $@" >&2
+}
+
+stub() {
+    [[ -z $DEBUG ]] && return
+    echo -e "  \033[;33m --[[ $* ]]--\033[;0m" >&2
+}
+
+project_list_dirs() {
+    # Print "places where .pjl files might be located"
+    cat <<-EOF
+$HOME 
+$HOME/projects 
+$HOME/.taskrc 
+/workarea 
+$HOME/bin
+EOF
+}
+
+project_lists() {
+    # List the files where project specs are defined in this environment
+    while read line; do
+        [[ -z $line ]] && continue
+        if test -a "${line}" ; then
+            command ls ${line}/*.pjl 2>/dev/null
+        fi
+    done < <( project_list_dirs )
+}
+
+list_projects() {
+    for proj_list in $(project_lists); do
+        stub "proj_list is $proj_list"
+        echo "$proj_list :"
+        awk '/^[a-zA-Z]+/ {print "  " $0 }'  $proj_list
+        echo
+    done
+}
+
+
+parseArgs() {
+    readonly local disp=$1; shift
+    local mode_opt='search'
+
+    local passthru_args=""
+    stub "parseArgs got $*"
+
+    while [[ -n $1 ]]; do
+        case $1 in
+            -e|--edit) 
+                mode_opt=edit
+                ;;
+            -n|--new)
+                mode_opt=new_pjl
+                ;;
+            --paths)
+                mode_opt=show_paths
+                ;;
+            -l|--list)
+                mode_opt=list
+                ;;
+            -s|--search)
+                mode_opt=search
+                ;;
+            -h|--help)
+                shift
+                print_help "$@"
+                exit 1
+                ;;
+            *)
+                passthru_args="$passthru_args $1"
+                ;;
+        esac
+        shift
+    done
+    $disp $mode_opt $passthru_args
+}
+
+new_projectlist() {
+    # Create a new .pjl file in current dir
+    [[ -f ./projects.pjl ]] && die "There's already a ./projects.pjl, sorry"
+    cat > projects.pjl <<-EOF
+# projects.pjl  << You can rename this as you please.  
+#
+#    '#' Comments are ignored
+#
+#     As long as there's a .pjl extension, and the file is in one of the
+#     predefined paths, it's all good.  To see the predefined paths, use
+#     'projects --paths'
+#
+#    Line format:
+#     [project_name] [url-or-reference-key] "Context help description"
+#
+my_project http://www.cnn.com  "Search context is helpful here"
+my_other_project https://github.com/foobar.git "This project is very special"
+EOF
+    $EDITOR ./projects.pjl
+}
+
+search_projects() {
+    local readonly searchpat="$*"
+    stub "search_projects pattern is [$searchpat]"
+    list_projects | grep -E "${searchpat}"
+    #list_projects 
+}
+
+main() {
+    # We expect clean args, and first arg must be a mode name
+    stub "main got [$*]"
+    local readonly mode_opt=$1
+    shift
+    case $mode_opt in
+        search)
+            search_projects "$@"
+            ;;
+        list)
+            list_projects "$@"
+            ;;
+        new_pjl)
+            new_projectlist "$@"
+            ;;
+        edit)
+            $EDITOR <( echo "# Choose a project list to edit: "; project_lists )
+            ;;
+        show_paths)
+            project_list_dirs "$@"
+            ;;
+        *)
+            die "Unknown mode: $1"
+            ;;
+    esac
+
+}
+
+
+if [[ -z $sourceMe ]]; then
+    parseArgs main "$@"
+fi

@@ -32,7 +32,7 @@ if [[ -z $sourceMe ]]; then
     shift
     [[ -z $container ]] && { 
         container=$(pick_container)
-        [[ -z $container ]] && die "Container name required"; 
+        [[ -z $container ]] && { command docker ps; exit 1; }
     }
 
     main "$@"

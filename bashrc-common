@@ -693,6 +693,12 @@ export MYLIBS=${LmHome}/mylibs/$( $Uname )
 alias tmux='tmux -2'
 alias tw='tmuxw'
 
+python3() {
+    local py=$( which python3.10 python3.9 python3.8 python3.7 python3.6 2>/dev/null | command head -n 1 )
+    [[ -z $py ]] && { command python3 "$@" ; return;  }
+    $py "$@"
+}
+
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.
@@ -705,7 +711,7 @@ fi
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 
-[[ -f ~/bin/path_undupe.py ]] && which python3 &>/dev/null && {
+[[ -f ~/bin/path_undupe.py ]] && {
     PATH=$( python3 ~/bin/path_undupe.py -u )
 }
 

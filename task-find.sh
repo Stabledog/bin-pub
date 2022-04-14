@@ -19,7 +19,11 @@ find_dirs="$PWD $HOME/.taskrc $HOME/.taskrc/bin $HOME/bin $(cat ~/.taskrc/task-f
 main() {
     expr="$1"
     for xdir in $find_dirs; do
-        cd $xdir || { echo "ERROR: Can't cd to $xdir" >&2; continue; }
+        cd $xdir || { 
+            echo "ERROR: Can't cd to $xdir" >&2; 
+            echo "  (fix find_dirs() in ${0} )" >&2
+            continue; 
+        }
         yellow "Searching $PWD for \"${expr}\":" >&2
         grep -E "$expr" * 2>/dev/null | sed "s%^% $PWD/%"
     done

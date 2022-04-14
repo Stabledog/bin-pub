@@ -4,14 +4,26 @@
 
 print_help() {
     cat <<-EOF
+projects --list
+    List the defined projects. Default behavior if no args are provided.
+
+projects --search [pattern]
+projects -s [pattern]
+    Search the projects list for pattern
+    
 projects --new   
     Create+edit new projects.pjl in current dir
+
+projects --add
+    Add a project.  Presents a list of .pjl candidates first if there's more
+    than one.
 
 projects --paths
     Show the search paths for .pjl files
 
 projects --edit
     Launch editor with list of .pjl files found for editing
+
 
 EOF
 }
@@ -71,6 +83,9 @@ parseArgs() {
             -n|--new)
                 mode_opt=new_pjl
                 ;;
+            -a|--add)
+                mode_opt=add_proj
+                ;;
             --paths)
                 mode_opt=show_paths
                 ;;
@@ -122,6 +137,31 @@ search_projects() {
     #list_projects 
 }
 
+add_project_one() {
+    # Add a project to selected pjl file
+    local readonly pjlfile="$1"
+    local projname
+    local desc
+    local urlref
+    read -p "Project name (no whitespace): "  -e projname
+    read -p "Reference filename or URL: " -e urlref
+    read -p "Description: " -e desc
+
+    echo $projname $urlref "\"${desc}\"" >> $pjlfile
+}
+
+add_project() {
+    local pjlfiles=$(project_lists)
+    local readonly pjlcnt=$( wc -l <<< "$pjlfiles" )
+    [[ $pjlcnt -eq 0 ]] && die "No .pjl files found"
+    [[ $pjlcnt -eq 1 ]] && { add_project_one $pjlfiles ; return; }
+    
+    select pjlfile in ${pjlfiles}; do
+        add_project_one $pjlfile
+        return
+    done
+}
+
 main() {
     # We expect clean args, and first arg must be a mode name
     stub "main got [$*]"
@@ -136,6 +176,9 @@ main() {
             ;;
         new_pjl)
             new_projectlist "$@"
+            ;;
+        add_proj)
+            add_project "$@"
             ;;
         edit)
             $EDITOR <( echo "# Choose a project list to edit: "; project_lists )

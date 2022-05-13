@@ -461,6 +461,10 @@ fi
     alias vit="${HOME}/bin/vim-tmux -v"; 
     alias vih="${HOME}/bin/vim-tmux -h"; 
 }
+[[ -x ${HOME}/bin/tmux-split-launch ]] && {
+    alias tsh="${HOME}/bin/tmux-split-launch -h"
+    alias tsv="${HOME}/bin/tmux-split-launch -v"
+}
 
 export EDITOR=vim
 export XEDITOR=$EDITOR

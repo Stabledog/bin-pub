@@ -1,0 +1,45 @@
+#!/bin/bash
+# tmux-split-launch
+# If running in tmux, launch a command in a new split pane
+# Use -v or -h to choose orientation of the split
+
+die() {
+    builtin echo "ERROR: $*" >&1
+    exit 1
+}
+
+isTmux() {
+    [[ -n $TMUX ]]
+}
+
+main() {
+    local direction="-v"
+    local newargs=()
+    # We strip out -v and -h and use them as the split-orientation flag.
+    # And if tmux isn't running, just forward all args to normal vim
+    while [[ -n $1 ]]; do
+        case $1 in
+            -v)
+                direction="-v"
+                ;;
+            -h)
+                direction="-h"
+                ;;
+             *)
+                newargs=( ${newargs[*]} $1 )
+                ;;
+        esac
+        shift
+    done
+    set -- ${newargs[*]}
+    [[ $# == 0 ]] && set -- bash ${newargs[*]}
+    if isTmux; then
+        command tmux split-window -p 50 $direction  "$@"
+    else
+        command "$@"
+    fi
+}
+
+if [[ -z $sourceMe ]]; then
+    main "$@"
+fi

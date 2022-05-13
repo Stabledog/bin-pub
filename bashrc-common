@@ -457,8 +457,12 @@ if $isBash; then
     }
 fi
 
+[[ -x ${HOME}/bin/vim-tmux ]] && { 
+    alias vit="${HOME}/bin/vim-tmux -v"; 
+    alias vih="${HOME}/bin/vim-tmux -h"; 
+}
 
-export EDITOR=$(which vim)
+export EDITOR=vim
 export XEDITOR=$EDITOR
 
 

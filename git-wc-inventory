@@ -21,7 +21,9 @@ do_inventory() {
     (
         cd $top_dir || die "Can't cd to $top_dir"
         echo -e "do_inventory>>\t$PWD"
-        set -- $( find . -type d -name '.git'  | sed -e 's^/.git$^^' -e 's%^./%%' )
+        find . -type d -name '.git'  | sed -e 's^/.git$^^' -e 's%^./%%' | tee /tmp/git-inventory-$$
+        echo "Project list in /tmp/git-inventory-$$" >&2
+        set -- $( cat /tmp/git-inventory-$$ )
         for gitpath; do
             
             (
@@ -31,9 +33,11 @@ do_inventory() {
                 echo -e "wc-found>>>\t${gitpath}\t$PWD"
                 git remote -v 2>&1 | sed 's/^/    /'
                 git branch -a 2>&1 | sed 's/^/    /'
-                git status 2>&1 | sed 's/^/   /'
+                git status 2>&1 | sed 's/^/ :::: /'
                 if $interactive && [[ ! -f .git/done ]]; then
-                    echo "git-inventory subshell:  "
+                    echo
+                    echo " << git-inventory subshell: >>  "
+                    echo "  - project list in /tmp/git-inventory-$$"
                     echo "  - exit 0 to leave current shell"
                     echo "  - exit 1 to terminate inventory"
                     echo "  - touch .git/done to mark complete"

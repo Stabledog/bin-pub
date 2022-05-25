@@ -34,7 +34,7 @@ do_inventory() {
                 git status 2>&1 | sed 's/^/   /'
                 if $interactive && [[ ! -f .git/done ]]; then
                     echo "git-inventory subshell:  "
-                    echo "  - exit to leave current shell"
+                    echo "  - exit 0 to leave current shell"
                     echo "  - exit 1 to terminate inventory"
                     echo "  - touch .git/done to mark complete"
                     echo

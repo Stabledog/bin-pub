@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# git-wc-inventory
+#
+# Recursive find of git repos.  Produce an 'inventory' report
+# showing wc status, remotes, etc.
+
+
+die() {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+function xstub {
+    echo "[$*]" >&2
+}
+
+do_inventory() {
+    xstub "do_inventory $*"
+    local top_dir="$1:-$PWD"
+    (
+        cd $_top_dir || die "Can't cd to $top_dir"
+        while read gitpath; do
+            (
+                echo
+                echo
+                echo "WC-FOUND:  $PWD "
+                cd ${gitpath}/.. || die "Can't cd to ${gitpath}/.."
+                git status
+                git remote -v
+                git branch -a
+            )
+
+        done < <( find . -type d -name '.git' )
+    )
+}
+
+
+if [[ -z $sourceMe ]]; then
+    do_inventory "$@"    
+fi
+
+

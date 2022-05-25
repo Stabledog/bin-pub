@@ -16,22 +16,23 @@ function xstub {
 }
 
 do_inventory() {
-    xstub "do_inventory $*"
-    local top_dir="$1:-$PWD"
+    local top_dir="${1:-$PWD}"
     (
-        cd $_top_dir || die "Can't cd to $top_dir"
+        cd $top_dir || die "Can't cd to $top_dir"
+        echo -e "do_inventory>>\t$PWD"
         while read gitpath; do
+            
             (
                 echo
                 echo
-                echo "WC-FOUND:  $PWD "
-                cd ${gitpath}/.. || die "Can't cd to ${gitpath}/.."
-                git status
-                git remote -v
-                git branch -a
+                cd ${gitpath} || die "Can't cd to ${gitpath}"
+                echo -e "wc-found>>>\t${gitpath}\t$PWD"
+                git status 2>&1 | sed 's/^/   /'
+                git remote -v 2>&1 | sed 's/^/    /'
+                git branch -a 2>&1 | sed 's/^/    /'
             )
 
-        done < <( find . -type d -name '.git' )
+        done < <( find . -type d -name '.git'  | sed -e 's^/.git$^^' -e 's%^./%%')
     )
 }
 

@@ -4,40 +4,55 @@
 #
 # Recursive find of git repos.  Produce an 'inventory' report
 # showing wc status, remotes, etc.
+#
+#  --interactive:
+#      Open interactive shell for each working tree
 
+interactive=false
 
 die() {
     echo "ERROR: $*" >&2
     exit 1
 }
 
-function xstub {
-    echo "[$*]" >&2
-}
 
 do_inventory() {
     local top_dir="${1:-$PWD}"
     (
         cd $top_dir || die "Can't cd to $top_dir"
         echo -e "do_inventory>>\t$PWD"
-        while read gitpath; do
+        set -- $( find . -type d -name '.git'  | sed -e 's^/.git$^^' -e 's%^./%%' )
+        for gitpath; do
             
             (
                 echo
                 echo
                 cd ${gitpath} || die "Can't cd to ${gitpath}"
                 echo -e "wc-found>>>\t${gitpath}\t$PWD"
-                git status 2>&1 | sed 's/^/   /'
                 git remote -v 2>&1 | sed 's/^/    /'
                 git branch -a 2>&1 | sed 's/^/    /'
-            )
+                git status 2>&1 | sed 's/^/   /'
+                if $interactive && [[ ! -f .git/done ]]; then
+                    echo "git-inventory subshell:  "
+                    echo "  - exit to leave current shell"
+                    echo "  - exit 1 to terminate inventory"
+                    echo "  - touch .git/done to mark complete"
+                    echo
 
-        done < <( find . -type d -name '.git'  | sed -e 's^/.git$^^' -e 's%^./%%')
+                    Ps1Tail=git-inventory bash || exit 1
+                fi
+            ) || die "Quit at $PWD"
+
+        done 
     )
 }
 
 
 if [[ -z $sourceMe ]]; then
+    if [[ "$1" == "--interactive" ]]; then
+        interactive=true
+        shift
+    fi
     do_inventory "$@"    
 fi
 

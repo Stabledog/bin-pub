@@ -1,0 +1,13 @@
+#!/bin/bash
+# See also: "git-wc-inventory --help"
+
+die() {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
+[[ -d .git ]] || die "This isn't a git working copy"
+
+touch .git/done || die "Failed to touch .git/done in $PWD"
+
+

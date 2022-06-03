@@ -30,15 +30,12 @@ git-wc-inventory --wcfile-only
 git-wc-inventory --wcfile [path-to-file]
     -> Read working-copy pathnames from file
 
-git-wc-inventory --wcfile-only 
-    -> Generate wcfile but don't do any reporting or interaction
-
 git-wc-inventory --skip-mirrors
     -> If there's a remote and the wc is clean relative to it, skip processing
 
 git-wc-inventory --interactive
     -> Launch a shell for each dir after printing status, so user can do maintenance.
-       User may do 'exit 0' to continue, 'exit 1' to abort, 'touch .git/done' to mark iteration complete.
+       User may do 'exit 0' to continue, 'exit 1' to abort, 'git-wc-inventory-mark-done' to mark current dir complete.
 EOF
 }
 
@@ -102,7 +99,7 @@ do_inventory() {
             echo "Project list written to $wc_listfile" >&2
         }
         $wcfile_only && exit 0
-        set -- $( cat "$wc_listfile" )
+        set -- $( grep -Ev '^ *#' "$wc_listfile" )
         for gitpath; do
             (
                 eval_single_wc "$gitpath" || exit 1

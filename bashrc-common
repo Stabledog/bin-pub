@@ -567,7 +567,7 @@ PS1='
 
 
 if $isBash; then
-    shopt -s direxpand
+    shopt -s direxpand 2>/dev/null || true  
 fi
 
 function notepad {

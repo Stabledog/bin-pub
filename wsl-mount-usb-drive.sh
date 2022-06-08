@@ -34,14 +34,20 @@ parseArgs() {
 
 main() {
     parseArgs "$@"
+    grep -Eq "^[automount]" /etc/wsl.conf || {
+        echo "WARNING: can't find /etc/wsl.conf or no [automount] element."
+        echo "Add this to it, and then do a \"wsl --shutdown\" :"
+        echo "[automount]"
+        echo "options = \"metadata\""
+    }
     [[ -d /mnt/${drive_letter} ]] || { 
-        sudo mkdir -p /mnt/${drive_letter} || die "Failed creating /mnt/${drive_letter}"; 
+        sudo mkdir -p /mnt/${drive_letter} 2>/dev/null || die "Failed creating /mnt/${drive_letter}"; 
     }
     mount | grep -Eq "^drvfs on /mnt/${drive_letter} " && {
         true;  # Already a device mounted
         return;
     }
-    sudo mount -t drvfs "${drive_letter}:" /mnt/${drive_letter} || {
+    sudo mount -t drvfs "${drive_letter}:" /mnt/${drive_letter} -o metadata || {
         die "Failed mounting drive $drive_letter: on /mnt/${drive_letter}"
     }
 }

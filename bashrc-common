@@ -720,7 +720,8 @@ fi
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 
 [[ -f ~/bin/path_undupe.py ]] && {
-    PATH=$( python3 ~/bin/path_undupe.py -u )
+    tmpPath="$(python3 ~/bin/path_undupe.py -u )"
+    [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
 }
 
 

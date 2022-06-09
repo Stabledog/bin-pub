@@ -7,7 +7,7 @@ function errExit {
     echo "ERROR: $@" >&2
     exit 1
 }
-cygdir=$(ls -d
+cygdir=$(ls -d /c/{cygwin,cygwin64} | head -n 1)
 cbash=$( ls ${cygdir}/bin/bash.exe )
 if [[ ! -x $cbash ]]; then
     errExit "Can't find cygwin bash ($cbash)"

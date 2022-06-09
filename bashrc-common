@@ -702,9 +702,13 @@ alias tmux='tmux -2'
 alias tw='tmuxw'
 
 python3() {
-    local py=$( which python3.10 python3.9 python3.8 python3.7 python3.6 2>/dev/null | command head -n 1 )
-    [[ -z $py ]] && { command python3 "$@" ; return;  }
-    $py "$@"
+    for cand in python3.10 python3.9 python3.8 python3.7 python3; do
+        cand="$( which ${cand} )"
+        grep -Eq '/bin/'  <<< "${cand}"  # make sure it's a unixish path, not some Windows thing
+        [[ $? == 0 ]] && { local py="${cand}"; break; }
+    done
+    [[ -z "$py" ]] && { echo "ERROR: no python3 on path" >&2; return;  }
+    "$py" "$@"
 }
 
 

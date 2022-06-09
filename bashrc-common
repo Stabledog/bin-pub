@@ -74,7 +74,7 @@ alias pathadd=$LmHome/bin/pathadd
 
 # The ~/projects dir should be a symlink to a working root appropriate for
 # source controlled and/or toolchain-built projects.  An mbig is a good candidate,
-# or /c/Projects on a WSL environment, or /var/Projects on a Mac.  The HOME
+# or /c/Projects on a WSL1 environment, or /var/Projects on a Mac.  The HOME
 # dir itself is not an ideal place for the storage, in most cases.  On a
 # Docker container, /root/projects can point to a mounted volume to satisfy
 # this need:
@@ -567,7 +567,7 @@ PS1='
 
 
 if $isBash; then
-    shopt -s direxpand
+    shopt -s direxpand 2>/dev/null || true  
 fi
 
 function notepad {

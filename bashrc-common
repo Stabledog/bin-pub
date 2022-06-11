@@ -365,7 +365,7 @@ function initGitStuff {
             complete -F _complete_alias gb
             complete -F _complete_alias gba
             complete -F _complete_alias gpu
-            
+
         fi
     fi
 
@@ -457,9 +457,9 @@ if $isBash; then
     }
 fi
 
-[[ -x ${HOME}/bin/vim-tmux ]] && { 
-    alias vit="${HOME}/bin/vim-tmux -v"; 
-    alias vih="${HOME}/bin/vim-tmux -h"; 
+[[ -x ${HOME}/bin/vim-tmux ]] && {
+    alias vit="${HOME}/bin/vim-tmux -v";
+    alias vih="${HOME}/bin/vim-tmux -h";
 }
 [[ -x ${HOME}/bin/tmux-split-launch ]] && {
     alias tsh="${HOME}/bin/tmux-split-launch -h"
@@ -567,7 +567,7 @@ PS1='
 
 
 if $isBash; then
-    shopt -s direxpand 2>/dev/null || true  
+    shopt -s direxpand 2>/dev/null || true
 fi
 
 function notepad {
@@ -628,15 +628,15 @@ function quickshell() {
         echo '$  qs --help  # This help'
         return
     }
-    
-    $BASH --init-file <( 
+
+    $BASH --init-file <(
         echo 'export QSLEV'
         echo '[[ -n QSLEV ]] && QSLEV=$(( $QSLEV + 1 )) || QSLEV=1'
         echo 'export Ps1Tail="qs:${QSLEV}"'
         echo 'unset taskrc_dir'
-        cat ~/.bashrc; 
+        cat ~/.bashrc;
         echo 'HISTFILE=~/.bash_history'
-        if [[ $# -gt 0 ]]; then 
+        if [[ $# -gt 0 ]]; then
             echo 'set -x &>/dev/null'
             echo "$@"
             echo 'set +x &>/dev/null'
@@ -702,14 +702,17 @@ alias tmux='tmux -2'
 alias tw='tmuxw'
 
 python3() {
+
+    [[ -n ${SELECTED_PY3} ]] && { "${SELECTED_PY3}" "$@"; exit; }
     for cand in python3.10 python3.9 python3.8 python3.7 python3; do
-        cand="$( which ${cand} )"
-        grep -Eq '/bin/'  <<< "${cand}"  # make sure it's a unixish path, not some Windows thing
-        [[ $? == 0 ]] && { local py="${cand}"; break; }
+        cand="$( command which ${cand} 2>/dev/null )"
+        command grep -Eq '/bin/'  <<< "${cand}"  # make sure it's a unixish path, not some Windows thing
+        [[ $? == 0 ]] && { export SELECTED_PY3="${cand}"; break; }
     done
-    [[ -z "$py" ]] && { echo "ERROR: no python3 on path" >&2; return;  }
-    "$py" "$@"
+    [[ -z "${SELECTED_PY3}" ]] && { echo "ERROR: can't identify appropriate python3 in bashrc-common" >&2; return;  }
+    "${SELECTED_PY3}" "$@"
 }
+[[ -z ${SELECTED_PY3} ]] && python3 -V >/dev/null
 
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,

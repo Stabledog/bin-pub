@@ -17,10 +17,13 @@ alias ll='ls -la'
 
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 
-function git {
-    # Redirect user to wsl:
-    echo "ERROR: git operations should use the wsl environment ('command git' to override)" >&2
-    false
+git () 
+{ 
+    wsl git --version &> /dev/null || { 
+        command git "$@";
+        return
+    };
+    wsl git "$@"
 }
 
 title ()

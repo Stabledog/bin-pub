@@ -709,17 +709,20 @@ alias tmux='tmux -2'
 alias tw='tmuxw'
 
 python3() {
-
-    [[ -n ${SELECTED_PY3} ]] && { "${SELECTED_PY3}" "$@"; exit; }
-    for cand in python3.10 python3.9 python3.8 python3.7 python3; do
-        cand="$( command which ${cand} 2>/dev/null )"
-        command grep -Eq '/bin/'  <<< "${cand}"  # make sure it's a unixish path, not some Windows thing
-        [[ $? == 0 ]] && { export SELECTED_PY3="${cand}"; break; }
+    [[ -n ${BEST_PY3} ]] && { "$BEST_PY3" "$@" ; return; }
+    set -x
+    local cand;
+    for cand in python3.{10,9,8,7} python3; do
+        local py_cand="$( which ${cand} )"
+        "$py_cand" -c 'import termios' &>/dev/null || \
+            continue  # We don't want a dos/windows version
+        BEST_PY3="${py_cand}"
+        break
     done
-    [[ -z "${SELECTED_PY3}" ]] && { echo "ERROR: can't identify appropriate python3 in bashrc-common" >&2; return;  }
-    "${SELECTED_PY3}" "$@"
+    set +x
+    [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; return;  }
+    "$BEST_PY3" "$@"
 }
-[[ -z ${SELECTED_PY3} ]] && python3 -V >/dev/null
 
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
@@ -740,5 +743,4 @@ fi
 
 
 [[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
-
 

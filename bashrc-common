@@ -710,7 +710,6 @@ alias tw='tmuxw'
 
 python3() {
     [[ -n ${BEST_PY3} ]] && { "$BEST_PY3" "$@" ; return; }
-    set -x
     local cand;
     for cand in python3.{10,9,8,7} python3; do
         local py_cand="$( which ${cand} )"
@@ -719,7 +718,6 @@ python3() {
         BEST_PY3="${py_cand}"
         break
     done
-    set +x
     [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; return;  }
     "$BEST_PY3" "$@"
 }

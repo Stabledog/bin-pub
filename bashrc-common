@@ -266,16 +266,6 @@ if $CYGWIN; then
 	alias sudo="$@"
 fi
 
-if $isBash; then
-	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-		. /etc/bash_completion
-	fi
-	[[ -d ${HOME}/.bash_completion.d ]] && {
-        for xf in ${HOME}/.bash_completion.d/*; do
-            source ${xf}
-        done
-    }
-fi
 
 [[ -x ${HOME}/bin/vim-tmux ]] && {
     alias vit="${HOME}/bin/vim-tmux -v";
@@ -429,16 +419,6 @@ function notepad {
     $EDITOR $fname
 }
 
-init_complete_alias() {
-    [[ -n $PS1 ]] || return
-    # _complete_alias needs ~/.bash_completion.d/complete_alias
-    # Example: how to use complete_alias:
-    alias container=docker\ container
-    complete -F _complete_alias container
-}
-
-init_complete_alias
-
 [[ -f ${HOME}/bin/git.bashrc ]] && { source ${HOME}/bin/git.bashrc; initGitStuff; }
 
 [[ -n $PS1 ]] && t_setFancyPs1
@@ -504,6 +484,8 @@ function reset {
     setterm -cursor on
     command reset
 }
+
+[[ -f "/home/lmatheson/.completion_loader" ]] && source "/home/lmatheson/.completion_loader" # Added by setup-complete-alias.sh
 
 if $isBash; then
     # The 'tox' command:

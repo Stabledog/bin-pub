@@ -419,7 +419,6 @@ function notepad {
     $EDITOR $fname
 }
 
-[[ -f ${HOME}/bin/git.bashrc ]] && { source ${HOME}/bin/git.bashrc; initGitStuff; }
 
 [[ -n $PS1 ]] && t_setFancyPs1
 
@@ -485,7 +484,11 @@ function reset {
     command reset
 }
 
-[[ -f "/home/lmatheson/.completion_loader" ]] && source "/home/lmatheson/.completion_loader" # Added by setup-complete-alias.sh
+# Completion setup quickly:
+# curl -sL https://github.com/Stabledog/complete-alias/releases/download/1.18.4/setup-complete-alias.sh | bash -
+[[ -f "${HOME}/.completion_loader" ]] && source "${HOME}/.completion_loader" # Added by setup-complete-alias.sh
+
+[[ -f ${HOME}/bin/git.bashrc ]] && { source ${HOME}/bin/git.bashrc; initGitStuff; }
 
 if $isBash; then
     # The 'tox' command:

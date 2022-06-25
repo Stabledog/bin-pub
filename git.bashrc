@@ -163,6 +163,6 @@ function initGitStuff {
     }
 	alias gitg='set -f; gitgrep'
 
-
+    GITSTUFF_INIT=1
 }
 

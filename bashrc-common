@@ -372,6 +372,8 @@ function parse_host_suffix {
 }
 
 function t_setFancyPs1 {
+    [[ -n $GITSTUFF_INIT ]] || parse_git_branch() { :; }
+
     if ${PS1_INCLUDE_GIT_BRANCH:-true}; then
         local gitBranch=$(parse_git_branch)
     fi

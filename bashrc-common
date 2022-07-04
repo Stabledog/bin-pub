@@ -524,12 +524,6 @@ python3() {
 }
 
 
-# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
-# just source everything found there.
-if [[ -d $HOME/.taskrc ]] && $isBash; then
-	loadTaskrcs
-fi
-
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
@@ -540,6 +534,10 @@ fi
     [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
 }
 
-
 [[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
 
+# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
+# just source everything found there.
+if [[ -d $HOME/.taskrc ]] && $isBash; then
+	loadTaskrcs
+fi

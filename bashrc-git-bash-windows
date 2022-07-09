@@ -13,7 +13,7 @@ alias lr='ls -lirt'
 alias ll='ls -la'
 
 
-
+export MSYS=winsymlinks:native
 
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 

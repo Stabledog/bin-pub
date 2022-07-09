@@ -243,24 +243,7 @@ else
     title "$title_tail"
 fi
 
-function setDisplay {
-    # If the $DISPLAY variable is unset or set wrong, this function attempts
-    # to update it by sourcing ~/tmp/set_DISPLAY.  That script is generated
-    # by makeSet_DISPLAY
-    if [[ $1 != "-f" ]]; then
-        local tgt=$(cat ~/tmp/set_DISPLAY | egrep '^DISPLAY=.*$')
-        tgt=${tgt##DISPLAY=}  # Trim the prefix to leave the value
-        if xset -q 2>&1 1>/dev/null && [[ $tgt == $DISPLAY ]]; then
-            echo "$DISPLAY is already the correct value of DISPLAY. Use -f to force."
-            return
-        fi
-    fi
-    [[ -f ~/tmp/set_DISPLAY ]] || { echo "ERROR: no ~/tmp/set_DISPLAY script found. Run makeSet_DISPLAY in a shell that has a working X11 connection first." ; false; return; }
-    source ~/tmp/set_DISPLAY
-    echo "DISPLAY=$DISPLAY"
-}
-
-alias setdisp='setDisplay'
+unset DISPLAY  
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
@@ -294,10 +277,6 @@ if $isBash; then
 fi
 
 
-if is_cygwin; then
-    export DISPLAY=:0
-    cygPathAdd=$LmHome/bin/cyg
-fi
 
 
 # setargs is used for arbitrary mapping of positional args.  (Disabling

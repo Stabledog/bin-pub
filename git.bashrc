@@ -1,6 +1,6 @@
 function initGitStuff {
 
-    if $CYGWIN; then
+    if is_cygwin; then
         if wsl git --version &>/dev/null; then
             git() {
                 command wsl git "$@"

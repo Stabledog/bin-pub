@@ -104,8 +104,11 @@ export -f errExit
 #----------------------------------------------------------------
 #  Shell identification
 #
+is_cygwin() {
+    [[ -n $CYGWIN ]] || false
+}
 function shell_identify {
-	export CYGWIN=false
+	export CYGWIN
 	export MACOSX=false
 	if $notBash; then
 		eval "function shopt {
@@ -114,13 +117,13 @@ function shell_identify {
 		}"
 	fi
 
-	[[ -f /Cygwin.bat ]] && CYGWIN=true
+	[[ -f /Cygwin.bat ]] || [[ -d /home/mobaxterm ]]  && {
+        #  See https://www.cygwin.com/cygwin-ug-net/using-cygwinenv.html on $CYGWIN
+	    CYGWIN="export:winsymlinks:native"
+    }
 
 	[[ -d /Applications/Preview.app ]] && MACOSX=true
     [[ $( $Uname ) == Darwin ]] && MACOSX=true
-
-	# We treat Mobaterm as cygwin too:
-    [[ -d /home/mobaxterm ]]  && CYGWIN=true
 
 	# If not running interactively, don't do anything
 	if [[ ! -t 0 ]]; then
@@ -261,10 +264,10 @@ alias setdisp='setDisplay'
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
-if $CYGWIN; then
+is_cygwin && {
 	source ~/bin/cyg/cyg-utils
 	alias sudo="$@"
-fi
+}
 
 
 [[ -x ${HOME}/bin/vim-tmux ]] && {
@@ -291,7 +294,7 @@ if $isBash; then
 fi
 
 
-if $CYGWIN; then
+if is_cygwin; then
     export DISPLAY=:0
     cygPathAdd=$LmHome/bin/cyg
 fi
@@ -420,7 +423,6 @@ function notepad {
 }
 
 
-[[ -n $PS1 ]] && t_setFancyPs1
 
 function quickshell() {
     [[ $@ =~ -h|--help ]] && {
@@ -522,6 +524,8 @@ python3() {
     [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; return;  }
     "$BEST_PY3" "$@"
 }
+
+[[ -n $PS1 ]] && t_setFancyPs1
 
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,

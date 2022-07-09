@@ -528,12 +528,6 @@ python3() {
 [[ -n $PS1 ]] && t_setFancyPs1
 
 
-# Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
-# just source everything found there.
-if [[ -d $HOME/.taskrc ]] && $isBash; then
-	loadTaskrcs
-fi
-
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
@@ -544,6 +538,14 @@ fi
     [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
 }
 
-
 [[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
+
+# If there's a .taskrc directory in HOME, just source everything found there.
+# This should be the LAST environment-changing operation in .bashrc, because
+# .taskrc/ files are the most machine-and-user-specific elements that
+# matter.  Basically you can override anything else with a .taskrc/* file 
+# tuned exactly to purpose with all context available at load time.
+if [[ -d $HOME/.taskrc ]] && $isBash; then
+	loadTaskrcs
+fi
 

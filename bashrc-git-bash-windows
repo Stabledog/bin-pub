@@ -22,8 +22,8 @@ init_git_stuff() {
     git() {
         # Redirect user to wsl:
         wsl git --version &>/dev/null || {
- 	    command git "$@"; 
-            return; 
+ 	    command git "$@";
+            return;
         }
         wsl git "$@"
     }
@@ -31,6 +31,7 @@ init_git_stuff() {
     alias grv='git remote -v'
     alias gpa='git commit -am sync; git push'
     alias gco='git checkout'
+    alias gs='git status'
 }
 
 init_git_stuff

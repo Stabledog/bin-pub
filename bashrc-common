@@ -243,7 +243,7 @@ else
     title "$title_tail"
 fi
 
-unset DISPLAY  
+unset DISPLAY
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
@@ -495,8 +495,13 @@ python3() {
     local cand;
     for cand in python3.{10,9,8,7} python3; do
         local py_cand="$( which ${cand} )"
-        "$py_cand" -c 'import termios' &>/dev/null || \
-            continue  # We don't want a dos/windows version
+	    [[ -n $MSYS ]] && {
+            "$py_cand" -c 'import sys; sys.exit(0)' || continue
+        } || {
+            # Avoid Windows versions of python:
+            "$py_cand" -c 'import termios' &>/dev/null || \
+		    continue  # We don't want a dos/windows version
+        }
         BEST_PY3="${py_cand}"
         break
     done
@@ -512,9 +517,12 @@ python3() {
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 
-[[ -f ~/bin/path_undupe.py ]] && {
-    tmpPath="$(python3 ~/bin/path_undupe.py -u )"
-    [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
+[[ -z $MSYS ]] && {
+    # Not on git-bash, but otherwise undupe the PATH
+    [[ -f ~/bin/path_undupe.py ]] && {
+        tmpPath="$(python3 ~/bin/path_undupe.py -u )"
+        [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
+    }
 }
 
 [[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
@@ -522,7 +530,7 @@ python3() {
 # If there's a .taskrc directory in HOME, just source everything found there.
 # This should be the LAST environment-changing operation in .bashrc, because
 # .taskrc/ files are the most machine-and-user-specific elements that
-# matter.  Basically you can override anything else with a .taskrc/* file 
+# matter.  Basically you can override anything else with a .taskrc/* file
 # tuned exactly to purpose with all context available at load time.
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs

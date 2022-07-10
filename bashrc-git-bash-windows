@@ -88,7 +88,6 @@ function loadTaskrcs {
     fi
 }
 
-#title "Git-Bash $HOST"
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.

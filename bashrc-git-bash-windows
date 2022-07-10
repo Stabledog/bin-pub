@@ -14,27 +14,34 @@ alias ll='ls -la'
 
 
 export MSYS=winsymlinks:native
+export is_cygwin=false
 
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 
+set -x
+[[ -f ${HOME}/bin/git.bashrc ]] && {
+    source ${HOME}/bin/git.bashrc
+    initGitStuff
+} || {
 
-init_git_stuff() {
-    git() {
-        # Redirect user to wsl:
-        wsl git --version &>/dev/null || {
- 	    command git "$@"; 
-            return; 
+    init_git_stuff() {
+        git() {
+            # Redirect user to wsl:
+            wsl git --version &>/dev/null || {
+            command git "$@";
+                return;
+            }
+            wsl git "$@"
         }
-        wsl git "$@"
+        alias ga='git add'
+        alias grv='git remote -v'
+        alias gpa='git commit -am sync; git push'
+        alias gco='git checkout'
     }
-    alias ga='git add'
-    alias grv='git remote -v'
-    alias gpa='git commit -am sync; git push'
-    alias gco='git checkout'
+
+    init_git_stuff
 }
-
-init_git_stuff
-
+set +x
 
 title ()
 {

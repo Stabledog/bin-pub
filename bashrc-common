@@ -108,8 +108,11 @@ die() {
 #----------------------------------------------------------------
 #  Shell identification
 #
+is_cygwin() {
+    [[ -n $CYGWIN ]] || false
+}
 function shell_identify {
-	export CYGWIN=false
+	export CYGWIN
 	export MACOSX=false
 	if $notBash; then
 		eval "function shopt {
@@ -118,13 +121,13 @@ function shell_identify {
 		}"
 	fi
 
-	[[ -f /Cygwin.bat ]] && CYGWIN=true
+	[[ -f /Cygwin.bat ]] || [[ -d /home/mobaxterm ]]  && {
+        #  See https://www.cygwin.com/cygwin-ug-net/using-cygwinenv.html on $CYGWIN
+	    CYGWIN="export:winsymlinks:native"
+    }
 
 	[[ -d /Applications/Preview.app ]] && MACOSX=true
     [[ $( $Uname ) == Darwin ]] && MACOSX=true
-
-	# We treat Mobaterm as cygwin too:
-    [[ -d /home/mobaxterm ]]  && CYGWIN=true
 
 	# If not running interactively, don't do anything
 	if [[ ! -t 0 ]]; then
@@ -244,31 +247,14 @@ else
     title "$title_tail"
 fi
 
-function setDisplay {
-    # If the $DISPLAY variable is unset or set wrong, this function attempts
-    # to update it by sourcing ~/tmp/set_DISPLAY.  That script is generated
-    # by makeSet_DISPLAY
-    if [[ $1 != "-f" ]]; then
-        local tgt=$(cat ~/tmp/set_DISPLAY | egrep '^DISPLAY=.*$')
-        tgt=${tgt##DISPLAY=}  # Trim the prefix to leave the value
-        if xset -q 2>&1 1>/dev/null && [[ $tgt == $DISPLAY ]]; then
-            echo "$DISPLAY is already the correct value of DISPLAY. Use -f to force."
-            return
-        fi
-    fi
-    [[ -f ~/tmp/set_DISPLAY ]] || { echo "ERROR: no ~/tmp/set_DISPLAY script found. Run makeSet_DISPLAY in a shell that has a working X11 connection first." ; false; return; }
-    source ~/tmp/set_DISPLAY
-    echo "DISPLAY=$DISPLAY"
-}
-
-alias setdisp='setDisplay'
+unset DISPLAY
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
-if $CYGWIN; then
+is_cygwin && {
 	source ~/bin/cyg/cyg-utils
 	alias sudo="$@"
-fi
+}
 
 
 [[ -x ${HOME}/bin/vim-tmux ]] && {
@@ -295,10 +281,6 @@ if $isBash; then
 fi
 
 
-if $CYGWIN; then
-    export DISPLAY=:0
-    cygPathAdd=$LmHome/bin/cyg
-fi
 
 
 # setargs is used for arbitrary mapping of positional args.  (Disabling
@@ -424,7 +406,6 @@ function notepad {
 }
 
 
-[[ -n $PS1 ]] && t_setFancyPs1
 
 function quickshell() {
     [[ $@ =~ -h|--help ]] && {
@@ -518,8 +499,13 @@ python3() {
     local cand;
     for cand in python3.{10,9,8,7} python3; do
         local py_cand="$( which ${cand} )"
-        "$py_cand" -c 'import termios' &>/dev/null || \
-            continue  # We don't want a dos/windows version
+	    [[ -n $MSYS ]] && {
+            "$py_cand" -c 'import sys; sys.exit(0)' || continue
+        } || {
+            # Avoid Windows versions of python:
+            "$py_cand" -c 'import termios' &>/dev/null || \
+		    continue  # We don't want a dos/windows version
+        }
         BEST_PY3="${py_cand}"
         break
     done
@@ -527,15 +513,20 @@ python3() {
     "$BEST_PY3" "$@"
 }
 
+[[ -n $PS1 ]] && t_setFancyPs1
+
 
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 
-[[ -f ~/bin/path_undupe.py ]] && {
-    tmpPath="$(python3 ~/bin/path_undupe.py -u )"
-    [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
+[[ -z $MSYS ]] && {
+    # Not on git-bash, but otherwise undupe the PATH
+    [[ -f ~/bin/path_undupe.py ]] && {
+        tmpPath="$(python3 ~/bin/path_undupe.py -u )"
+        [[ -n $tmpPath ]] && PATH="$tmpPath" || echo "ERROR: path_undupe.py in .bashrc failed" >&2
+    }
 }
 
 [[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
@@ -543,7 +534,7 @@ python3() {
 # If there's a .taskrc directory in HOME, just source everything found there.
 # This should be the LAST environment-changing operation in .bashrc, because
 # .taskrc/ files are the most machine-and-user-specific elements that
-# matter.  Basically you can override anything else with a .taskrc/* file 
+# matter.  Basically you can override anything else with a .taskrc/* file
 # tuned exactly to purpose with all context available at load time.
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs

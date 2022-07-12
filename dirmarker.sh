@@ -6,7 +6,7 @@
 #
 help() {
     cat <<-EOF
-dirmarker.sh 
+dirmarker.sh
    - Print name of dirmarker based on PWD basename
 
 dirmarker.sh -w
@@ -22,7 +22,7 @@ die() {
 }
 
 make_dirmarker_name() {
-    echo "_$(basename ${PWD})" | command sed 's/./& /g' | tr '\n' '_'
+    echo "_$(basename ${PWD})" | command sed 's/./&_/g' | tr '\n' '_'
 }
 
 
@@ -49,5 +49,5 @@ if [[ -z $sourceMe ]]; then
         mkdir -p "${name}" || die "Failed creating dirmarker for $PWD"
         echo "$(pwd -P)" > "${name}/.dirmarker"
     }
-    
+
 fi

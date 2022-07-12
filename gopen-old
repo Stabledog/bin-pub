@@ -10,7 +10,7 @@ function errExit {
     exit 1
 }
 
-if $CYGWIN; then
+if is_cygwin; then
     cygstart $@
 elif [[ -x /usr/bin/xdg-open ]]; then
     /usr/bin/xdg-open $@

@@ -13,21 +13,25 @@ alias lr='ls -lirt'
 alias ll='ls -la'
 
 
-
+export MSYS=winsymlinks:native
 
 export RdeHome="/c/blp/Rde Projects/BBGitHub"
 
 
 init_git_stuff() {
-    function git {
+    git() {
         # Redirect user to wsl:
-        wsl git --version &>/dev/null || {command git "$@"; return; }
+        wsl git --version &>/dev/null || {
+ 	    command git "$@";
+            return;
+        }
         wsl git "$@"
     }
     alias ga='git add'
     alias grv='git remote -v'
     alias gpa='git commit -am sync; git push'
     alias gco='git checkout'
+    alias gs='git status'
 }
 
 init_git_stuff
@@ -85,7 +89,6 @@ function loadTaskrcs {
     fi
 }
 
-#title "Git-Bash $HOST"
 
 # Mildly cleaner taskrc.  If there's a .taskrc directory in HOME,
 # just source everything found there.

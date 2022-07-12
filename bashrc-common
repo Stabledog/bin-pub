@@ -92,12 +92,16 @@ function isSunos {
 }
 
 
-function errExit {
+errExit() {
     echo "ERROR: $*" >&2
     exit 1
 }
 
-export -f errExit
+die() {
+    echo "ERROR: $*" >&2
+    exit 1
+}
+
 
 
 

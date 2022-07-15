@@ -1,70 +1,117 @@
 #!/bin/bash
-# make-isolated-merge-environment.sh
+# git-make-child-clone.sh
 #
-# When you want to merge or maintain settings stuff without messing up VScode with intermediate changes, run this script first.
+#  Create a clone of the current working copy, in an alternate location.
+#  Sets a `parent` remote on the clone which refers to the original source.
 #
-# It will create ./tmp/isolated-merge as a host workspace for vscode, with git enabled etc.
+#  Destination dir can be command line argument, defaults to /tmp/{orig-basename}
 #
-# PUSH YOUR CHANGES BEFORE destroying the workspace!
 #
+SCRIPT=$(basename $(readlink -f -- $0))
+
 die() {
     builtin echo "ERROR: $*" >&2
     exit 1
 }
 
-
-tgtDir=tmp/isolated-merge
-orgDir="$PWD"
-
-script=$(basename -- $0)
-
-command -v git || die "No git available"
-
 readymsg() {
-    builtin echo "$tgtDir is open for business"
+    local parent=$1
+    local dest=$2
+    local branch=$3
+
+    (
+        builtin cd -- "$dest" || die "203"
+        command cat <<-EOF
+Clone is open for business:
+    destination: $dest
+    branch: ${branch}
+    parent: $(git  remote -v | grep parent | head -n 1)
+EOF
+    )
+
 }
+
 statusmsg() {
-    echo "====   Status of $tgtDir: ====" 
+    local dest="$1"
+
+    echo "====   Status of $dest: ===="
     git remote -v | sed 's/^/   /'
-    git status | sed 's/^/   /' 
+    git status | sed 's/^/   /'
     echo
     echo "OK: You may now safely do maintenance with 'code .':"
-    echo "  cd $tgtDir"
-    echo "  code ." 
-    echo 
+    echo "  cd $dest"
+    echo "  code ."
+    echo
     echo "  Be sure to commit + push when done."
 }
 
-[[ -f  $script ]] || die 101
-
-command mkdir -p $tgtDir
-[[ -d $tgtDir ]] || die 102
-
-[[ -d $tgtDir/.git ]] && { 
-    builtin cd $tgtDir && git pull parent || die "Failed to pull remote 'parent' in $PWD"
-    readymsg; 
-    exit 0; 
+do_help() {
+    echo "$(basename $0) <destination-dir>"
+    echo "   -> If destination-dir not specified, a temp dir is created."
 }
 
-builtin cd $tgtDir || die 103
-command rm -rf .git &>/dev/null
 
-git clone  ../.. . || die "Failed cloning $PWD/../.."
+parseArgs() {
+    ORIG_DIR=$PWD
+    command git --version &>/dev/null || die "No git available"
+    SOURCE_ROOT_DIR=$( command git rev-parse --show-toplevel 2>/dev/null )
+    [[ -z $SOURCE_ROOT_DIR ]] && die "$PWD is not from a git working copy"
 
-cp ../../.git/config .git/ || die 104
-git remote remove parent &>/dev/null
-
-git remote add parent ../.. || die 105
-git fetch parent
-
-branch=$(git symbolic-ref HEAD --short)
-[[ -n $branch ]] && {
-    git checkout ${branch}
-    git branch -u parent/${branch}
+    while [[ -n $1 ]]; do
+        case $1 in
+            -h|--help)
+                 do_help "$@"
+                exit 1
+                ;;
+            *)
+                [[ -n $DEST_DIR ]] && die "Bad argument: $1"
+                DEST_DIR=$1
+                ;;
+        esac
+        shift
+    done
+    [[ -z $DEST_DIR ]] && {
+        DEST_DIR=/tmp/$(basename -- "$ORIG_DIR" )
+        [[ -z $DEST_DIR ]] && die "Failed to create temp dest dir"
+    }
 }
 
-statusmsg
-touch .ready
+main() {
 
+    parseArgs "$@"
 
+    [[ -d .git ]] || die "No .git in this dir"
+    local branch=$(git symbolic-ref HEAD --short)
 
+    command mkdir -p $DEST_DIR
+    [[ -d $DEST_DIR ]] || die 102
+
+    [[ -d ${DEST_DIR}/.git ]] && {
+        readymsg "$SOURCE_ROOT_DIR" "$DEST_DIR" ${branch};
+        echo "Destination already exists."
+        exit 0;
+    }
+
+    builtin cd $DEST_DIR || die 103
+
+    command git clone  "$SOURCE_ROOT_DIR" . || die "Failed cloning $SOURCE_ROOT_DIR"
+
+    command cp ${SOURCE_ROOT_DIR}/.git/config .git/ || die 104
+    command git remote remove parent &>/dev/null
+
+    command git remote add parent "$SOURCE_ROOT_DIR" || die 105
+    command git fetch parent
+
+    [[ -n $branch ]] && {
+        command git checkout ${branch}
+        command git branch -u parent/${branch}
+    }
+
+    statusmsg "$DEST_DIR"
+    touch .ready
+    readymsg "SOURCE_ROOT_DIR" "$DEST_DIR" "${branch}"
+}
+
+if [[ -z $sourceMe ]]; then
+    main "$@"
+fi

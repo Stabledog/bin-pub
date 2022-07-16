@@ -91,6 +91,7 @@ main() {
         echo "Destination already exists."
         exit 0;
     }
+    DEST_DIR="$(readlink -f $DEST_DIR)"
 
     builtin cd $DEST_DIR || die 103
 

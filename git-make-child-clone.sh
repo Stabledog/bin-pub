@@ -97,7 +97,7 @@ main() {
 
     command git clone  "$SOURCE_ROOT_DIR" . || die "Failed cloning $SOURCE_ROOT_DIR"
 
-    command cp ${SOURCE_ROOT_DIR}/.git/config .git/ || die 104
+    command cp "${SOURCE_ROOT_DIR}/.git/config" .git/ || die 104
     command git remote remove parent &>/dev/null
 
     command git remote add parent "$SOURCE_ROOT_DIR" || die 105

@@ -1,5 +1,5 @@
 #!/bin/bash
-# The name says it all
+# Useful for sorting jsonc settings files, such as used by VSCode and Windows Terminal
 #
 
 die() {

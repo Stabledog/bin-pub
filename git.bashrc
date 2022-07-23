@@ -1,12 +1,5 @@
 function initGitStuff {
 
-    is_cygwin && {
-        if wsl git --version &>/dev/null; then
-            git() {
-                command wsl git "$@"
-            }
-        fi
-    }
     # Set this to false elsewhere if you don't want the slight delay of checking
     # git branches all the time:
     PS1_INCLUDE_GIT_BRANCH=${PS1_INCLUDE_GIT_BRANCH:-true}

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Useful for sorting jsonc settings files, such as used by VSCode and Windows Terminal
-#
+#  Optional filename arg is $1
 
 die() {
     echo "ERROR: $@" >&2

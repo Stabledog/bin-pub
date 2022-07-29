@@ -1,1 +1,1 @@
-/c/Program Files/Microsoft VS Code/bin/code.cmd
+C:/c/Program Files/Microsoft VS Code/bin/code.cmd

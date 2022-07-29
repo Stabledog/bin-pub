@@ -503,19 +503,19 @@ alias tw='tmuxw'
 python3() {
     [[ -n ${BEST_PY3} ]] && { "$BEST_PY3" "$@" ; return; }
     local cand;
-    for cand in python3.{10,9,8,7} python3; do
-        local py_cand="$( which ${cand} )"
+    for cand in python3.{10,9,8,7} python3 python; do
+        local py_cand="$( command which ${cand} 2>/dev/null)"
 	    [[ -n $MSYS ]] && {
-            "$py_cand" -c 'import sys; sys.exit(0)' || continue
+            "$py_cand" -c 'import sys; sys.exit(0)' &>/dev/null || continue
         } || {
-            # Avoid Windows versions of python:
+            # On Unix-ish shells, avoid a Windows versions of python:
             "$py_cand" -c 'import termios' &>/dev/null || \
 		    continue  # We don't want a dos/windows version
         }
         BEST_PY3="${py_cand}"
         break
     done
-    [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; return;  }
+    [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; false; return;  }
     "$BEST_PY3" "$@"
 }
 

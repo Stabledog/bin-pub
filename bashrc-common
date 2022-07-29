@@ -332,6 +332,9 @@ function parse_host_suffix {
         CYGWIN*)
             PS1_HOST_SUFFIX='Cyg'; echo $PS1_HOST_SUFFIX ; return
             ;;
+        MINGW*)
+            PS1_HOST_SUFFIX='Gitb'; echo $PS1_HOST_SUFFIX ; return
+            ;;
         # Other platform-type detections can be added here:
     esac
     if which lsb_release &>/dev/null; then

@@ -1,0 +1,18 @@
+{
+    "name": "bin-pub",
+	//"initializeCommand": "bin/initializeCommand.sh",
+	"dockerComposeFile": "docker-compose.yaml",
+	"service": "bin-pub",
+	"workspaceFolder": "/workspace",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	}
+
+}

@@ -1,0 +1,8 @@
+version: "3.4"
+services:
+  bin-pub:
+    build: .
+    init: true
+    volumes: 
+      - ..:/workspace:cached
+    user: vscode

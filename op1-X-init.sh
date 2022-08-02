@@ -1,1 +1,0 @@
-bbonly/op1-X-init.sh

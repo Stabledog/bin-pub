@@ -3,6 +3,10 @@ services:
   bin-pub:
     build: .
     init: true
-    volumes: 
-      - ..:/workspace:cached
+    command: sleep infinity
+    volumes:
+      - ..:/home/vscode/bin:cached
+      - ${HOME}:/host_home:ro
+      - ${HOME}/.ssh:/home/vscode/.ssh
     user: vscode
+    container_name: bin_topia

@@ -25,7 +25,17 @@ RUN apt-get update \
     && /bin/bash /tmp/library-scripts/docker-debian.sh "${ENABLE_NONROOT_DOCKER}" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}"   \
     && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
-WORKDIR /home/vscode/bin
+WORKDIR /home/vscode
+USER vscode
+RUN mkdir -p projects
+WORKDIR /home/vscode/projects
+RUN echo "ID: $(whoami) $( id -u)"
+RUN  [ -d ./cdpp ] ||  git clone https://github.com/Sanekits/cdpp
+RUN  [ -d ./localhist ] ||  git clone https://github.com/Sanekits/localhist
+RUN  [ -d ./taskrc-kit ] ||  git clone https://github.com/Sanekits/taskrc-kit
+WORKDIR /home/vscode
+
+
 # Setting the ENTRYPOINT to docker-init.sh will configure non-root access
 # to the Docker socket. The script will also execute CMD as needed.
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]

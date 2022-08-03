@@ -1,6 +1,6 @@
 {
     "name": "bin-pub",
-	//"initializeCommand": "bin/initializeCommand.sh",
+	"initializeCommand": "${localEnv:HOME}/bin/.devcontainer/bin/initializeCommand.sh",
 	"dockerComposeFile": "docker-compose.yaml",
 	"service": "bin-pub",
 	"workspaceFolder": "/home/vscode/bin",

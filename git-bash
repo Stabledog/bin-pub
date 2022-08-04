@@ -1,7 +1,10 @@
 #!/bin/bash
 
 uname -a | grep -q WSL2 && {
-    /mnt/c/Program\ Files/Git/bin/bash.exe "$@"
+    winHome="$(cd /mnt/c; cmd.exe /C 'echo %USERPROFILE%' )"
+    # Get rid of non-printable utf16 junk in output of cygpath... but why?
+    rcPath=$(/mnt/c/Program\ Files/Git/usr/bin/cygpath.exe -w "${winHome}" | tr -cd '[:print:]')
+    /mnt/c/Program\ Files/Git/bin/bash.exe --rcfile "${rcPath}\\.bash_profile" "$@"
     exit $?
 }
 /c/Program\ Files/Git/bin/bash.exe "$@"

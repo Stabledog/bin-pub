@@ -525,7 +525,10 @@ python3() {
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
+
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
+
+[[ -n $PS1 && -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
 
 [[ -z $MSYS ]] && {
     # Not on git-bash, but otherwise undupe the PATH
@@ -546,5 +549,4 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-[[ -n $PS1 && -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
 

@@ -285,7 +285,6 @@ fi
 
 
 
-
 # setargs is used for arbitrary mapping of positional args.  (Disabling
 # glob expansion is both a feature and sometimes a bug.)
 alias setargs='set -f; set -- '
@@ -301,73 +300,6 @@ function no_exit {
 
 # Preferred options for `less`:
 export LESS="-rFX"
-
-
-function parse_ext_tail {
-    # If we've shelled-out from vi/vim, we want to know about it to avoid chaos:
-    if [[ -n $VIM ]]; then
-        echo -n '[vi]'
-        return
-    elif [[ -n $bbproxy_shell_ps1 ]]; then
-        echo -n '[bbproxy]'
-        return
-    fi
-}
-
-function parse_lh_status {
-    [[ -z $HISTFILE ]] && return;
-    [[ $HISTFILE == ~/.bash_history ]] && return
-    echo -n "+H"
-}
-
-unset PS2_HOST_SUFFIX
-function parse_host_suffix {
-    # What sort of unix variant/flavor are we?
-    [[ -n $PS1_HOST_SUFFIX ]] && { echo $PS1_HOST_SUFFIX; return; }
-    [[ -n $PS1_SUPPRESS_HOST_SUFFIX ]] && return
-    [[ -f /.dockerenv ]] && { PS1_HOST_SUFFIX='Docker'; echo $PS1_HOST_SUFFIX; return; }
-    case $(uname -a) in
-        Darwin*)
-            PS1_HOST_SUFFIX='Mac'; echo $PS1_HOST_SUFFIX; return
-            ;;
-        Linux*-WSL2*)
-            PS1_HOST_SUFFIX='Wsl2'; echo $PS1_HOST_SUFFIX ; return
-            ;;
-        Linux*-Microsoft*)
-            PS1_HOST_SUFFIX='Wsl1'; echo $PS1_HOST_SUFFIX ; return
-            ;;
-        CYGWIN*)
-            PS1_HOST_SUFFIX='Cyg'; echo $PS1_HOST_SUFFIX ; return
-            ;;
-        MINGW*)
-            PS1_HOST_SUFFIX='Gitb'; echo $PS1_HOST_SUFFIX ; return
-            ;;
-        # Other platform-type detections can be added here:
-    esac
-    if which lsb_release &>/dev/null; then
-        if lsb_release -a 2>/dev/null | egrep -q 'RedHat'; then
-            PS1_HOST_SUFFIX='rhat'; echo $PS1_HOST_SUFFIX; return
-        fi
-    fi
-    PS1_HOST_SUFFIX='Generic'  # undetected
-    echo $PS1_HOST_SUFFIX
-}
-
-function t_setFancyPs1 {
-    [[ -n $GITSTUFF_INIT ]] || parse_git_branch() { :; }
-
-    if ${PS1_INCLUDE_GIT_BRANCH:-true}; then
-        local gitBranch=$(parse_git_branch)
-    fi
-    PROMPT_DIRTRIM=3
-    # NOTE: to avoid problems with cursor positioning due to fancy PS1,
-    # be aware of the need to escape non-printing chars (see https://stackoverflow.com/a/19501528/237059)
-PS1='
-\[\033[1;33m\][\D{%m-%d %H:%M.%S}]\[\033[0m\] \[\033[1;35m\]\w\[\033[0m\]$(parse_git_branch)
-\[\033[1;36m\][\u $(parse_host_suffix) \h]\[\033[0m\]$(parse_ext_tail)$Ps1Tail$(parse_lh_status)> '
-}
-
-
 
 
 if $isBash; then
@@ -519,15 +451,11 @@ python3() {
     "$BEST_PY3" "$@"
 }
 
-[[ -n $PS1 ]] && t_setFancyPs1
 
-
-[[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
-
+[[ -n $PS1 && -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
-
+[[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
-
 [[ -n $PS1 && -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
 
 [[ -z $MSYS ]] && {
@@ -548,5 +476,4 @@ python3() {
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
-
 

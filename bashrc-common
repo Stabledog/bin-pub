@@ -411,7 +411,6 @@ function reset {
 # curl -sL https://github.com/Stabledog/complete-alias/releases/download/1.18.4/setup-complete-alias.sh | bash -
 [[ -f "${HOME}/.completion_loader" ]] && source "${HOME}/.completion_loader" # Added by setup-complete-alias.sh
 
-[[ -f ${HOME}/bin/git.bashrc ]] && { source ${HOME}/bin/git.bashrc; initGitStuff; }
 
 if $isBash; then
     # The 'tox' command:
@@ -457,6 +456,7 @@ python3() {
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
 [[ -n $PS1 && -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
 [[ -n $PS1 && -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
+[[ -n $PS1 && -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
 
 [[ -z $MSYS ]] && {
     # Not on git-bash, but otherwise undupe the PATH

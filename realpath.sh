@@ -111,4 +111,10 @@ _bsd_stat_readlink() {
     stat -f %Y -- "$1" 2>/dev/null
 }
 
-[ -z "$sourceMe" ] && readlink "$@"
+[ -z "$sourceMe" ] && {
+    if [ "$*" = "--version" ]; then
+        echo '1.0.1'
+        exit 0
+    fi
+    readlink "$@"
+}

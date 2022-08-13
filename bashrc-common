@@ -479,3 +479,5 @@ fi
 
 
 
+[[ -n $PS1 && -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
+

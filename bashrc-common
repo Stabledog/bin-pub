@@ -451,6 +451,7 @@ python3() {
 }
 
 
+[[ -n $PS1 && -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
 [[ -n $PS1 && -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
 [[ -n $PS1 && -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
 [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
@@ -476,6 +477,7 @@ python3() {
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
+
 
 
 

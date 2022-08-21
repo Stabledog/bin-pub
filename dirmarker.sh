@@ -32,6 +32,7 @@ if [[ -z $sourceMe ]]; then
         exit
     }
     [[ "$*" == "-r" ]] && {
+        set --
         # Remove any dirmarkers found in ./*
         while read dm; do
             dd=$(dirname "${dm}")

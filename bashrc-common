@@ -141,9 +141,9 @@ function shell_identify {
 
 shell_identify
 
-
-#----------------------------------------------------------------
-
+[[ -n $PS1 ]] && $MACOSX && type -t brew &>/dev/null && {
+    [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+}
 
 alias which='type -p '
 

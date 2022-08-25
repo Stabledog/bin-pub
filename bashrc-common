@@ -453,13 +453,13 @@ python3() {
 # Most of these shell tools can be managed with shpm:
 [[ -n $PS1 ]] && {
     [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
-    [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
-    [[ -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
-    [[ -f ${HOME}/.local/bin/cdpp/cdpp ]] && source ${HOME}/.local/bin/cdpp/cdpp # Added by cdpp-setup.sh
-    [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
     [[ -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
-    [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
+    [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
     [[ -f ${HOME}/.local/bin/docktools/docktools.bashrc ]] && source ${HOME}/.local/bin/docktools/docktools.bashrc # Added by docktools-setup.sh
+    [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
+    [[ -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
+    [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
+    [[ -n $PS1 && -f ${HOME}/.local/bin/cdpp/cdpp.bashrc ]] && source ${HOME}/.local/bin/cdpp/cdpp.bashrc # Added by cdpp-setup.sh
 }
 
 [[ -z $MSYS ]] && {

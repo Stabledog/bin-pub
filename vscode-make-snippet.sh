@@ -57,10 +57,14 @@ EOF
 
 make_snippet() {
     emitHeader
-    [[ -t 0 ]] && echo "Enter raw body text and then hit Ctrl+D:" >&2
+    [[ -t 0 ]] && {
+        echo "-- Vscode snippet creation -- " >&2
+        echo "Paste raw text and then hit Ctrl+D:" >&2
+    }
     (
         [[ -t 0 ]] && command stty -echo
         while IFS= builtin read line; do
+            [[ -t 0 ]] && echo "$line" >&2
             xform_body_line <<< "$line"
         done
         [[ -t 0 ]] && command stty echo
@@ -71,7 +75,7 @@ make_snippet() {
 main() {
     local outfile=/tmp/_new_snippet.json
     make_snippet | sed 's/^/    /' | command tee $outfile
-    echo "Snippet output copied to $outfile" >&2
+    echo "Snippet output copied to $outfile -- Use Ctrl+Shift+P > \"Snippets: Configure User Snippets\" and paste content there." >&2
 }
 
 [[ -z ${sourceMe} ]] && {

@@ -1,9 +1,22 @@
 #!/bin/bash
 # vscode-make-snippet.sh
-# Read from stdin, write to stdout.
+# Read from stdin, write to stdout. CC: output to /tmp/_newSnippet.json
 
 
-scriptName="$(command readlink -f $0)"
+canonpath() {
+    builtin type -t realpath.sh &>/dev/null && {
+        realpath.sh -f "$@"
+        return
+    }
+    builtin type -t readlink &>/dev/null && {
+        command readlink -f "$@"
+        return
+    }
+    # Fallback: Ok for rough work only, does not handle some corner cases:
+    ( builtin cd -L -- "$(command dirname -- $0)"; builtin echo "$(command pwd -P)/$(command basename -- $0)" )
+}
+
+scriptName="$(canonpath $0)"
 scriptDir=$(command dirname -- "${scriptName}")
 
 die() {
@@ -12,7 +25,14 @@ die() {
 }
 
 stub() {
-   builtin echo "  <<< STUB[$*] >>> " >&2
+    # Print debug output to stderr.  Call like this:
+    #   stub ${FUNCNAME[0]}.$LINENO item item item
+    #
+    builtin echo -n "  <<< STUB" >&2
+    for arg in "$@"; do
+        echo -n "[${arg}] " >&2
+    done
+    echo " >>> " >&2
 }
 
 xform_body_line() {
@@ -22,7 +42,8 @@ emitHeader() {
     command cat <<-EOF
 "todoNameMe": {
     "description": "TODO give this snippet a description",
-    "prefix": ["todoPrefixList"],
+    "prefix": ["todoPrefixList"], // Multiple prefixes may be defined
+    // "scope": "shellscript",  // TODO: Set this to the relevant language(s) to make  snippet non-global
     "body": [
 EOF
 }

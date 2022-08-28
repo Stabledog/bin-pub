@@ -15,6 +15,7 @@ stub() {
 }
 main() {
     builtin echo "args:[$*]"
+
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
         | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
      && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \

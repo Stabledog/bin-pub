@@ -450,8 +450,8 @@ python3() {
     "$BEST_PY3" "$@"
 }
 
-# Most of these shell tools can be managed with shpm:
 [[ -n $PS1 ]] && {
+    # Most of these tools can be managed with shpm:
     [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
     [[ -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
     [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
@@ -460,6 +460,7 @@ python3() {
     [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
     [[ -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
     [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
+    [[ -f ${HOME}/.local/bin/gh-help/gh-help.bashrc ]] && source ${HOME}/.local/bin/gh-help/gh-help.bashrc # Added by gh-help-setup.sh
 }
 
 [[ -z $MSYS ]] && {
@@ -482,6 +483,7 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ 1 -eq 1  ]]
+
 
 
 

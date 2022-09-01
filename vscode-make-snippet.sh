@@ -19,6 +19,8 @@ canonpath() {
 scriptName="$(canonpath $0)"
 scriptDir=$(command dirname -- "${scriptName}")
 
+origInputs=
+
 die() {
     builtin echo "ERROR: $*" >&2
     builtin exit 1
@@ -37,7 +39,6 @@ stub() {
 
 xform_body() {
     [[ -f $1 ]] || die "no input for xform_body()"
-    set -x
     local inputfile="$1"
     command sed -E \
          -e 's%[\]$%\\\\%' \
@@ -83,14 +84,44 @@ make_snippet() {
     [[ 1 -eq 1 ]]
 }
 
+parseArgs() {
+    local filename
+    while [[ -n $1 ]]; do
+        case $1 in
+            -h|--help)
+                do_help $*
+                exit 1
+                ;;
+            *)
+                origInputs="$origInputs $1"
+                ;;
+        esac
+        shift
+    done
+    # Validate that minimal args have been parsed:
+    # ??
+}
+
 main() {
-    local origInput="$1"
-    [[ -f $origInput ]] || die "No original input file [$1]"
+    parseArgs "$@"
+    [[ -z $origInputs ]] && {
+        echo "Paste input and hit Ctrl-D:" >&2
+        origInputs=/tmp/_snippet_raw_input
+        echo -n > $origInputs
+        cat > $origInputs || die
+    }
     local outfile=/tmp/_new_snippet.json
     echo "{" > $outfile
-    make_snippet "$origInput" | sed 's/^/    /' | command tee -a $outfile
+    for origInput in ${origInputs}; do
+        make_snippet "$origInput" | sed 's/^/    /' | command tee -a $outfile
+    done
     echo "}" >> $outfile
-    echo "Snippet output copied to $outfile -- Use Ctrl+Shift+P > \"Snippets: Configure User Snippets\" and paste content there." >&2
+
+    (
+        echo "  In vscode, hit: "
+        echo "    Ctrl+Shift+P > \"Snippets: Configure User Snippets\""
+        echo "    and paste content of ${outfile} into the appropriate snippet file."
+    ) >&2
 }
 
 [[ -z ${sourceMe} ]] && {

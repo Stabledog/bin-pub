@@ -487,3 +487,4 @@ fi
 
 
 
+source ~/.bbproxy-env # Added by bbproxy-setup.sh

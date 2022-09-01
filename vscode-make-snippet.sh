@@ -35,9 +35,23 @@ stub() {
     echo " >>> " >&2
 }
 
-xform_body_line() {
-    command sed -e 's/["]/\\"/g' -e 's/[$]/\\\\\$/g' -e 's/^/        "/' -e 's/$/",/'
+xform_body() {
+    [[ -f $1 ]] || die "no input for xform_body()"
+    set -x
+    local inputfile="$1"
+    command sed -E \
+         -e 's%[\]$%\\\\%' \
+         -e 's/["]/\\"/g'  \
+         -e 's/[$]/\\\\\$/g'  \
+         -e 's/[\]/\\/g' \
+         -e 's/\t/\\t/g' \
+         -e 's/^/        "/'  \
+         -e 's/$/",/'  \
+         ${inputfile}
+
+    set +x
 }
+
 emitHeader() {
     command cat <<-EOF
 "todoNameMe": {
@@ -56,25 +70,26 @@ EOF
 }
 
 make_snippet() {
+    [[ -f $1 ]] || die "no intermediate input for make_snippet()"
+    local input="$1"
     emitHeader
-    [[ -t 0 ]] && {
-        echo "-- Vscode snippet creation -- " >&2
-        echo "Paste raw text and then hit Ctrl+D:" >&2
-    }
-    (
-        [[ -t 0 ]] && command stty -echo
-        while IFS= builtin read line; do
-            [[ -t 0 ]] && echo "$line" >&2
-            xform_body_line <<< "$line"
-        done
-        [[ -t 0 ]] && command stty echo
-    )
+    local bodyIntermediateOutput=$(mktemp)
+    xform_body "$input" > $bodyIntermediateOutput
+    cat "$bodyIntermediateOutput"
     emitTail
+    [[ -z $PRESERVE_BODY ]] && {
+        [[ -f $bodyIntermediateOutput ]] && command rm $bodyIntermediateOutput
+    }
+    [[ 1 -eq 1 ]]
 }
 
 main() {
+    local origInput="$1"
+    [[ -f $origInput ]] || die "No original input file [$1]"
     local outfile=/tmp/_new_snippet.json
-    make_snippet | sed 's/^/    /' | command tee $outfile
+    echo "{" > $outfile
+    make_snippet "$origInput" | sed 's/^/    /' | command tee -a $outfile
+    echo "}" >> $outfile
     echo "Snippet output copied to $outfile -- Use Ctrl+Shift+P > \"Snippets: Configure User Snippets\" and paste content there." >&2
 }
 

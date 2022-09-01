@@ -54,10 +54,12 @@ xform_body() {
 }
 
 emitHeader() {
+    local snipName="$1"
+    [[ -n $snipName ]] || die "no snipName passed to emitHeader()"
     command cat <<-EOF
-"todoNameMe": {
-    "description": "TODO give this snippet a description",
-    "prefix": ["todoPrefixList"], // Multiple prefixes may be defined
+"${snipName}": {
+    "description": "TODO ${snipName} needs a description?",
+    "prefix": ["${snipName}"], // Multiple prefixes may be defined
     // "scope": "shellscript",  // TODO: Set this to the relevant language(s) to make  snippet non-global
     "body": [
 EOF
@@ -73,7 +75,7 @@ EOF
 make_snippet() {
     [[ -f $1 ]] || die "no intermediate input for make_snippet()"
     local input="$1"
-    emitHeader
+    emitHeader $(basename "$input")
     local bodyIntermediateOutput=$(mktemp)
     xform_body "$input" > $bodyIntermediateOutput
     cat "$bodyIntermediateOutput"
@@ -106,7 +108,7 @@ main() {
     parseArgs "$@"
     [[ -z $origInputs ]] && {
         echo "Paste input and hit Ctrl-D:" >&2
-        origInputs=/tmp/_snippet_raw_input
+        origInputs=/tmp/_nameless_snippet
         echo -n > $origInputs
         cat > $origInputs || die
     }

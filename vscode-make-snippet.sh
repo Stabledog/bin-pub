@@ -42,6 +42,7 @@ xform_body() {
     local inputfile="$1"
     command sed -E \
          -e 's%[\]$%\\\\%' \
+         -e 's%[\]n%\\\\n%g' \
          -e 's/["]/\\"/g'  \
          -e 's/[$]/\\\\\$/g'  \
          -e 's/[\]/\\/g' \

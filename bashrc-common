@@ -419,9 +419,6 @@ if $isBash; then
     fi
 fi
 
-# loop_cmd is very handy:
-[[ -r ${LmHome}/bin/loop_cmd ]] && sourceMe=1 source ${LmHome}/bin/loop_cmd
-alias loop=loop_cmd
 
 unalias rm 2>/dev/null # If someone aliased my rm, cut it out.
 
@@ -461,6 +458,7 @@ python3() {
     [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
     [[ -f ${HOME}/.local/bin/gh-help/gh-help.bashrc ]] && source ${HOME}/.local/bin/gh-help/gh-help.bashrc # Added by gh-help-setup.sh
     [[ -f ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc ]] && source ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc # Added by taskrc-kit-setup.sh
+    [[ -f ${HOME}/.local/bin/looper/looper.bashrc ]] && source ${HOME}/.local/bin/looper/looper.bashrc # Added by looper-setup.sh
 }
 
 [[ -z $MSYS ]] && {
@@ -471,7 +469,6 @@ python3() {
     }
 }
 
-[[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
 
 # If there's a .taskrc directory in HOME, just source everything found there.
 # This should be the LAST environment-changing operation in .bashrc, because
@@ -482,5 +479,5 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-[[ 1 -eq 1  ]]
+[[ 1 -eq 1  ]] # END
 

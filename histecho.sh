@@ -17,6 +17,7 @@ makeDefaultConfig() {
 # .histecho -- config for histecho.sh
 targetPath=www/histecho/bash_history.txt
 destHost=my-web-server
+pub_url=http://my-web-server/bash_history.txt
 sourcePath=~/.bash_history
 reverseOrder=true  # Newest events on top?
 stripTimestamps=true
@@ -36,23 +37,40 @@ stub() {
     done
     echo " >>> " >&2
 }
+do_help() {
+    local fname=$(basename ${scriptName})
+    cat <<-EOF
+${fname} --makeconfig   # print default config content
+${fname} --config       # print the current config
+${fname} --loop         # Loop the transmission
+
+EOF
+}
+
+printConfig() {
+    echo "Contents of ${configFile}:" >&2
+    cat ${configFile}
+}
 
 parseArgs() {
-    [[ $# -eq 0 ]] && die "Expected arguments"
     local filename  # Declare arguments to be parsed as local
     while [[ -n $1 ]]; do
         case $1 in
             -h|--help)
-                #  do_help $*
+                do_help $*
                 exit 1
                 ;;
             -l|--loop)
                 loop_mode=true
                 ;;
-            --config)
+            --makeconfig)
                 # Print default config file
                 makeDefaultConfig
                 exit 0
+                ;;
+            --config)
+                printConfig "$@"
+                exit
                 ;;
             *)
                 unknown_args="$unknown_args $1"
@@ -64,14 +82,19 @@ parseArgs() {
 }
 
 do_send() {
-    tac $sourcePath | ssh ${destHost} bash -c "cat > ${targetPath}"
+    echo -n "Sending $sourcePath to ${destHost}:${targetPath} @$(date -Iseconds):" >&2
+    tac $sourcePath | ssh ${destHost} bash -c "cat > ${targetPath}" && {
+        echo "  OK"
+    } || {
+        echo "ERROR occurred: $?" >&2
+    }
+
+
 }
 
 do_loop_send() {
     while true; do
-        set -x
         do_send
-        set +x
         sleep $loop_interval
     done
 }
@@ -80,6 +103,8 @@ main() {
     parseArgs "$@"
     if $loop_mode; then
         do_loop_send
+    else
+        do_send
     fi
 }
 

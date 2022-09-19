@@ -4,7 +4,6 @@
 
 scriptName="$(readlink -f "$0")"
 scriptDir=$(command dirname -- "${scriptName}")
-
 configFile=~/.histecho
 
 die() {
@@ -83,13 +82,25 @@ parseArgs() {
 
 do_send() {
     echo -n "Sending $sourcePath to ${destHost}:${targetPath} @$(date -Iseconds):" >&2
-    tac $sourcePath | ssh ${destHost} bash -c "cat > ${targetPath}" && {
-        echo "  OK"
+    do_filter() {
+        if $stripTimestamps; then
+            grep -Ev "^\#[0-9]+$"
+        else
+            while read line; do
+                if [[ ${line} == \#[0-9]* ]]; then
+                    echo -n "${line:1}" | awk '{print strftime("%b-%d %T ", $1)}' | tr -d '\n'
+                else
+                    echo "$line"
+                fi
+            done
+        fi
+    }
+    tac $sourcePath | do_filter | ssh ${destHost} bash -c "cat > ${targetPath}" && {
+        echo "  OK" >&2
+        echo "   $pub_url" >&2
     } || {
         echo "ERROR occurred: $?" >&2
     }
-
-
 }
 
 do_loop_send() {

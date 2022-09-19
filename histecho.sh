@@ -95,7 +95,7 @@ do_send() {
             done
         fi
     }
-    tac $sourcePath | do_filter | ssh ${destHost} bash -c "cat > ${targetPath}" && {
+    tac $sourcePath | do_filter | ssh ${destHost} bash -c "cat > ${targetPath}.tmp && mv ${targetPath}.tmp ${targetPath}" && {
         echo "  OK" >&2
         echo "   $pub_url" >&2
     } || {

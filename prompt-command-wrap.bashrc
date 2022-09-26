@@ -43,7 +43,10 @@ $__do_define_pcwrap && {
         false
     }
     __pcwrap_capture_existing_prompt_command() {
-        [[ -z $PROMPT_COMMAND ]] && return
+        [[ -z $PROMPT_COMMAND ]] && {
+            PROMPT_COMMAND=__pcwrap_run;
+            return
+        }
         [[ "$PROMPT_COMMAND" == __pcwrap_run ]] || {
             local funcId=__pcwrap_synth_${RANDOM}
             eval "$funcId() { \
@@ -83,4 +86,5 @@ $__do_define_pcwrap && {
         declare -a __pcwrap_items;
         COMMAND_PROMPT=""
     }
+    __pcwrap_register
 }

@@ -1,4 +1,5 @@
 # vim: filetype=sh :
+# bin/bashrc-common
 
 
 if [[ -n $CUSTOM_SHELL ]]; then

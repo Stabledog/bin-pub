@@ -450,7 +450,7 @@ python3() {
 [[ -n $PS1 ]] && {
     # Most of these tools can be managed with shpm:
     [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
-    [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
+    [[ -f ${HOME}/.local/bin/localhist/localhist.bashrc ]] && source ${HOME}/.local/bin/localhist/localhist.bashrc # Added by localhist-setup.sh
     [[ -f ${HOME}/.local/bin/cdpp/cdpp.bashrc ]] && source ${HOME}/.local/bin/cdpp/cdpp.bashrc # Added by cdpp-setup.sh
     [[ -f ${HOME}/.local/bin/docktools/docktools.bashrc ]] && source ${HOME}/.local/bin/docktools/docktools.bashrc # Added by docktools-setup.sh
     [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
@@ -480,4 +480,5 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ 1 -eq 1  ]] # END
+
 

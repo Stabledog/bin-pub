@@ -1,4 +1,5 @@
 # vim: filetype=sh :
+# bin/bashrc-common
 
 
 if [[ -n $CUSTOM_SHELL ]]; then
@@ -467,4 +468,5 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ 1 -eq 1  ]] # END
+
 

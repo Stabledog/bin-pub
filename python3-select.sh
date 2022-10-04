@@ -16,8 +16,8 @@ python3_select() {
         BEST_PY3="${py_cand}"
         break
     done
-    [[ -n "$BEST_PY3" ]] || { 
-        echo "ERROR: no python3 on path" >&2; false; return;  
+    [[ -n "$BEST_PY3" ]] || {
+        echo "ERROR: no python3 on path" >&2; false; return;
     }
     echo "$BEST_PY3"
 }
@@ -26,7 +26,12 @@ python3() {
     [[ -n ${BEST_PY3} ]] || {
         python3_select >/dev/null || exit 1
     }
-    "$BEST_PY3" "$@" 
+    [[ $1 == "--detect" ]] && {
+        echo "$BEST_PY3"
+        [[ -n $BEST_PY3 ]]
+        exit
+    }
+    "$BEST_PY3" "$@"
 }
 
 [[ -z $sourceMe ]] && {

@@ -1,4 +1,5 @@
 # vim: filetype=sh :
+# bin/bashrc-common
 
 
 if [[ -n $CUSTOM_SHELL ]]; then
@@ -55,8 +56,10 @@ function define_yellow {
 
 define_yellow
 
+
 # set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
 [[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
+
 
 # Outer code can define notBash=true to disable non-posix bashisms:
 if [[ ! -z $notBash ]] && $notBash; then
@@ -428,34 +431,20 @@ export MYLIBS=${LmHome}/mylibs/$( $Uname )
 alias tmux='tmux -2'
 alias tw='tmuxw'
 
-python3() {
-    [[ -n ${BEST_PY3} ]] && { "$BEST_PY3" "$@" ; return; }
-    local cand;
-    for cand in python3.{10,9,8,7} python3 python; do
-        local py_cand="$( command which ${cand} 2>/dev/null)"
-	    [[ -n $MSYS ]] && {
-            "$py_cand" -c 'import sys; sys.exit(0)' &>/dev/null || continue
-        } || {
-            # On Unix-ish shells, avoid a Windows versions of python:
-            "$py_cand" -c 'import termios' &>/dev/null || \
-		    continue  # We don't want a dos/windows version
-        }
-        BEST_PY3="${py_cand}"
-        break
-    done
-    [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; false; return;  }
-    "$BEST_PY3" "$@"
+
+[[ -f ~/bin/python3-select.sh ]] && {
+    sourceMe=1 source ~/bin/python3-select.sh
 }
 
 [[ -n $PS1 ]] && {
     # Most of these tools can be managed with shpm:
     [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
-    [[ -f ${HOME}/.local/bin/localhist/localhist.bashrc ]] && source ${HOME}/.local/bin/localhist/localhist.bashrc # Added by localhist setup.sh
-    [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
     [[ -f ${HOME}/.local/bin/cdpp/cdpp.bashrc ]] && source ${HOME}/.local/bin/cdpp/cdpp.bashrc # Added by cdpp-setup.sh
     [[ -f ${HOME}/.local/bin/docktools/docktools.bashrc ]] && source ${HOME}/.local/bin/docktools/docktools.bashrc # Added by docktools-setup.sh
     [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
     [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
+    [[ -f ${HOME}/.local/bin/localhist/localhist.bashrc ]] && source ${HOME}/.local/bin/localhist/localhist.bashrc # Added by localhist setup.sh
+    [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
     [[ -f ${HOME}/.local/bin/gh-help/gh-help.bashrc ]] && source ${HOME}/.local/bin/gh-help/gh-help.bashrc # Added by gh-help-setup.sh
     [[ -f ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc ]] && source ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc # Added by taskrc-kit-setup.sh
     [[ -f ${HOME}/.local/bin/looper/looper.bashrc ]] && source ${HOME}/.local/bin/looper/looper.bashrc # Added by looper-setup.sh
@@ -480,6 +469,4 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ 1 -eq 1  ]] # END
-
-
 

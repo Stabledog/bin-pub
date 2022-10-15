@@ -22,6 +22,8 @@ function init_sh_tools {
     )
 }
 
+set +o noclobber
+
 init_sh_tools
 
 
@@ -384,6 +386,7 @@ function load_rcs1 {
 }
 
 function loadTaskrcs {
+    set +o noclobber
     local logfile9=$HOME/.loadtaskrcs.log
     echo "$(date): loadTaskrcs: trainload initialization of ~/.taskrc" > $logfile9
 

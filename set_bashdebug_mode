@@ -6,16 +6,18 @@ function set_bashdebug_mode {
     #   --off: turn it off 
     #   --tty [device]: send output to specified pty (e.g. -tty /dev/pts/112)
     #       (--tty implies --on as well, you don't have to add the latter)
+    #   --gen1:  Generate the PS4 setting for use in other scripts
     function print_bad_bxdb {
-        echo -e "\E[1;31mBad or no arg[$1]: try --on|--off|--tty /dev/pts/???\E[0m" >&2
+        echo -e "\E[1;31mBad or no arg[$1]: use --on | --off | --tty /dev/pts/??? | --gen1\E[0m" >&2
         false
     }
     [[ ${#@} == 0 ]] &&  { print_bad_bxdb $1 ; return; }
+    local Ps4_proto='\033[0;33m+(${BASH_SOURCE}:${LINENO}):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
     while [[ ! -z $1 ]]; do
         case $1 in
             --on|-o)
-                PS4='\033[0;33m+(${BASH_SOURCE}:${LINENO}):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+                PS4="$Ps4_proto"
                 set -x
                ;;
            --off|-f)
@@ -30,6 +32,11 @@ function set_bashdebug_mode {
                shift
                set_bashdebug_mode --on
                ;;
+           --gen1)
+               echo "PS4='$Ps4_proto'"
+               echo "# set -x"
+               ;;
+
            *)
                print_bad_bxdb $1; return; 
                ;;

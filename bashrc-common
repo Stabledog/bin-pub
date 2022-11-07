@@ -123,9 +123,6 @@ function shell_identify {
         #  See https://www.cygwin.com/cygwin-ug-net/using-cygwinenv.html on $CYGWIN
 	    CYGWIN="export:winsymlinks:native"
     }
-    uname -a | grep -E MINGW &>/dev/null && {
-        export MSYS=winsymlinks:native  # git bash
-    }
 
 	[[ -d /Applications/Preview.app ]] && MACOSX=true
     [[ $( $Uname ) == Darwin ]] && MACOSX=true

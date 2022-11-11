@@ -448,6 +448,7 @@ python3() {
 }
 
 [[ -n $PS1 ]] && {
+    [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc # Added by shellkit (bashics-setup.sh)\n
     # Most of these tools can be managed with shpm:
     [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
     [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
@@ -480,4 +481,5 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ 1 -eq 1  ]] # END
+
 

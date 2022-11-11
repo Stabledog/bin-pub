@@ -342,15 +342,10 @@ alias tw='tmuxw'
 
 [[ -n $PS1 ]] && {
     # Kits that shpm installs use this:
-    [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc # Added by shellkit (bashics-setup.sh)\n
+    [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc # Added by shellkit (bashics-setup.sh)
 
-    #       [[ -f ${HOME}/.local/bin/cdpp/cdpp.bashrc ]] && source ${HOME}/.local/bin/cdpp/cdpp.bashrc # Added by cdpp-setup.sh
-    #       [[ -f ${HOME}/.local/bin/localhist/localhist.bashrc ]] && source ${HOME}/.local/bin/localhist/localhist.bashrc # Added by localhist setup.sh
-
-    [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
     [[ -f ${HOME}/.local/bin/docktools/docktools.bashrc ]] && source ${HOME}/.local/bin/docktools/docktools.bashrc # Added by docktools-setup.sh
     [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
-    [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
     [[ -f ${HOME}/.local/bin/gh-help/gh-help.bashrc ]] && source ${HOME}/.local/bin/gh-help/gh-help.bashrc # Added by gh-help-setup.sh
     [[ -f ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc ]] && source ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc # Added by taskrc-kit-setup.sh
     [[ -f ${HOME}/.local/bin/looper/looper.bashrc ]] && source ${HOME}/.local/bin/looper/looper.bashrc # Added by looper-setup.sh

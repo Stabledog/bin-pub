@@ -334,6 +334,7 @@ export MYLIBS=${LmHome}/mylibs/$( $Uname )
 # Make tmux use 256 colors so vim highlighting works right:
 alias tmux='tmux -2'
 alias tw='tmuxw'
+alias eb='exec bash'
 
 
 [[ -f ~/bin/python3-select.sh ]] && {

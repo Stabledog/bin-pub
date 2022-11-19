@@ -1,6 +1,12 @@
 #!/bin/bash
+# Return 0 if repo is 'dirty' in any way: new files, uncommitted changes, or differs from upstream
 
-# Return 0 if repo is 'dirty' in any way: new files, uncommitted changes, or differs from upstream 
+PS4='\033[0;33m+(${BASH_SOURCE}:${LINENO}):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+
+function errExit {
+    echo "ERROR: $*" >&2
+    exit 1
+}
 
 function git_status_dirty {
     local kx=$(git status --porcelain=2 --branch 2>&1)
@@ -21,16 +27,13 @@ function git_status_dirty {
     return 1 # no difference
 }
 
-function errExit {
-    echo "ERROR: $*" >&2
-    exit 1
-}
 
 if [[ -z $sourceMe ]]; then
-    set -ue
-    xdir=$1
-    if [[ ! -z $xdir ]]; then
-        cd $xdir || errExit "Can't cd to $xdir"
-    fi
-    git_status_dirty $xdir
+    [[ $# -eq 0 ]] && {
+        set -- $PWD
+    }
+    for xdir; do
+        git_status_dirty $xdir && exit 0
+    done
+    exit 1
 fi

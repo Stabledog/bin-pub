@@ -349,7 +349,6 @@ alias eb='exec bash'
     [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
     [[ -f ${HOME}/.local/bin/gh-help/gh-help.bashrc ]] && source ${HOME}/.local/bin/gh-help/gh-help.bashrc # Added by gh-help-setup.sh
     [[ -f ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc ]] && source ${HOME}/.local/bin/taskrc-kit/taskrc-kit.bashrc # Added by taskrc-kit-setup.sh
-    [[ -f ${HOME}/.local/bin/looper/looper.bashrc ]] && source ${HOME}/.local/bin/looper/looper.bashrc # Added by looper-setup.sh
 }
 
 [[ -z $MSYS ]] && {

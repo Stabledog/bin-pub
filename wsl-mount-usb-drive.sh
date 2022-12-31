@@ -1,17 +1,25 @@
 #!/bin/bash
+# wsl-mount-usb-drive.sh
+
+# See also:
+#  https://learn.microsoft.com/en-us/windows/wsl/wsl-config
+#    ( How to setup c:\Users\[me]\.wslconfig "automount" so that USB drivers are attached on WSL startup )
+
+scriptName="$(readlink -f "$0")"
+scriptDir=$(command dirname -- "${scriptName}")
+PS4='\033[0;33m+$?(${BASH_SOURCE}:${LINENO}):\033[0m ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 drive_letter=   # Defaults to d, set this with --drive or -d
 
 die() {
-    echo "ERROR: $*" >&2
-    exit 1
+    builtin echo "ERROR($(basename ${scriptName})): $*" >&2
+    builtin exit 1
 }
 
-stub() {
-    echo "   -->$*<--"
-}
+
 
 parseArgs() {
+
     command uname -r | grep -qi microsoft || die "This command is intended only for WSL"
 
     [[ $# == 0 ]] && { drive_letter='d'; return; }
@@ -28,22 +36,23 @@ parseArgs() {
         esac
         shift
     done
+    [[ -n $drive_letter ]] || die No drive letter defined
     [[ $# == 0 ]] || { die "Unknown command line args: $*"; false; return; }
     true
 }
 
 main() {
     parseArgs "$@"
-    grep -Eq "^[automount]" /etc/wsl.conf || {
-        echo "WARNING: can't find /etc/wsl.conf or no [automount] element."
+    [[ -f ~/win-profile/.wslconfig ]] || die "Can't find ~/win-profile/.wslconfig"
+
+    grep -Eq "^[automount]" ~/win-profile/.wslconfig || {
+        echo "WARNING: can't find [automount] element in ~/win-profile/.wslconfig"
         echo "Add this to it, and then do a \"wsl --shutdown\" :"
         echo "[automount]"
         echo "options = \"metadata\""
+        echo "enabled = true"
     }
-    [[ -d /mnt/${drive_letter} ]] || { 
-        sudo mkdir -p /mnt/${drive_letter} 2>/dev/null || die "Failed creating /mnt/${drive_letter}"; 
-    }
-    mount | grep -Eq "^drvfs on /mnt/${drive_letter} " && {
+    mount | command grep -Eq "${drive_letter}: on /mnt/${drive_letter}" && {
         true;  # Already a device mounted
         return;
     }
@@ -52,7 +61,8 @@ main() {
     }
 }
 
-if [[ -z $sourceMe ]]; then
-
+[[ -z ${sourceMe} ]] && {
     main "$@"
-fi
+    builtin exit
+}
+command true

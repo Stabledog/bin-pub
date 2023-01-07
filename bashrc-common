@@ -1,6 +1,11 @@
 # vim: filetype=sh :
 # bin/bashrc-common
 
+# Note the use of 'ssh-unsafe' markers to guard sections
+# that MUST not be invoked in a non-interactive shell
+#
+# Such must be protected with 
+# [[ $- == *i* ]] && { ssh-unsafe thing here; }
 
 if [[ -n $CUSTOM_SHELL ]]; then
     # We expect bash to come from our build:
@@ -8,6 +13,9 @@ if [[ -n $CUSTOM_SHELL ]]; then
         PATH=$(dirname -- ${CUSTOM_SHELL}):$PATH
     fi
 fi
+
+[[ $- == *i* ]] \
+    || return # ssh-safety guard
 
 function init_sh_tools {
     # Platform-dependent tools detection (dang you, MacOS!):
@@ -26,6 +34,7 @@ function init_sh_tools {
 init_sh_tools
 
 
+
 init_browser_tools() {
 
     alias wbs='web-search.sh'
@@ -37,6 +46,7 @@ init_browser_tools() {
 }
 
 [[ -n $PS1 ]] && init_browser_tools
+
 
 
 function define_yellow {
@@ -86,6 +96,7 @@ else
     echo "WARNING: no ~/projects dir: this should be a symlink to mbig, /c/Projects, /var/projects, or similar general project root.  \$ProjectsHome remains unresolved." >&2
 fi
 export ProjectsHome
+
 
 
 function isSunos {
@@ -156,9 +167,12 @@ function ptop {
 
 
 
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
+[[ $- == *i* ]] && {
+    # ssh-unsafe:
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
+}
 
 
 
@@ -173,8 +187,11 @@ function title {
         title_hostname_result=$HOSTNAME
         echo $title_hostname_result
     }
-    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(title_hostname)"
+    [[ $- == *i* ]] \
+        && printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(title_hostname)"
+        # ^ ssh-unsafe
 }
+
 
 if [[ -z $title_tail ]]; then
     title "bash"
@@ -183,6 +200,7 @@ else
 fi
 
 unset DISPLAY
+
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
@@ -205,6 +223,7 @@ export EDITOR=vim
 
 
 set -o vi
+
 
 # setargs is used for arbitrary mapping of positional args.  (Disabling
 # glob expansion is both a feature and sometimes a bug.)
@@ -288,6 +307,8 @@ function quickshell() {
 
 [[ -n $PS1 ]] && alias qs=quickshell
 
+
+
 function load_rcs1 {
     eval "$xlocal rootDir=$1"
     while read path; do
@@ -320,6 +341,7 @@ function loadTaskrcs {
 [[ -f ~/bin/sourceMeRun.taskrc ]] && source ~/bin/sourceMeRun.taskrc
 
 
+
 # Completion setup quickly:
 # curl -sL https://github.com/Stabledog/complete-alias/releases/download/1.18.4/setup-complete-alias.sh | bash -
 [[ -f "${HOME}/.completion_loader" ]] && source "${HOME}/.completion_loader" # Added by setup-complete-alias.sh
@@ -345,6 +367,7 @@ alias eb='exec bash'
     [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc # Added by shellkit (bashics-setup.sh)
 }
 
+
 [[ -z $MSYS ]] && {
     # Not on git-bash, but otherwise undupe the PATH
     [[ -f ~/bin/path_undupe.py ]] && {
@@ -362,6 +385,7 @@ alias eb='exec bash'
 if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
+
 
 [[ 1 -eq 1  ]] # END
 

@@ -30,7 +30,6 @@ function init_sh_tools {
     )
 }
 
-set +o noclobber
 
 init_sh_tools
 
@@ -366,8 +365,6 @@ alias eb='exec bash'
 [[ -n $PS1 ]] && {
     # Kits that shpm installs use this:
     [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc # Added by shellkit (bashics-setup.sh)
-
-    [[ -f ${HOME}/.local/bin/gh-help/gh-help.bashrc ]] && source ${HOME}/.local/bin/gh-help/gh-help.bashrc # Added by gh-help-setup.sh
 }
 
 

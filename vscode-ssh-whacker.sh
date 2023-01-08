@@ -29,7 +29,7 @@ do_whack() {
         }
         mkdir ${HOME}/.vscode-server || die 109
         cd ${HOME}/.vscode-server || die 110
-        rsync -a ${HOME}/.vsc${dn}/data ${HOME}/.vsc${dn}/extensions ./ || die 112
+        rsync -a ${HOME}/.vscold${dn}/data ${HOME}/.vscold${dn}/extensions ./ || die 112
         {
             echo "Rebuilt $(hostname):$USER:.vscode-server tree. "
             echo "Reload your vscode window now."

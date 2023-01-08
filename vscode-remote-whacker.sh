@@ -1,11 +1,13 @@
 #!/bin/bash
-# vscode-ssh-whacker.sh
-#  Run this on a remote ssh host when you're using VSCode for remote development.
-#  If you have trouble with starting new VSCode sessions or reloading existing windows,
-# this script will rebuild your ~/.vscode-server tree without removing the
+# vscode-remote-whacker.sh
+#  Run this on a remote vscode when vscode spins endlessly trying to reconnect.
+#
+#  In that situation (assuming your ssh configuration and proxy settings are correct)
+# this script can often help by rebuilding your ~/.vscode-server tree without removing the
 # persistent state data.  
 #
-# Then if you do a Reload Window in vscode, it can usually rebuild the ./bin folder and reconnect
+# Then if you do a Reload Window in vscode, it can usually start fresh quickly.
+#
 
 scriptName="$(readlink -f "$0")"
 scriptDir=$(command dirname -- "${scriptName}")

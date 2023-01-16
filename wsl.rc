@@ -48,7 +48,7 @@ function do_wslrc {
     print_divide
 
     if [[ -f $PWD/taskrc  || -f $PWD/taskrc.md ]]; then
-        taskrc_v3 >/dev/null
+        taskrc_v5 >/dev/null
         echo -n "taskrc: Load $(itemstatus $?)"
     else
         echo -n "taskrc: " ; print_warn "None"

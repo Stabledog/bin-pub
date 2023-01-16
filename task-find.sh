@@ -14,7 +14,7 @@ yellow() {
 }
 
 
-find_dirs="$PWD $HOME/.taskrc $HOME/.taskrc/bin $HOME/bin $(cat ~/.taskrc/task-find-dirs 2>/dev/null | tr -d '#' )"
+find_dirs="$PWD $HOME/.taskrc $HOME/.taskrc/bin $HOME/bin $HOME/.local/bin $HOME/my-home $(cat ~/.taskrc/task-find-dirs 2>/dev/null | tr -d '#' )"
 
 main() {
     expr="$1"

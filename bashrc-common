@@ -1,5 +1,11 @@
 # vim: filetype=sh :
+# bin/bashrc-common
 
+# Note the use of 'ssh-unsafe' markers to guard sections
+# that MUST not be invoked in a non-interactive shell
+#
+# Such must be protected with
+# [[ $- == *i* ]] && { ssh-unsafe thing here; }
 
 if [[ -n $CUSTOM_SHELL ]]; then
     # We expect bash to come from our build:
@@ -7,6 +13,9 @@ if [[ -n $CUSTOM_SHELL ]]; then
         PATH=$(dirname -- ${CUSTOM_SHELL}):$PATH
     fi
 fi
+
+[[ $- == *i* ]] \
+    || return # ssh-safety guard
 
 
 init_browser_tools() {
@@ -20,6 +29,7 @@ init_browser_tools() {
 }
 
 [[ -n $PS1 ]] && init_browser_tools
+
 
 
 function define_yellow {
@@ -40,8 +50,7 @@ function define_yellow {
 
 define_yellow
 
-# set_bashdebug_mode is a function that's useful for debugging shell commands+script in general:
-[[ -f ~/bin/set_bashdebug_mode ]] && source ~/bin/set_bashdebug_mode
+
 
 # Outer code can define notBash=true to disable non-posix bashisms:
 if [[ ! -z $notBash ]] && $notBash; then
@@ -64,12 +73,13 @@ alias pathadd=$LmHome/bin/pathadd
 # Docker container, /root/projects can point to a mounted volume to satisfy
 # this need:
 if [[ -d ~/projects ]]; then
-    ProjectsHome=$( readlink ~/projects )
+    ProjectsHome=$( readlink -f ~/projects )
 else
     ProjectsHome=${ProjectsHome:-$HOME/projects}
     echo "WARNING: no ~/projects dir: this should be a symlink to mbig, /c/Projects, /var/projects, or similar general project root.  \$ProjectsHome remains unresolved." >&2
 fi
 export ProjectsHome
+
 
 
 function isSunos {
@@ -82,10 +92,6 @@ errExit() {
     exit 1
 }
 
-die() {
-    echo "ERROR: $*" >&2
-    exit 1
-}
 
 
 
@@ -110,9 +116,6 @@ function shell_identify {
         #  See https://www.cygwin.com/cygwin-ug-net/using-cygwinenv.html on $CYGWIN
 	    CYGWIN="export:winsymlinks:native"
     }
-    uname -a | grep -E MINGW &>/dev/null && {
-        export MSYS=winsymlinks:native  # git bash
-    }
 
 	[[ -d /Applications/Preview.app ]] && MACOSX=true
     [[ $( $Uname ) == Darwin ]] && MACOSX=true
@@ -133,7 +136,6 @@ shell_identify
 alias which='type -p '
 
 
-IGNOREEOF="3"   # Don't close interactive shell for ^D
 
 
 function ptop {
@@ -148,73 +150,15 @@ function ptop {
 
 
 
-TERM=xterm-256color
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
-
-function initLsStuff {
-
-    function ls_less {
-        command ls --color=yes -- "$@" | less -RFSX
-    }
-    function ls_grep() {
-        command ls -la | command grep -E "$@"
-        builtin set +f
-    }
-
-    if [[ -n $PS1 ]]; then
-        alias lsl=ls_less
-        alias ll='ls -alF'
-        alias la='ls -A'
-        alias lra='ls -lrta'
-        alias l='ls -CF'
-        alias l1='ls -1'
-        alias lr='ls -lrt'
-        alias lg='builtin set -f; ls_grep'
-        alias lsg='builtin set -f; ls_grep'
-    fi
-
-	if $MACOSX; then   # Mac doesn't have dircolors
-		CLICOLOR=YES
-		alias ls='ls -G'
-	elif which dircolors &>/dev/null; then
-		eval $(dircolors --bourne-shell)
-		alias ls='command ls --color=auto '
-        LS_COLORS+=':ow=01;33' # fix horrid unreadable blue-on-green other-writable dirnames
-	fi
+[[ $- == *i* ]] && {
+    # ssh-unsafe:
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
 }
 
 
-initLsStuff
 
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-if $isBash; then
-    shopt -s checkwinsize
-fi
-
-
-function initLessStuff {
-    function tree_less {
-        tree -C "$@" | less -RFSX
-    }
-
-    function find_less {
-        if [[ -z $1 ]]; then
-            local args=
-        else
-            local args="--pattern $@"
-        fi
-
-        find | less -RFSX $args
-    }
-
-    alias treel=tree_less
-    alias findl=find_less
-}
-
-initLessStuff
 
 # Set the terminal title:
 function title {
@@ -226,8 +170,11 @@ function title {
         title_hostname_result=$HOSTNAME
         echo $title_hostname_result
     }
-    printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(title_hostname)"
+    [[ $- == *i* ]] \
+        && printf '\E]2;%s\E\\' "$title_tail - $(tty)@$(title_hostname)"
+        # ^ ssh-unsafe
 }
+
 
 if [[ -z $title_tail ]]; then
     title "bash"
@@ -236,6 +183,7 @@ else
 fi
 
 unset DISPLAY
+
 
 [[ -f ~/bin/bash_aliases ]] && source ~/bin/bash_aliases
 
@@ -255,19 +203,9 @@ is_cygwin && {
 }
 
 export EDITOR=vim
-export XEDITOR=$EDITOR
 
 
-# disable flow control for terminal:
-/bin/stty -ixon -ixoff 2>/dev/null
-
-# Magic space expands !! and !-{n} when you hit spacebar after.  You can also do
-# {cmd-frag}!<space> to expand the last command that started with that frag.
-if $isBash; then
-    set -o vi
-    bind Space:magic-space
-fi
-
+set -o vi
 
 
 # setargs is used for arbitrary mapping of positional args.  (Disabling
@@ -286,10 +224,6 @@ function no_exit {
 # Preferred options for `less`:
 export LESS="-rFX"
 
-
-if $isBash; then
-    shopt -s direxpand 2>/dev/null || true
-fi
 
 function notepad {
     local fname=~/notepad
@@ -366,6 +300,7 @@ function load_rcs1 {
 }
 
 function loadTaskrcs {
+    set +o noclobber
     local logfile9=$HOME/.loadtaskrcs.log
     echo "$(date): loadTaskrcs: trainload initialization of ~/.taskrc" > $logfile9
 
@@ -386,27 +321,13 @@ function loadTaskrcs {
 
 [[ -f ~/bin/sourceMeRun.taskrc ]] && source ~/bin/sourceMeRun.taskrc
 
-function reset {
-    # The standard reset doesn't restore the cursor, necessarily.
-    setterm -cursor on
-    command reset
-}
+
 
 # Completion setup quickly:
 # curl -sL https://github.com/Stabledog/complete-alias/releases/download/1.18.4/setup-complete-alias.sh | bash -
 [[ -f "${HOME}/.completion_loader" ]] && source "${HOME}/.completion_loader" # Added by setup-complete-alias.sh
 
 
-if $isBash; then
-    # The 'tox' command:
-    if [[ $PS1 ]]; then
-        source ${LmHome}/bin/tox-py/tox-completion.bash &>/dev/null
-    fi
-fi
-
-# loop_cmd is very handy:
-[[ -r ${LmHome}/bin/loop_cmd ]] && sourceMe=1 source ${LmHome}/bin/loop_cmd
-alias loop=loop_cmd
 
 unalias rm 2>/dev/null # If someone aliased my rm, cut it out.
 
@@ -415,37 +336,18 @@ export MYLIBS=${LmHome}/mylibs/$( $Uname )
 # Make tmux use 256 colors so vim highlighting works right:
 alias tmux='tmux -2'
 alias tw='tmuxw'
+alias eb='exec bash'
 
-python3() {
-    [[ -n ${BEST_PY3} ]] && { "$BEST_PY3" "$@" ; return; }
-    local cand;
-    for cand in python3.{10,9,8,7} python3 python; do
-        local py_cand="$( command which ${cand} 2>/dev/null)"
-	    [[ -n $MSYS ]] && {
-            "$py_cand" -c 'import sys; sys.exit(0)' &>/dev/null || continue
-        } || {
-            # On Unix-ish shells, avoid a Windows versions of python:
-            "$py_cand" -c 'import termios' &>/dev/null || \
-		    continue  # We don't want a dos/windows version
-        }
-        BEST_PY3="${py_cand}"
-        break
-    done
-    [[ -z "$BEST_PY3" ]] && { echo "ERROR: no python3 on path" >&2; false; return;  }
-    "$BEST_PY3" "$@"
+
+[[ -f ~/bin/python3-select.sh ]] && {
+    sourceMe=1 source ~/bin/python3-select.sh
 }
 
-# Most of these shell tools can be managed with shpm:
 [[ -n $PS1 ]] && {
-    [[ -f ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc ]] && source ${HOME}/.local/bin/shellkit-pm/shellkit-pm.bashrc # Added by shellkit-pm-setup.sh
-    [[ -e ${HOME}/.taskrc-kit-loader ]] && source ${HOME}/.taskrc-kit-loader # Added by taskrc-kit setup.sh
-    [[ -f ${HOME}/.bash_completion.d/localhist-completion.bash ]] && source ${HOME}/.bash_completion.d/localhist-completion.bash # Added by localhist setup.sh
-    [[ -f ${HOME}/.local/bin/cdpp/cdpp.bashrc ]] && source ${HOME}/.local/bin/cdpp/cdpp.bashrc # Added by cdpp-setup.sh
-    [[ -f ${HOME}/.local/bin/docktools/docktools.bashrc ]] && source ${HOME}/.local/bin/docktools/docktools.bashrc # Added by docktools-setup.sh
-    [[ -f ${HOME}/.local/bin/gitsmart/gitsmart.bashrc ]] && source ${HOME}/.local/bin/gitsmart/gitsmart.bashrc # Added by gitsmart-setup.sh
-    [[ -f ${HOME}/.local/bin/localhist/localhist ]] && source ${HOME}/.local/bin/localhist/localhist # Added by localhist setup.sh
-    [[ -f ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc ]] && source ${HOME}/.local/bin/ps1-foo/ps1-foo.bashrc # Added by ps1-foo-setup.sh
+    # Kits that shpm installs use this:
+    [[ -f ${HOME}/.local/bin/shellkit-loader.bashrc ]] && source ${HOME}/.local/bin/shellkit-loader.bashrc # Added by shellkit (bashics-setup.sh)
 }
+
 
 [[ -z $MSYS ]] && {
     # Not on git-bash, but otherwise undupe the PATH
@@ -455,7 +357,6 @@ python3() {
     }
 }
 
-[[ -f $HOME/.cargo/env ]] && . "$HOME/.cargo/env"
 
 # If there's a .taskrc directory in HOME, just source everything found there.
 # This should be the LAST environment-changing operation in .bashrc, because
@@ -466,5 +367,6 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 	loadTaskrcs
 fi
 
-[[ 1 -eq 1  ]]
+[[ 1 -eq 1  ]] # END
+
 

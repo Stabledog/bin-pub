@@ -8,21 +8,6 @@ if [[ -n $CUSTOM_SHELL ]]; then
     fi
 fi
 
-function init_sh_tools {
-    # Platform-dependent tools detection (dang you, MacOS!):
-    eval $(
-        PATH=/opt/bb/bin:/usr/local/bin:/usr/bin:/bin
-        for tool in Realpath.realpath Sed.sed Uname.uname; do
-            tv=${tool#*.}
-            tp=$(which $tv)
-            [[ -z $tp ]] && { echo "ERROR: can't find $tv in $PATH" >&2; continue; }
-            echo "${tool%.*}=$tp;"
-        done
-    )
-}
-
-init_sh_tools
-
 
 init_browser_tools() {
 
@@ -79,7 +64,7 @@ alias pathadd=$LmHome/bin/pathadd
 # Docker container, /root/projects can point to a mounted volume to satisfy
 # this need:
 if [[ -d ~/projects ]]; then
-    ProjectsHome=$( cd ~/projects; $Realpath . )
+    ProjectsHome=$( readlink ~/projects )
 else
     ProjectsHome=${ProjectsHome:-$HOME/projects}
     echo "WARNING: no ~/projects dir: this should be a symlink to mbig, /c/Projects, /var/projects, or similar general project root.  \$ProjectsHome remains unresolved." >&2
@@ -377,7 +362,7 @@ function load_rcs1 {
         [[ -z $path ]] && continue
         [[ -f $path ]] || continue
         echo "$path"
-    done < <( /bin/ls -1 -- ${rootDir}/.taskrc/ 2>/dev/null | egrep -v '\.vim$' | sort | $Sed -e "s%^%${rootDir}/.taskrc/%" )
+    done < <( command ls -1 -- ${rootDir}/.taskrc/ 2>/dev/null | grep -Ev '\.vim$' | sort | sed -e "s%^%${rootDir}/.taskrc/%" )
 }
 
 function loadTaskrcs {
@@ -482,6 +467,4 @@ if [[ -d $HOME/.taskrc ]] && $isBash; then
 fi
 
 [[ 1 -eq 1  ]]
-
-
 

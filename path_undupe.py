@@ -1,10 +1,9 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python
 # path_undupe.py
 import sys
 import os
-from typing import List
 
-def make_counts(path:str, delim=':') -> List[str]:
+def make_counts(str, delim=':'): # -> List[str]:
     ''' Returns
     [a] ordered list of [path,count]
     [b] set of {dupes} '''
@@ -30,7 +29,8 @@ if __name__=="__main__":
     if len(sys.argv)==1:
         ord,dup=make_counts(path)
         print('--- All: ---')
-        [ print('%s %s' % (o[0],o[1])) for o in ord ]
+        for o in ord:
+           print( '%s %s' % (o[0],o[1]))
         print('--- Dupes: ---')
         print(dup)
 

@@ -1,1 +1,1 @@
-makeself-2.4.5/makeself-header.sh
+makeself-2.5.0/makeself-header.sh

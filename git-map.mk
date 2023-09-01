@@ -10,7 +10,10 @@ SHELL=/bin/bash
 
 StartDir=$(shell pwd)
 CacheDir=$(HOME)/.git-map.mk.d
-Logfile=$(CacheDir)/git-map.log
+Logname=git-map.log
+Logfile=$(CacheDir)/$(Logname)
+Treename=git-map.trees
+Treesfile=$(CacheDir)/$(Treename)
 Mypid:=$(shell ps -o ppid $$$$ | tail -n 1 | tr -d [:space:] )
 TmpLog=$(CacheDir)/tmp-$(Mypid).log
 TmpTreeList=$(CacheDir)/tmp-$(Mypid).trees
@@ -29,35 +32,60 @@ Config:
 	cat <<-EOF
 	StartDir=$(StartDir)
 	CacheDir=$(CacheDir)
+	Logname=$(Logname)
+	Treename=$(Treename)
 	Logfile=$(Logfile)
-	Mypid=$(Mypid)
-	TmpTreeList=$(TmpTreeList)
+	Treesfile=$(Treesfile)
 	EOF
 
 $(TmpTreeList):
 	@set -ue
+	set -x
 	cd $(StartDir)
-	find $(StartDir) -type d -name '.git' | sed -e 's,/\.git$,,,' | tee $(TmpTreeList)
+	find $(StartDir) -type d -name '.git' | sed -e 's,/\.git$,,,' | sort | tee $(TmpTreeList)
 
 $(TmpLog): $(TmpTreeList)
-	@set -ue
-	cat $< | $(invoke_xargs_parallel) -- bash -c 'cd {}; $(print_git_remotes); $(print_git_branch)' | sort | tee $@
+	@set -u
+	set -x
+	cat $< | $(invoke_xargs_parallel) -- bash -c 'cd {}; $(print_git_remotes); $(print_git_branch)' | sort | tee $(TmpLog)
+
+stub1: $(TmpLog)
 
 $(CacheDir):
 	@set -ue
-	mkdir -p $@
+	tmpDir=$@.$(Mypid)
+	mkdir -p $$tmpDir
+	cd $$tmpDir
+	touch ./$(Treename)
+	touch ./$(Logname)
+	echo 'tmp-*' >> .gitignore
+	git init
+	git add .
+	git commit -m "Initial cache created"
+	cd ..
+	mv $$tmpDir $@
+
+
 
 .PHONY: .forever
 .forever:
 
 
-$(Logfile): $(CacheDir) .forever $(TmpLog)
+$(Logfile): $(CacheDir) .forever $(TmpTreeList) $(TmpLog)
 	@set -ue
+	set -x
+	mv $(TmpTreeList) $(Treesfile)
+	mv $(TmpLog) $(Logfile)
 	echo "Done: $@ ok"
 
-map: clean-tmp $(Logfile)
+
+
+map: $(Logfile)
 	@set -ue
-	echo "Ok: $@"
+	cd $(CacheDir)
+	git add .
+	git commit -m "Updated $$(date -Iseconds)"
+	echo "Ok: $@ updated"
 
 clean-tmp:
 	@set -ue

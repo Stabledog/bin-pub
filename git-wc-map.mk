@@ -2,14 +2,14 @@
 #  For mapping all git repos in a tree and their remotes.
 #
 #  Basic usage:
-#     - cd & bin/git-map.mk map
+#     - cd & bin/git-wc-map.mk map
 #         Map entire HOME tree.  Output goes to stdout and ~/.git-map.mk.d/git-map.log
 
 SHELL=/bin/bash
 .ONESHELL:
 
 StartDir=$(shell pwd)
-CacheDir=$(HOME)/.git-map.mk.d
+CacheDir=$(StartDir)/.git-map.mk.d
 Logname=git-map.log
 Logfile=$(CacheDir)/$(Logname)
 Treename=git-map.trees
@@ -40,13 +40,11 @@ Config:
 
 $(TmpTreeList):
 	@set -ue
-	set -x
 	cd $(StartDir)
 	find $(StartDir) -type d -name '.git' | sed -e 's,/\.git$,,,' | sort | tee $(TmpTreeList)
 
 $(TmpLog): $(TmpTreeList)
 	@set -u
-	set -x
 	cat $< | $(invoke_xargs_parallel) -- bash -c 'cd {}; $(print_git_remotes); $(print_git_branch)' | sort | tee $(TmpLog)
 
 stub1: $(TmpLog)
@@ -73,7 +71,6 @@ $(CacheDir):
 
 $(Logfile): $(CacheDir) .forever $(TmpTreeList) $(TmpLog)
 	@set -ue
-	set -x
 	mv $(TmpTreeList) $(Treesfile)
 	mv $(TmpLog) $(Logfile)
 	echo "Done: $@ ok"
@@ -84,8 +81,11 @@ map: $(Logfile)
 	@set -ue
 	cd $(CacheDir)
 	git add .
-	git commit -m "Updated $$(date -Iseconds)"
-	echo "Ok: $@ updated"
+	git commit -m "Updated $$(date -Iseconds)" && {
+		echo "Ok: mapping for $(StartDir) created / updated"
+	} || {
+		echo "Mapping succeeded for $(StartDir), but no changes from prior run."
+	}
 
 clean-tmp:
 	@set -ue

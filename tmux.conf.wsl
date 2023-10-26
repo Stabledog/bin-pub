@@ -58,6 +58,9 @@ set-option -g repeat-time 0
 
 set-option -g default-terminal "xterm-256color"
 
+# Split window with ctrl+\ without requiring prefix!
+bind-key -n C-\\ split-window -h
+
 # Toggle mouse on with <prefix>M
 bind-key M \
   set-option -g mouse on \;\

@@ -7,7 +7,8 @@ die() {
     exit 1
 }
 
-command -v python3 &>/dev/null || die "\python3 not set"
+Python=$(which python3.{11..8} | head -n 1)
+
 
 infile=settings.json
 
@@ -31,7 +32,7 @@ rm tmp/${infile}.{10,20} &>/dev/null
 
 sort_json_py() {
    cat <<- EOF
-from json import dumps,loads
+from json5 import dumps,loads
 with open("$1","r") as f_1:
     obj=loads(f_1.read())
 print(dumps(obj,indent=4,sort_keys=True))
@@ -39,7 +40,7 @@ EOF
 }
 
 
-sort_json_py ./tmp/${infile}.10 | python3 > ./tmp/${infile}.20
+sort_json_py ./tmp/${infile}.10 | $Python > ./tmp/${infile}.20
 [[ $? == 0 ]] || die Python filter failed
 
 [[ -f ./tmp/${infile}.20 ]] || fail step 20

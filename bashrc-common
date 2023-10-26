@@ -61,6 +61,9 @@ else
     xlocal=local
 fi
 
+[[ -f "${HOME}/my-home/jumpstart.bashrc" ]] && {
+    source "${HOME}/my-home/jumpstart.bashrc"
+}
 
 [[ -z $LmHome ]] && export LmHome=$HOME
 

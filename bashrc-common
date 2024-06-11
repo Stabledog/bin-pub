@@ -201,8 +201,8 @@ is_cygwin && {
     alias vih="${HOME}/bin/vim-tmux -h";
 }
 [[ -x ${HOME}/bin/tmux-split-launch ]] && {
-    alias tsh="${HOME}/bin/tmux-split-launch -h"
-    alias tsv="${HOME}/bin/tmux-split-launch -v"
+    alias tmsh="${HOME}/bin/tmux-split-launch -h"
+    alias tmsv="${HOME}/bin/tmux-split-launch -v"
 }
 
 export EDITOR=vim

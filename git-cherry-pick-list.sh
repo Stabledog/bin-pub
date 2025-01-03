@@ -1,14 +1,58 @@
 #!/bin/bash
 
+post_review_options() {
+    local commit=$1
+    local message="$2"
+    while true; do
+        echo "(1) Commit with message \"$message\""
+        echo "(2) Edit commit message and then commit"
+        echo "(3) Discard staged changes and move on"
+        echo "(4) Blindly forward (add more cherries to this bag)"
+        echo "-----"
+        echo "(q) Quit"
+        echo
+        read -rp "Select an option: " option
+        case $option in
+            1) git commit -m "$message"; return 0 ;;
+            2) git commit ; return 0 ;;
+            3) git reset --hard HEAD; return 0 ;;
+            4) return 0 ;;
+            q) echo "Quitting.  If you wish to restart with the same pick list, use -r|--restart"; return 1 ;;
+            *) echo "Invalid option" >&2 ; echo ;;
+        esac
+    done
+}
+
+mark_reconciled_branch() {
+    local branch="$1"
+    local cur_branch
+    cur_branch="$(git rev-parse --abbrev-ref HEAD)"
+    echo "All commits have been cherry-picked from ${branch}."
+    echo "Should I mark \"${cur_branch}\" with an empty merge commit? (This will prevent "
+    echo "re-merging of the same lineage, counting them as reconciled.)"
+    echo 
+    read -rp "Mark \"${cur_branch}\" now (Y/n)? " answer
+    if [[ "$answer" =~ [yY] ]]; then
+        git merge --strategy=ours "${branch}" -m "Reconciled with ${branch} by cherry-picking."
+    fi
+}
+
+# Function to display usage
+usage() {
+    local scr
+    scr=$(basename -- "$0")
+    echo "Usage: " 
+    echo "   $scr <branch>"
+    echo "     Create a new picklist, edit it, then loop over them with review for each"
+    echo "   $scr [-r|--restart]"
+    echo "     Restart the picklist from the previous run"
+    exit 1
+}
+
+
 main() {
     PS4='+$?( $(realpath ${BASH_SOURCE[0]}):${LINENO} ): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
     set -ue
-
-    # Function to display usage
-    usage() {
-        echo "Usage: $0 [-r|--restart] <branch>"
-        exit 1
-    }
 
     # Initialize variables
     RESTART=false
@@ -36,7 +80,6 @@ main() {
     fi
 
     EDITOR=${EDITOR:-vim}  # Use vim as default editor if $EDITOR is not set
-
     # Generate the list of commits if not restarting
     if [[ "$RESTART" == true ]]; then
         cp /tmp/cherry-pick-list.txt.previous /tmp/cherry-pick-list.txt || {
@@ -48,29 +91,10 @@ main() {
     fi
     # Open the list in the editor
     $EDITOR /tmp/cherry-pick-list.txt
+    cp /tmp/cherry-pick-list.txt /tmp/cherry-pick-list.txt.previous
+    [[ -n ${BRANCH} ]] && \
+        echo "${BRANCH}" > /tmp/cherry-pick-list-branch
 
-    post_review_options() {
-        local commit=$1
-        local message="$2"
-        while true; do
-            echo "(1) Commit with message \"$message\""
-            echo "(2) Edit commit message and then commit"
-            echo "(3) Discard staged changes and move on"
-            echo "(4) Blindly forward (add more cherries to this bag)"
-            echo "-----"
-            echo "(q) Quit"
-            echo
-            read -rp "Select an option: " option
-            case $option in
-                1) git commit -m "$message"; return 0 ;;
-                2) git commit ; return 0 ;;
-                3) git reset --hard HEAD; return 0 ;;
-                4) return 0 ;;
-                q) return 1 ;;
-                *) echo "Invalid option" >&2 ; echo ;;
-            esac
-        done
-    }
 
     # Read the edited list and cherry-pick commits
     exec 3</tmp/cherry-pick-list.txt
@@ -88,10 +112,13 @@ main() {
         post_review_options "$commit" "$message" || break
     done
 
-    # Clean up
+    [[ -f /tmp/cherry-pick-list-branch ]] && {
+        mark_reconciled_branch "$(cat /tmp/cherry-pick-list-branch)"
+        rm /tmp/cherry-pick-list-branch
+    }
+    
     rm /tmp/cherry-pick-list.txt
 
-    echo "Cherry-picking completed."
 }
 
 main "$@"

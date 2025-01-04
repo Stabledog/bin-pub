@@ -17,7 +17,7 @@ post_review_options() {
             2) git commit ; return 0 ;;
             3) git reset --hard HEAD; return 0 ;;
             4) return 0 ;;
-            q) echo "Quitting.  If you wish to restart with the same pick list, use -r|--restart"; return 1 ;;
+            q) echo "Quitting.  If you wish to restart with the same pick list, use -r|--restart"; exit 1;;
             *) echo "Invalid option" >&2 ; echo ;;
         esac
     done
@@ -75,7 +75,8 @@ main() {
     done
 
     # Check if branch name is provided
-    if [ -z "${BRANCH:-}" ]; then
+    BRANCH=${BRANCH:-$(cat /tmp/git-cherry-pick-branch 2>/dev/null)}
+    if [[ -z "${BRANCH}" ]]; then
         usage
     fi
 
@@ -87,7 +88,8 @@ main() {
             exit 1
         }
     else
-        git log --reverse --pretty=format:"%H %s" "main..${BRANCH}" > /tmp/cherry-pick-list.txt
+        cur_branch="$(git rev-parse --abbrev-ref HEAD)"
+        git log --reverse --pretty=format:"%H %s" "$cur_branch..${BRANCH}" > /tmp/cherry-pick-list.txt
     fi
     # Open the list in the editor
     $EDITOR /tmp/cherry-pick-list.txt
@@ -99,9 +101,11 @@ main() {
     # Read the edited list and cherry-pick commits
     exec 3</tmp/cherry-pick-list.txt
     while read -r commit message <&3; do
-        git cherry-pick --no-commit "$commit" || {
+        if git cherry-pick --no-commit "$commit"; then 
+            git reset  # Unstage the changes
+        else 
             echo "WARNING: git cherry-pick failed. "
-        }
+        fi
         # Now you can edit the changes before committing
         echo "Picking:"
         echo "    Commit=$commit"

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# See discussion: http://askubuntu.com/questions/343047/installing-skype-on-ubuntu-13-04-64-bit
-sudo dpkg --add-architecture i386 || exit 1
-sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" || exit 1
-sudo apt-get update || exit 1
-sudo apt-get install skype || exit 1
-

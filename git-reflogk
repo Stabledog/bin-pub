@@ -13,7 +13,7 @@
 # sound confusing?  try it...!
 
 # grab top N entries from the reflog
-refs=`git reflog -${1:-10} | cut -f1 -d' '  | sort -u`
+refs=$(git reflog -${1:-10} | cut -f1 -d' '  | sort -u)
 
 # find their common merge-base
 export common

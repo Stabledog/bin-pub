@@ -1,0 +1,44 @@
+#!/bin/bash
+# notehub installer, pulls notehub from pypi
+
+scriptName="${scriptName:-"$(command readlink -f -- "$0")"}"
+[[ -n "$DEBUGSH" ]] && set -x
+
+{
+    Python() {
+        for pyCand in python3.{14..9} python3 python; do
+            "$pyCand" -m pip &>/dev/null || continue
+            readlink -f "${pyCand}"
+            "${pyCand}" "$@"
+            return
+        done
+        echo "No usable python found for notehub setup" >&2
+        return 1
+    }
+
+    die() {
+        builtin echo "ERROR($(basename "${scriptName}")): $*" >&2
+        builtin exit 1
+    }
+
+    main() {
+        set -ue
+        set -x
+        Python -m pip install --extra-index-url https://pypi.org/simple lm-notehub
+        case ${USER:-none} in
+            lmatheson4)
+                unset GH_ENTERPRISE_TOKEN
+                gh auth login --hostname bbgithub.dev.bloomberg.com
+                ;;
+            *) 
+                gh auth login --hostname github.com
+                ;;
+        esac
+    }
+}
+
+if [[ -z "${sourceMe}" ]]; then
+    main "$@"
+    builtin exit
+fi
+command true
